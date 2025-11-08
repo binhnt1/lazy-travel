@@ -19,7 +19,7 @@ object PocketBaseConfig {
     // Admin credentials for auto collection setup
     // TODO: Move to secure storage in production!
     object Admin {
-        const val EMAIL = "admin@lazytravel.com"
-        const val PASSWORD = "your-admin-password"
+        const val EMAIL = "binhnt1@gmail.com"
+        const val PASSWORD = "A1a@a#a\$a%"
     }
 }
