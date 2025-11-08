@@ -12,8 +12,10 @@
 shared/src/commonMain/kotlin/com/lazytravel/
 ├── data/remote/
 │   ├── PocketBaseConfig.kt      # ⚙️ Cấu hình (URL, collections)
-│   ├── PocketBaseClient.kt      # 🔌 Client singleton
-│   └── PocketBaseSetup.kt       # 🛠️ Auto collection setup
+│   ├── PocketBaseClient.kt      # 🔌 Ktor HTTP Client wrapper
+│   ├── PocketBaseApi.kt         # 🌐 REST API helpers
+│   ├── PocketBaseSetup.kt       # 🛠️ Auto collection setup
+│   └── PocketBaseSeedData.kt    # 🌱 Sample data seeder
 ├── data/repository/
 │   └── DestinationRepositoryImpl.kt  # 💾 CRUD operations
 └── domain/model/
@@ -113,29 +115,105 @@ repository.createDestination(destination)
 // ✅ PocketBase tự động chấp nhận fields mới!
 ```
 
-### 4️⃣ CRUD Operations
+### 4️⃣ Seed dữ liệu mẫu (cho testing)
+
+**Tạo dữ liệu test nhanh:**
+
+```kotlin
+// Trong MainActivity (Android) hoặc App init (iOS)
+import com.lazytravel.data.remote.PocketBaseSeedData
+
+lifecycleScope.launch {
+    // Test connection trước
+    PocketBaseSeedData.testConnection()
+
+    // Seed 5 destinations mẫu
+    PocketBaseSeedData.seedDestinations()
+}
+```
+
+**Clear tất cả data (cẩn thận!):**
+
+```kotlin
+lifecycleScope.launch {
+    PocketBaseSeedData.clearDestinations()
+}
+```
+
+**Các destinations mẫu bao gồm:**
+- Ha Long Bay (Nature, 4.8⭐, 1,200,000đ)
+- Hoi An Ancient Town (Cultural, 4.7⭐, 800,000đ)
+- Sapa Terraced Fields (Adventure, 4.6⭐, 1,500,000đ)
+- Phu Quoc Island (Beach, 4.5⭐, 2,000,000đ)
+- Da Lat City (Mountain, 4.4⭐, 900,000đ)
+
+### 5️⃣ CRUD Operations
 
 **Tạo Repository cho model mới:**
 
 ```kotlin
+import com.lazytravel.data.remote.PocketBaseApi
+import kotlinx.serialization.json.Json
+
 class HotelRepositoryImpl {
-    private val client = PocketBaseClient.getInstance()
     private val collectionName = PocketBaseConfig.Collections.HOTELS
+    private val json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+    }
 
     suspend fun getHotels(): List<Hotel> {
-        val records = client.records.getList(
+        val result = PocketBaseApi.getRecords(
             collection = collectionName,
-            options = RecordListOptions(page = 1, perPage = 50)
+            page = 1,
+            perPage = 50
         )
-        return records.items.map { /* parse to Hotel */ }
+
+        return result.fold(
+            onSuccess = { response ->
+                response.items.mapNotNull { jsonElement ->
+                    try {
+                        json.decodeFromJsonElement(Hotel.serializer(), jsonElement)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+            },
+            onFailure = { emptyList() }
+        )
     }
 
     suspend fun createHotel(hotel: Hotel): Hotel? {
-        val record = client.records.create(
-            collection = collectionName,
-            body = hotel
+        val result = PocketBaseApi.createRecord(collectionName, hotel)
+
+        return result.fold(
+            onSuccess = { responseText ->
+                try {
+                    json.decodeFromString(Hotel.serializer(), responseText)
+                } catch (e: Exception) {
+                    null
+                }
+            },
+            onFailure = { null }
         )
-        return /* parse to Hotel */
+    }
+
+    suspend fun updateHotel(id: String, hotel: Hotel): Hotel? {
+        val result = PocketBaseApi.updateRecord(collectionName, id, hotel)
+        return result.fold(
+            onSuccess = { responseText ->
+                json.decodeFromString(Hotel.serializer(), responseText)
+            },
+            onFailure = { null }
+        )
+    }
+
+    suspend fun deleteHotel(id: String): Boolean {
+        val result = PocketBaseApi.deleteRecord(collectionName, id)
+        return result.fold(
+            onSuccess = { success -> success },
+            onFailure = { false }
+        )
     }
 }
 ```
@@ -215,13 +293,24 @@ object PocketBaseConfig {
 ### Connection failed
 
 ```kotlin
-// Check logs
-println("PocketBase URL: ${PocketBaseConfig.BASE_URL}")
+// Test connection
+import com.lazytravel.data.remote.PocketBaseSeedData
 
-// Test connection manually
-val client = PocketBaseClient.getInstance()
-client.health.check()  // Should return OK
+lifecycleScope.launch {
+    val connected = PocketBaseSeedData.testConnection()
+    if (connected) {
+        println("✅ PocketBase is reachable!")
+    } else {
+        println("❌ Cannot connect to: ${PocketBaseConfig.BASE_URL}")
+    }
+}
 ```
+
+**Kiểm tra:**
+1. PocketBase server có đang chạy không?
+2. URL có đúng không? (Check `PocketBaseConfig.BASE_URL`)
+3. Firewall có block không?
+4. Network có kết nối không?
 
 ### Collections không tự động tạo
 
@@ -290,23 +379,42 @@ data class Destination(
 )
 ```
 
-### 4. Realtime subscriptions
+### 4. Search/Filter
 
 ```kotlin
-// Subscribe to collection changes
-client.realtime.subscribe("destinations") { event ->
-    when (event.action) {
-        "create" -> println("New destination added!")
-        "update" -> println("Destination updated!")
-        "delete" -> println("Destination deleted!")
-    }
+// Tìm kiếm destinations
+suspend fun searchDestinations(query: String): List<Destination> {
+    val filter = "name ~ '$query' || description ~ '$query'"
+
+    val result = PocketBaseApi.getRecords(
+        collection = PocketBaseConfig.Collections.DESTINATIONS,
+        filter = filter
+    )
+
+    return result.fold(
+        onSuccess = { response ->
+            response.items.mapNotNull { jsonElement ->
+                json.decodeFromJsonElement(Destination.serializer(), jsonElement)
+            }
+        },
+        onFailure = { emptyList() }
+    )
 }
 ```
 
+**PocketBase Filter Syntax:**
+- `name = 'Ha Long'` - Exact match
+- `name ~ 'long'` - Contains (case-insensitive)
+- `price > 1000000` - Greater than
+- `rating >= 4.5` - Greater or equal
+- `category = 'Beach' && price < 2000000` - AND condition
+- `category = 'Beach' || category = 'Mountain'` - OR condition
+
 ## 📚 Tài liệu thêm
 
-- [PocketBase Docs](https://pocketbase.io/docs/)
-- [PocketBase Kotlin Client](https://github.com/agrevster/pocketbase-kotlin)
+- [PocketBase API Docs](https://pocketbase.io/docs/)
+- [PocketBase Filter Syntax](https://pocketbase.io/docs/api-rules-and-filters/)
+- [Ktor Client](https://ktor.io/docs/client.html)
 - [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization)
 
 ## ✅ Checklist Setup
