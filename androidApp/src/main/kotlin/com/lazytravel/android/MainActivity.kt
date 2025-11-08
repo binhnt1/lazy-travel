@@ -13,13 +13,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.lazytravel.data.remote.PocketBaseClient
+import com.lazytravel.data.remote.PocketBaseSetup
 import com.lazytravel.di.AppModule
 import com.lazytravel.domain.model.Destination
 import com.lazytravel.presentation.DestinationViewModel
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize PocketBase client
+        PocketBaseClient.initialize()
+
+        // Auto-create collections (optional, for development)
+        lifecycleScope.launch {
+            PocketBaseSetup.ensureCollectionsExist()
+        }
 
         val viewModel = AppModule.provideDestinationViewModel()
 

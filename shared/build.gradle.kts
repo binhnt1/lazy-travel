@@ -1,6 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.library")
+    kotlin("plugin.serialization") version "1.9.20"
 }
 
 kotlin {
@@ -27,11 +28,15 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+                implementation("io.github.agrevster:pocketbase-kotlin:0.8.0")
+                implementation("io.ktor:ktor-client-core:2.3.7")
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+                implementation("io.ktor:ktor-client-android:2.3.7")
             }
         }
         val iosX64Main by getting
@@ -42,6 +47,9 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:2.3.7")
+            }
         }
     }
 }

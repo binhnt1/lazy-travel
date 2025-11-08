@@ -1,57 +1,143 @@
 package com.lazytravel.data.repository
 
+import com.lazytravel.data.remote.PocketBaseClient
+import com.lazytravel.data.remote.PocketBaseConfig
 import com.lazytravel.domain.model.Destination
 import com.lazytravel.domain.repository.DestinationRepository
+import io.github.agrevster.pocketbaseKotlin.dsl.query.RecordListOptions
+import kotlinx.serialization.json.Json
 
 /**
- * Repository Implementation - Triển khai cụ thể việc lấy dữ liệu
- * Hiện tại đang sử dụng mock data, sau này có thể thay bằng API call
+ * Repository Implementation - Using PocketBase
+ * Lấy dữ liệu từ PocketBase server
  */
 class DestinationRepositoryImpl : DestinationRepository {
 
-    private val mockDestinations = listOf(
-        Destination(
-            id = "1",
-            name = "Hạ Long Bay",
-            description = "Di sản thiên nhiên thế giới với cảnh quan thiên nhiên tuyệt đẹp",
-            imageUrl = "https://example.com/halong.jpg",
-            rating = 4.8,
-            price = 1500000.0
-        ),
-        Destination(
-            id = "2",
-            name = "Phú Quốc",
-            description = "Đảo ngọc với bãi biển đẹp và hải sản tươi ngon",
-            imageUrl = "https://example.com/phuquoc.jpg",
-            rating = 4.7,
-            price = 2000000.0
-        ),
-        Destination(
-            id = "3",
-            name = "Đà Lạt",
-            description = "Thành phố ngàn hoa với khí hậu mát mẻ quanh năm",
-            imageUrl = "https://example.com/dalat.jpg",
-            rating = 4.6,
-            price = 1200000.0
-        )
-    )
+    private val client = PocketBaseClient.getInstance()
+    private val collectionName = PocketBaseConfig.Collections.DESTINATIONS
+
+    private val json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+    }
 
     override suspend fun getDestinations(): List<Destination> {
-        // Giả lập network delay
-        kotlinx.coroutines.delay(1000)
-        return mockDestinations
+        return try {
+            val records = client.records.getList(
+                collection = collectionName,
+                options = RecordListOptions(
+                    page = 1,
+                    perPage = 50,
+                    sort = "-created" // Newest first
+                )
+            )
+
+            // Parse records to Destination objects
+            records.items.mapNotNull { record ->
+                try {
+                    json.decodeFromString<Destination>(record.toString())
+                } catch (e: Exception) {
+                    println("⚠️ Failed to parse destination: ${e.message}")
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            println("❌ Error fetching destinations: ${e.message}")
+            // Return empty list on error (or throw exception)
+            emptyList()
+        }
     }
 
     override suspend fun getDestinationById(id: String): Destination? {
-        kotlinx.coroutines.delay(500)
-        return mockDestinations.find { it.id == id }
+        return try {
+            val record = client.records.getOne(
+                collection = collectionName,
+                id = id
+            )
+
+            json.decodeFromString<Destination>(record.toString())
+        } catch (e: Exception) {
+            println("❌ Error fetching destination $id: ${e.message}")
+            null
+        }
     }
 
     override suspend fun searchDestinations(query: String): List<Destination> {
-        kotlinx.coroutines.delay(500)
-        return mockDestinations.filter {
-            it.name.contains(query, ignoreCase = true) ||
-            it.description.contains(query, ignoreCase = true)
+        return try {
+            // PocketBase filter syntax
+            val filter = "name ~ '$query' || description ~ '$query'"
+
+            val records = client.records.getList(
+                collection = collectionName,
+                options = RecordListOptions(
+                    page = 1,
+                    perPage = 50,
+                    filter = filter
+                )
+            )
+
+            records.items.mapNotNull { record ->
+                try {
+                    json.decodeFromString<Destination>(record.toString())
+                } catch (e: Exception) {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            println("❌ Error searching destinations: ${e.message}")
+            emptyList()
+        }
+    }
+
+    /**
+     * Create a new destination
+     * Example usage for adding data
+     */
+    suspend fun createDestination(destination: Destination): Destination? {
+        return try {
+            val record = client.records.create(
+                collection = collectionName,
+                body = destination
+            )
+
+            json.decodeFromString<Destination>(record.toString())
+        } catch (e: Exception) {
+            println("❌ Error creating destination: ${e.message}")
+            null
+        }
+    }
+
+    /**
+     * Update a destination
+     */
+    suspend fun updateDestination(id: String, destination: Destination): Destination? {
+        return try {
+            val record = client.records.update(
+                collection = collectionName,
+                id = id,
+                body = destination
+            )
+
+            json.decodeFromString<Destination>(record.toString())
+        } catch (e: Exception) {
+            println("❌ Error updating destination: ${e.message}")
+            null
+        }
+    }
+
+    /**
+     * Delete a destination
+     */
+    suspend fun deleteDestination(id: String): Boolean {
+        return try {
+            client.records.delete(
+                collection = collectionName,
+                id = id
+            )
+            true
+        } catch (e: Exception) {
+            println("❌ Error deleting destination: ${e.message}")
+            false
         }
     }
 }
