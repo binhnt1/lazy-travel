@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Background -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M0,0h108v108h-108z"/>
+
+    <!-- Airplane icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M69,54L69,39L75,39L75,24L60,24L60,9L54,9L54,24L39,24L39,39L45,39L45,54L27,54L27,63L21,63L21,72L27,72L27,81L45,81L45,96L54,96L54,81L72,81L72,72L78,72L78,63L72,63L72,54Z"/>
+</vector>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Background circle -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M24,24m-24,0a24,24 0,1,1 48,0a24,24 0,1,1 -48,0"/>
+
+    <!-- Airplane icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30.5,24L30.5,17L33,17L33,10L26.5,10L26.5,4L22.5,4L22.5,10L16,10L16,17L18.5,17L18.5,24L10,24L10,28L7,28L7,32L10,32L10,36L18.5,36L18.5,43L22.5,43L22.5,36L31,36L31,32L34,32L34,28L31,28L31,24Z"/>
+</vector>
