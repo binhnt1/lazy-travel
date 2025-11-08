@@ -69,26 +69,45 @@ LazyTravel/
 
 ## 📦 Cài đặt và Chạy
 
-### Android
+> ⚠️ **Lưu ý:** Dự án này cần kết nối internet lần đầu để download dependencies.
+> Xem chi tiết trong [SETUP.md](SETUP.md) để biết hướng dẫn đầy đủ và troubleshooting.
 
-1. Mở project trong Android Studio
-2. Sync Gradle
-3. Chạy module `androidApp`
+### Yêu cầu
+- JDK 17 hoặc mới hơn
+- Android Studio Hedgehog (2023.1.1) hoặc mới hơn (cho Android)
+- Xcode 14+ (cho iOS, chỉ trên macOS)
 
+### Quick Start
+
+**1. Clone và Setup:**
 ```bash
+git clone <repository-url>
+cd lazy-travel
+
+# Nếu chưa có gradlew, tạo wrapper:
+gradle wrapper --gradle-version 8.2
+```
+
+**2. Android:**
+```bash
+# Build và install trên emulator/device
 ./gradlew :androidApp:installDebug
+
+# Hoặc mở trong Android Studio và click Run
 ```
 
-### iOS
-
-1. Build shared framework:
+**3. iOS (macOS only):**
 ```bash
-./gradlew :shared:embedAndSignAppleFrameworkForXcode
+# Build shared framework
+./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
+
+# Mở Xcode project
+open iosApp/iosApp.xcodeproj
+
+# Trong Xcode: Chọn scheme và nhấn Run (⌘R)
 ```
 
-2. Mở `iosApp/iosApp.xcodeproj` trong Xcode
-3. Chọn target và simulator
-4. Nhấn Run (⌘R)
+Gặp vấn đề? Xem [SETUP.md](SETUP.md) để biết troubleshooting chi tiết.
 
 ## 🔧 Công nghệ sử dụng
 

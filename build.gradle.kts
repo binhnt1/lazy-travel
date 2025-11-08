@@ -1,13 +1,22 @@
-plugins {
-    // Kotlin Multiplatform
-    kotlin("multiplatform") version "1.9.20" apply false
-    kotlin("android") version "1.9.20" apply false
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
+        classpath("com.android.tools.build:gradle:8.1.4")
+    }
+}
 
-    // Android
-    id("com.android.application") version "8.1.4" apply false
-    id("com.android.library") version "8.1.4" apply false
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
 
 tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory)
 }
