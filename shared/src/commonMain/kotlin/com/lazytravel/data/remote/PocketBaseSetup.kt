@@ -1,7 +1,5 @@
 package com.lazytravel.data.remote
 
-import io.github.agrevster.pocketbaseKotlin.PocketbaseException
-import io.github.agrevster.pocketbaseKotlin.dsl.collections.CollectionCreate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -24,46 +22,40 @@ object PocketBaseSetup {
     /**
      * Ensure all required collections exist
      * Creates them if they don't exist
-     *
-     * Call this once during app startup (optional, but recommended for dev)
      */
     suspend fun ensureCollectionsExist() = withContext(Dispatchers.Default) {
         try {
-            val client = PocketBaseClient.getInstance()
-
             println("🔍 Checking PocketBase collections...")
 
-            // Login as admin (needed to create collections)
-            try {
-                client.admins.authWithPassword(
-                    PocketBaseConfig.Admin.EMAIL,
-                    PocketBaseConfig.Admin.PASSWORD
-                )
-                println("✅ Admin authenticated")
-            } catch (e: Exception) {
-                println("⚠️ Admin auth failed: ${e.message}")
-                println("⚠️ Skipping auto-collection setup. Please create collections manually in Admin UI.")
+            // Login as admin
+            val authResult = PocketBaseApi.adminAuth(
+                PocketBaseConfig.Admin.EMAIL,
+                PocketBaseConfig.Admin.PASSWORD
+            )
+
+            if (authResult.isFailure) {
+                println("⚠️ Admin auth failed: ${authResult.exceptionOrNull()?.message}")
+                println("⚠️ Skipping auto-collection setup. Please create collections manually.")
                 return@withContext
             }
+
+            println("✅ Admin authenticated")
 
             // Check and create each collection
             requiredCollections.forEach { collectionName ->
                 try {
-                    // Try to get collection (will throw if doesn't exist)
-                    client.collections.getOne(collectionName)
-                    println("✅ Collection '$collectionName' already exists")
-                } catch (e: PocketbaseException) {
-                    // Collection doesn't exist, create it
-                    try {
-                        client.collections.create(
-                            CollectionCreate(
-                                name = collectionName,
-                                type = "base" // base collection type
-                            )
-                        )
-                        println("✅ Created collection '$collectionName'")
-                    } catch (createError: Exception) {
-                        println("❌ Failed to create collection '$collectionName': ${createError.message}")
+                    val exists = PocketBaseApi.collectionExists(collectionName)
+
+                    if (exists) {
+                        println("✅ Collection '$collectionName' already exists")
+                    } else {
+                        // Create collection
+                        val createResult = PocketBaseApi.createCollection(collectionName)
+                        if (createResult.isSuccess) {
+                            println("✅ Created collection '$collectionName'")
+                        } else {
+                            println("❌ Failed to create collection '$collectionName': ${createResult.exceptionOrNull()?.message}")
+                        }
                     }
                 } catch (e: Exception) {
                     println("❌ Error checking collection '$collectionName': ${e.message}")
@@ -80,30 +72,25 @@ object PocketBaseSetup {
 
     /**
      * Create a single collection programmatically
-     * Useful when adding a new model at runtime
      */
     suspend fun createCollection(name: String): Boolean {
         return try {
-            val client = PocketBaseClient.getInstance()
-
-            // Try to get collection first
-            try {
-                client.collections.getOne(name)
+            val exists = PocketBaseApi.collectionExists(name)
+            if (exists) {
                 println("ℹ️ Collection '$name' already exists")
                 return true
-            } catch (e: PocketbaseException) {
-                // Doesn't exist, create it
-                client.collections.create(
-                    CollectionCreate(
-                        name = name,
-                        type = "base"
-                    )
-                )
+            }
+
+            val result = PocketBaseApi.createCollection(name)
+            if (result.isSuccess) {
                 println("✅ Created collection '$name'")
                 true
+            } else {
+                println("❌ Failed to create collection '$name'")
+                false
             }
         } catch (e: Exception) {
-            println("❌ Failed to create collection '$name': ${e.message}")
+            println("❌ Error creating collection '$name': ${e.message}")
             false
         }
     }
