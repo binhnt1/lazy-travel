@@ -1,7 +1,6 @@
 package com.lazytravel.data.remote
 
-import com.lazytravel.data.remote.schema.SchemaMigration
-import com.lazytravel.data.remote.schema.destinationsSchema
+import com.lazytravel.data.remote.schema.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -38,10 +37,44 @@ object PocketBaseSetup {
 
             // Run schema migrations for collections with defined schemas
             val migrationResult = SchemaMigration.migrate(
-                destinationsSchema
-                // Add more schemas here as you define them:
-                // hotelsSchema,
-                // reviewsSchema,
+                // Destinations
+                destinationsSchema,
+
+                // Users & Profile
+                userProfilesSchema,
+                userStatsSchema,
+                achievementsSchema,
+                userAchievementsSchema,
+
+                // Trips
+                tripsSchema,
+                tripMembersSchema,
+                tripExpensesSchema,
+                tripChecklistsSchema,
+                tripChecklistItemsSchema,
+                tripNotificationsSchema,
+
+                // Tours
+                toursSchema,
+                tourReviewsSchema,
+
+                // Travel Buddies
+                buddyRequestsSchema,
+                buddyRequestTagsSchema,
+
+                // Blog
+                blogCategoriesSchema,
+                blogPostsSchema,
+
+                // Social Feed
+                postsSchema,
+                postMediaSchema,
+                postLikesSchema,
+                postCommentsSchema,
+
+                // Notifications & Photos
+                notificationsSchema,
+                tripPhotosSchema
             )
 
             if (!migrationResult) {
