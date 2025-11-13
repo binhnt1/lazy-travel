@@ -1,0 +1,3760 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Chuyến Đi - TravelVote</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #F5F5F5;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: #FAFAFA;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            padding: 16px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .header-title p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 16px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #212121;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+
+        /* IMPROVED: Beautiful Info Box with Gradient */
+        .info-box {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .info-box-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .trip-name-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #212121;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .trip-name-input::placeholder {
+            color: #999;
+        }
+
+        .trip-name-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.8);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .date-picker-modern {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-box {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 14px 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .date-box:hover {
+            background: white;
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .date-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+            margin-bottom: 6px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .date-value {
+            font-size: 16px;
+            font-weight: 800;
+            color: #212121;
+        }
+
+        .date-arrow {
+            font-size: 24px;
+            opacity: 0.9;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* IMPROVED: Full width description */
+        .description-box {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 14px;
+            color: #212121;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .description-box::placeholder {
+            color: #999;
+        }
+
+        .description-box:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.8);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Date Picker Modal */
+        .date-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .date-modal.active {
+            display: flex;
+        }
+
+        .date-picker-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 360px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .date-picker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .month-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #F5F5F5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .current-month {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            padding: 8px 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calendar-day:hover {
+            background: #F5F5F5;
+        }
+
+        .calendar-day.selected {
+            background: #FF6B35;
+            color: white;
+            font-weight: 700;
+        }
+
+        .calendar-day.empty {
+            cursor: default;
+        }
+
+        .calendar-day.today {
+            border: 2px solid #FF6B35;
+        }
+
+        /* IMPROVED: Destination Combobox */
+        .country-select-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .country-select {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            appearance: none;
+            background: white;
+        }
+
+        .country-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+        }
+
+        .hot-destinations {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .hot-chip {
+            padding: 6px 12px;
+            background: #FFF3E0;
+            border: 1px solid #FFB74D;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #E65100;
+        }
+
+        .hot-chip:hover {
+            background: #FFE0B2;
+            border-color: #FF6B35;
+        }
+
+        .destination-combobox-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .destination-combobox {
+            width: 100%;
+            padding: 10px 10px 10px 36px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .destination-combobox:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+
+        .combobox-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #FF6B35;
+        }
+
+        .destination-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 10;
+        }
+
+        .destination-suggestions.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #F5F5F5;
+            font-size: 13px;
+        }
+
+        .suggestion-item:hover {
+            background: #F5F5F5;
+        }
+
+        /* Route Option Cards */
+        .route-option-card {
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .route-option-card:hover {
+            border-color: #FFB74D;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.1);
+        }
+
+        .route-badge {
+            position: absolute;
+            top: -12px;
+            left: 16px;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .route-header {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 10;
+        }
+
+        .route-path {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            padding-right: 40px;
+            padding-top: 8px;
+        }
+
+        .route-stop {
+            background: #FFF3E0;
+            border: 1px solid #FFB74D;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #E65100;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .route-arrow {
+            color: #999;
+            font-size: 16px;
+        }
+
+        .stop-remove-btn {
+            background: #FF5252;
+            border: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .add-stop-btn {
+            background: white;
+            border: 1px dashed #E0E0E0;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-stop-btn:hover {
+            border-color: #FF6B35;
+            color: #FF6B35;
+        }
+
+        .route-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .route-detail-item {
+            background: #F9F9F9;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .route-detail-item strong {
+            color: #212121;
+        }
+
+        .delete-route-btn {
+            background: rgba(255, 82, 82, 0.9);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(255, 82, 82, 0.3);
+        }
+
+        .delete-route-btn:hover {
+            background: #D32F2F;
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+        }
+
+        .add-route-btn {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px dashed #E0E0E0;
+            border-radius: 8px;
+            color: #666;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .add-route-btn:hover {
+            border-color: #667EEA;
+            color: #667EEA;
+            background: linear-gradient(135deg, #F3F4FF 0%, #FAF5FF 100%);
+        }
+
+        .destination-card {
+            background: #F9F9F9;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .destination-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .destination-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .collapsible-section {
+            margin-top: 12px;
+        }
+
+        .collapse-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #F5F5F5;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+        .collapse-header:hover {
+            background: #EEEEEE;
+        }
+
+        .collapse-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .collapse-icon {
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+
+        .collapse-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .collapse-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .collapse-content.expanded {
+            max-height: 500px;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .option-item {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 8px 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .option-item.selected {
+            border-color: #FF6B35;
+            background: #FFF3E0;
+        }
+
+        .option-icon {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+
+        .option-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #212121;
+        }
+
+        /* Friends Invite */
+        .invite-card {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .invite-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .invite-icon-large {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .invite-header-text h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .invite-header-text p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .friend-counter {
+            background: #E8F5E9;
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .friend-counter-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2E7D32;
+        }
+
+        .friend-counter-label {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #F9F9F9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .friend-item:hover {
+            background: #F0F0F0;
+        }
+
+        .friend-item.selected {
+            background: #E8F5E9;
+            border: 1px solid #4CAF50;
+        }
+
+        .friend-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 14px;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212121;
+        }
+
+        .friend-trips {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .friend-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E0E0E0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: transparent;
+            transition: all 0.2s;
+        }
+
+        .friend-item.selected .friend-checkbox {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #E0E0E0;
+            background: white;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            background: #F5F5F5;
+        }
+
+        .page-btn.active {
+            background: #FF6B35;
+            color: white;
+            border-color: #FF6B35;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Destination Picker Popup */
+        .destination-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .destination-popup.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .destination-popup-container {
+            background: white;
+            border-radius: 16px;
+            max-width: 420px;
+            width: 90%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .destination-popup-header {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            padding: 24px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .destination-popup-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .popup-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .destination-search-box {
+            padding: 20px;
+            background: #FAFAFA;
+            border-bottom: 1px solid #E0E0E0;
+            position: relative;
+        }
+
+        .destination-search-input {
+            width: 100%;
+            padding: 14px 14px 14px 44px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .destination-search-input:focus {
+            outline: none;
+            border-color: #667EEA;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .search-icon-popup {
+            position: absolute;
+            left: 34px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #667EEA;
+        }
+
+        .destination-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 20px 20px;
+            background: #FAFAFA;
+        }
+
+        .destination-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .destination-list::-webkit-scrollbar-thumb {
+            background: #667EEA;
+            border-radius: 3px;
+        }
+
+        .destination-item {
+            padding: 16px;
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #212121;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .destination-item:hover {
+            background: linear-gradient(135deg, #F3F4FF 0%, #FAF5FF 100%);
+            border-color: #667EEA;
+            transform: translateX(6px) translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .destination-item:active {
+            transform: translateX(4px) scale(0.98);
+        }
+
+        .destination-emoji {
+            font-size: 28px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #F3F4FF 0%, #FAF5FF 100%);
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .popup-pagination {
+            padding: 18px 20px;
+            border-top: 2px solid #E0E0E0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: white;
+        }
+
+        .popup-pagination .page-btn {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #E0E0E0;
+            background: white;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup-pagination .page-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            color: white;
+            border-color: #667EEA;
+            transform: scale(1.05);
+        }
+
+        .popup-pagination .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .popup-page-info {
+            font-size: 13px;
+            font-weight: 600;
+            color: #667EEA;
+            margin: 0 10px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        /* Deadline DateTime Picker Popup */
+        .deadline-datetime-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .deadline-datetime-popup.active {
+            display: flex;
+        }
+
+        .datetime-picker-container {
+            background: white;
+            border-radius: 8px;
+            max-width: 360px;
+            width: 90%;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s;
+            overflow: hidden;
+        }
+
+        .datetime-picker-header {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .datetime-picker-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .datetime-picker-body {
+            padding: 20px;
+        }
+
+        .datetime-tab-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .datetime-tab-btn {
+            padding: 12px;
+            border: 2px solid #E0E0E0;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #666;
+        }
+
+        .datetime-tab-btn.active {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            color: white;
+            border-color: #FF6B35;
+        }
+
+        .datetime-content {
+            display: none;
+        }
+
+        .datetime-content.active {
+            display: block;
+        }
+
+        .time-picker-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .time-scroll-container {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            background: #F9F9F9;
+        }
+
+        .time-scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .time-scroll-container::-webkit-scrollbar-thumb {
+            background: #FF6B35;
+            border-radius: 3px;
+        }
+
+        .time-option {
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .time-option:hover {
+            background: #FFF3E0;
+        }
+
+        .time-option.selected {
+            background: #FF6B35;
+            color: white;
+            font-weight: 700;
+        }
+
+        .time-separator {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF6B35;
+        }
+
+        .datetime-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .datetime-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .datetime-btn-cancel {
+            background: #F5F5F5;
+            color: #666;
+        }
+
+        .datetime-btn-cancel:hover {
+            background: #E0E0E0;
+        }
+
+        .datetime-btn-confirm {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            color: white;
+        }
+
+        .datetime-btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        /* GitHub-style Invite */
+        .github-invite-card {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .github-invite-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .github-icon {
+            width: 40px;
+            height: 40px;
+            background: #24292E;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .github-invite-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .github-invite-desc {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .invite-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .invite-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .invite-btn {
+            padding: 10px 16px;
+            background: #24292E;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .invite-btn:hover {
+            background: #1a1e22;
+        }
+
+        .pending-invites {
+            background: #F9F9F9;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .pending-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .pending-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+
+        .pending-email {
+            font-size: 12px;
+            color: #212121;
+            font-weight: 600;
+        }
+
+        .pending-badge {
+            font-size: 10px;
+            padding: 4px 8px;
+            background: #FFF3E0;
+            color: #E65100;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* Community Card */
+        .community-card {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+        }
+
+        .community-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .community-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .community-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .filter-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag-chip {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-chip.selected {
+            background: white;
+            color: #667EEA;
+        }
+
+        .age-slider-container {
+            padding: 10px 0;
+        }
+
+        .age-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .match-result {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .match-number {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .match-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* NEW: Summary Tabs */
+        .summary-tabs {
+            display: flex;
+            background: #F5F5F5;
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .summary-tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .summary-tab.active {
+            background: #FF6B35;
+            color: white;
+        }
+
+        .summary-content {
+            display: none;
+        }
+
+        .summary-content.active {
+            display: block;
+        }
+
+        .overview-card {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            border-radius: 8px;
+            padding: 16px;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .overview-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .overview-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .overview-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 4px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .info-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #212121;
+        }
+
+        .destination-vote-card {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .hot-badge {
+            position: absolute;
+            top: -8px;
+            right: 12px;
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        }
+
+        .vote-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .destination-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .vote-count {
+            font-size: 12px;
+            color: #666;
+            background: #F5F5F5;
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        .destination-details {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .voter-list {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .voter-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .member-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .member-type {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .member-votes {
+            font-size: 11px;
+            color: #FF6B35;
+            font-weight: 600;
+        }
+
+        .type-badge {
+            background: #E3F2FD;
+            color: #1976D2;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .type-badge.community {
+            background: #F3E5F5;
+            color: #7B1FA2;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        /* NEW: Participant Counter */
+        .participant-counter {
+            background: #FAFAFA;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+
+        .counter-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 12px;
+            text-align: center;
+            color: #666;
+        }
+
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .counter-btn {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            color: #FF6B35;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .counter-btn:hover {
+            background: #FFF3E0;
+            border-color: #FF6B35;
+        }
+
+        .counter-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .counter-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #FF6B35;
+        }
+
+        .counter-range {
+            font-size: 11px;
+            opacity: 0.7;
+            color: #666;
+        }
+
+        /* NEW: Beautiful Deadline Vote */
+        .deadline-box {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deadline-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .deadline-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .deadline-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .deadline-picker {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .deadline-input-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .deadline-input-wrapper:hover {
+            background: white;
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .deadline-input-wrapper:active {
+            transform: translateY(0);
+        }
+
+        .deadline-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .deadline-value {
+            font-size: 16px;
+            font-weight: 800;
+            color: #212121;
+        }
+
+        .deadline-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .countdown-badge {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: #E65100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* NEW: Notes Section */
+        .notes-section {
+            background: white;
+            border: 1px dashed #E0E0E0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .notes-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .notes-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .notes-count {
+            font-size: 11px;
+            color: #666;
+            background: #F5F5F5;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .notes-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        .notes-input:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+
+        .add-note-btn {
+            width: 100%;
+            padding: 8px;
+            background: #F5F5F5;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .add-note-btn:hover {
+            background: #EEEEEE;
+        }
+
+        .note-item {
+            background: #F9F9F9;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .note-author {
+            font-size: 11px;
+            font-weight: 600;
+            color: #FF6B35;
+        }
+
+        .note-time {
+            font-size: 10px;
+            color: #999;
+        }
+
+        .note-content {
+            font-size: 12px;
+            color: #212121;
+            line-height: 1.5;
+        }
+
+        .ticket-options {
+            display: flex;
+            gap: 6px;
+            flex-wrap: nowrap;
+            margin-top: 8px;
+        }
+
+        .ticket-option {
+            width: 100%;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #212121;
+        }
+
+        .ticket-option.selected {
+            background: #E3F2FD;
+            border-color: #2196F3;
+            color: #1565C0;
+        }
+
+        .ticket-option:hover {
+            background: #F5F5F5;
+        }
+
+        .comments-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .comments-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .comments-count {
+            font-size: 11px;
+            color: #666;
+            background: #F5F5F5;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .comment-input-wrapper {
+            margin-bottom: 16px;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+
+        .comment-btn {
+            width: 100%;
+            padding: 10px;
+            background: #FF6B35;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .comment-btn:hover {
+            background: #F57C00;
+        }
+
+        .comment-item {
+            background: #F9F9F9;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #FF6B35;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .comment-author-info {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212121;
+        }
+
+        .comment-time {
+            font-size: 10px;
+            color: #999;
+        }
+
+        .comment-content {
+            font-size: 13px;
+            color: #212121;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .comment-action {
+            font-size: 11px;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .comment-action:hover {
+            color: #FF6B35;
+        }
+
+        .comment-replies {
+            margin-top: 12px;
+            margin-left: 20px;
+            border-left: 2px solid #E0E0E0;
+            padding-left: 12px;
+        }
+
+        .reply-item {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .reply-input-wrapper {
+            margin-top: 8px;
+            display: none;
+        }
+
+        .reply-input-wrapper.active {
+            display: block;
+        }
+
+        .reply-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 12px;
+            resize: vertical;
+            min-height: 50px;
+            margin-bottom: 6px;
+        }
+
+        .reply-input:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+
+        .reply-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .reply-btn {
+            padding: 6px 12px;
+            background: #FF6B35;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .cancel-reply-btn {
+            padding: 6px 12px;
+            background: #F5F5F5;
+            border: none;
+            border-radius: 8px;
+            color: #666;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .member-votes-detail {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .vote-location {
+            display: inline-block;
+            background: #FFF3E0;
+            color: #E65100;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn">←</button>
+            <div class="header-title">
+                <h1>Tạo Chuyến Đi Mới</h1>
+                <p>Lên kế hoạch chi tiết cho chuyến đi</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Beautiful Info Box -->
+            <div class="info-box">
+                <div class="info-box-title">✨ Thông Tin Chuyến Đi</div>
+
+                <input type="text" class="trip-name-input" placeholder="Đặt tên chuyến đi của bạn..." id="tripName">
+
+                <div class="date-picker-modern">
+                    <div class="date-box" onclick="openDatePicker('start')">
+                        <div class="date-label">BẮT ĐẦU</div>
+                        <div class="date-value" id="startDateDisplay">15 Th12</div>
+                    </div>
+                    <div class="date-arrow">→</div>
+                    <div class="date-box" onclick="openDatePicker('end')">
+                        <div class="date-label">KẾT THÚC</div>
+                        <div class="date-value" id="endDateDisplay">18 Th12</div>
+                    </div>
+                </div>
+
+                <textarea class="description-box" placeholder="Mô tả ngắn về chuyến đi của bạn... Bạn có thể chia sẻ về mục đích, kỳ vọng hoặc những điều đặc biệt của chuyến đi này."></textarea>
+
+                <!-- NEW: Participant Counter -->
+                <div class="participant-counter">
+                    <div class="counter-label">👥 Số người tham gia mong muốn</div>
+                    <div class="counter-controls">
+                        <button class="counter-btn" onclick="changeParticipants(-1)">-</button>
+                        <div class="counter-display">
+                            <div class="counter-number" id="participantCount">6</div>
+                        </div>
+                        <button class="counter-btn" onclick="changeParticipants(1)">+</button>
+                    </div>
+                </div>
+
+                <!-- NEW: Deadline Vote -->
+                <div class="deadline-box">
+                    <div class="deadline-header">
+                        <span style="font-size: 24px;">⏰</span>
+                        <span class="deadline-title">Hạn chót bình chọn</span>
+                    </div>
+                    <div class="deadline-picker">
+                        <div class="deadline-input-wrapper" onclick="openDeadlinePicker('date')">
+                            <div class="deadline-label">NGÀY</div>
+                            <div class="deadline-value" id="deadlineDateDisplay">10 Th12</div>
+                        </div>
+                        <div class="deadline-input-wrapper" onclick="openDeadlinePicker('time')">
+                            <div class="deadline-label">GIỜ</div>
+                            <div class="deadline-value" id="deadlineTimeDisplay">23:59</div>
+                        </div>
+                    </div>
+                    <div class="countdown-badge" id="countdown">
+                        <span style="font-size: 20px;">⏳</span>
+                        <span>Còn 15 ngày 8 giờ để bình chọn</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date Picker Modal -->
+            <div class="date-modal" id="dateModal">
+                <div class="date-picker-container">
+                    <div class="date-picker-header">
+                        <div class="current-month" id="currentMonth">Tháng 12, 2024</div>
+                        <div class="month-nav">
+                            <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+                            <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                    <button class="submit-btn" style="margin-top: 16px;" onclick="closeDatePicker()">Xác nhận</button>
+                </div>
+            </div>
+
+            <!-- Route Options for Voting -->
+            <div class="section">
+                <div class="section-title">🗺️ Lựa Chọn Hành Trình</div>
+                <div style="font-size: 13px; color: #666; margin-bottom: 16px;">
+                    Tạo các lựa chọn hành trình để thành viên bình chọn
+                </div>
+
+                <div class="country-select-wrapper">
+                    <span class="country-icon">🌏</span>
+                    <select class="country-select" id="countrySelect" onchange="updateHotDestinations(this.value)">
+                        <option value="vn">🇻🇳 Việt Nam</option>
+                        <option value="th">🇹🇭 Thái Lan</option>
+                        <option value="jp">🇯🇵 Nhật Bản</option>
+                        <option value="kr">🇰🇷 Hàn Quốc</option>
+                        <option value="sg">🇸🇬 Singapore</option>
+                        <option value="my">🇲🇾 Malaysia</option>
+                    </select>
+                </div>
+
+                <div class="hot-destinations" id="hotDestinations">
+                    <div class="hot-chip" onclick="quickAddToCurrentRoute('Nha Trang')">🏖️ Nha Trang</div>
+                    <div class="hot-chip" onclick="quickAddToCurrentRoute('Đà Nẵng')">🌆 Đà Nẵng</div>
+                    <div class="hot-chip" onclick="quickAddToCurrentRoute('Phú Quốc')">🏝️ Phú Quốc</div>
+                    <div class="hot-chip" onclick="quickAddToCurrentRoute('Hội An')">🏛️ Hội An</div>
+                    <div class="hot-chip" onclick="quickAddToCurrentRoute('Đà Lạt')">🌲 Đà Lạt</div>
+                    <div class="hot-chip" onclick="quickAddToCurrentRoute('Sapa')">⛰️ Sapa</div>
+                </div>
+
+                <!-- Route Options List -->
+                <div id="routeOptionsList">
+                    <!-- Default Route Option 1 -->
+                    <div class="route-option-card" data-route-id="1">
+                        <div class="route-badge">🗳️ LỰA CHỌN #1</div>
+                        <div class="route-header">
+                            <button class="delete-route-btn" onclick="removeRoute(this)">×</button>
+                        </div>
+                        <div class="route-path">
+                            <div class="route-stop">
+                                🏖️ Nha Trang
+                                <button class="stop-remove-btn" onclick="removeStop(this)" style="display: none;">×</button>
+                            </div>
+                            <button class="add-stop-btn" onclick="addStopToRoute(this)">+ Thêm điểm dừng</button>
+                        </div>
+                        <div class="collapsible-section">
+                            <div class="collapse-header" onclick="toggleCollapse(this)">
+                                <span class="collapse-title">🚗 Phương tiện & Chi tiết</span>
+                                <span class="collapse-icon">▼</span>
+                            </div>
+                            <div class="collapse-content">
+                                <div class="form-group">
+                                    <label class="form-label">Phương tiện</label>
+                                    <div class="option-grid">
+                                        <div class="option-item selected">
+                                            <div class="option-icon">✈️</div>
+                                            <div class="option-label">Máy bay</div>
+                                        </div>
+                                        <div class="option-item">
+                                            <div class="option-icon">🚗</div>
+                                            <div class="option-label">Xe riêng</div>
+                                        </div>
+                                        <div class="option-item">
+                                            <div class="option-icon">🚌</div>
+                                            <div class="option-label">Xe khách</div>
+                                        </div>
+                                        <div class="option-item">
+                                            <div class="option-icon">🚂</div>
+                                            <div class="option-label">Tàu hỏa</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Chỗ ở</label>
+                                    <div class="option-grid">
+                                        <div class="option-item">
+                                            <div class="option-icon">🏖️</div>
+                                            <div class="option-label">Resort</div>
+                                        </div>
+                                        <div class="option-item selected">
+                                            <div class="option-icon">🏨</div>
+                                            <div class="option-label">Hotel</div>
+                                        </div>
+                                        <div class="option-item">
+                                            <div class="option-icon">🏠</div>
+                                            <div class="option-label">Homestay</div>
+                                        </div>
+                                        <div class="option-item">
+                                            <div class="option-icon">🛏️</div>
+                                            <div class="option-label">Hostel</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Ăn uống</label>
+                                    <div class="option-grid">
+                                        <div class="option-item">
+                                            <div class="option-icon">⭐</div>
+                                            <div class="option-label">Cao cấp</div>
+                                        </div>
+                                        <div class="option-item selected">
+                                            <div class="option-icon">🍜</div>
+                                            <div class="option-label">Bình dân</div>
+                                        </div>
+                                        <div class="option-item">
+                                            <div class="option-icon">🌮</div>
+                                            <div class="option-label">Ăn vặt</div>
+                                        </div>
+                                        <div class="option-item">
+                                            <div class="option-icon">🍳</div>
+                                            <div class="option-label">Tự nấu</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">🎫 Vé tham quan (ước tính/người)</label>
+                                    <div class="ticket-options">
+                                        <div class="ticket-option" onclick="selectTicket(this)">500K</div>
+                                        <div class="ticket-option selected" onclick="selectTicket(this)">1 triệu</div>
+                                        <div class="ticket-option" onclick="selectTicket(this)">2 triệu</div>
+                                        <div class="ticket-option" onclick="selectTicket(this)">3 triệu</div>
+                                        <div class="ticket-option" onclick="selectTicket(this)">5 triệu</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add New Route Option Button -->
+                <button class="add-route-btn" onclick="addNewRoute()">
+                    <span>➕</span>
+                    <span>Thêm lựa chọn hành trình mới</span>
+                </button>
+            </div>
+
+            <!-- Friends Invite -->
+            <div class="section">
+                <div class="section-title">👥 Mời Người Tham Gia</div>
+
+                <div class="invite-card">
+                    <div class="invite-header">
+                        <div class="invite-icon-large">👥</div>
+                        <div class="invite-header-text">
+                            <h3>Mời Bạn Bè</h3>
+                            <p>Chọn từ danh sách bạn bè của bạn</p>
+                        </div>
+                    </div>
+
+                    <div class="friend-counter">
+                        <div class="friend-counter-number" id="selectedCount">2</div>
+                        <div class="friend-counter-label">bạn bè đã chọn</div>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <input type="text" class="form-input" placeholder="🔍 Tìm bạn bè...">
+                    </div>
+
+                    <div id="friendsList">
+                        <div class="friend-item selected" onclick="toggleFriend(this)">
+                            <div class="friend-avatar" style="background: #FF6B35;">LA</div>
+                            <div class="friend-info">
+                                <div class="friend-name">Lan Anh</div>
+                                <div class="friend-trips">✈️ Đã đi 5 chuyến cùng nhau</div>
+                            </div>
+                            <div class="friend-checkbox">✓</div>
+                        </div>
+                        <div class="friend-item selected" onclick="toggleFriend(this)">
+                            <div class="friend-avatar" style="background: #4ECDC4;">TH</div>
+                            <div class="friend-info">
+                                <div class="friend-name">Tuấn Hùng</div>
+                                <div class="friend-trips">✈️ Đã đi 3 chuyến cùng nhau</div>
+                            </div>
+                            <div class="friend-checkbox">✓</div>
+                        </div>
+                        <div class="friend-item" onclick="toggleFriend(this)">
+                            <div class="friend-avatar" style="background: #E91E63;">MP</div>
+                            <div class="friend-info">
+                                <div class="friend-name">Mai Phương</div>
+                                <div class="friend-trips">✈️ Đã đi 8 chuyến cùng nhau</div>
+                            </div>
+                            <div class="friend-checkbox">✓</div>
+                        </div>
+                        <div class="friend-item" onclick="toggleFriend(this)">
+                            <div class="friend-avatar" style="background: #2196F3;">HN</div>
+                            <div class="friend-info">
+                                <div class="friend-name">Hoàng Nam</div>
+                                <div class="friend-trips">✈️ Đã đi 2 chuyến cùng nhau</div>
+                            </div>
+                            <div class="friend-checkbox">✓</div>
+                        </div>
+                        <div class="friend-item" onclick="toggleFriend(this)">
+                            <div class="friend-avatar" style="background: #9C27B0;">TL</div>
+                            <div class="friend-info">
+                                <div class="friend-name">Thu Linh</div>
+                                <div class="friend-trips">✈️ Chưa đi chuyến nào</div>
+                            </div>
+                            <div class="friend-checkbox">✓</div>
+                        </div>
+                    </div>
+
+                    <div class="pagination">
+                        <button class="page-btn" disabled>◀</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">4</button>
+                        <span style="color: #999; font-size: 12px;">...</span>
+                        <button class="page-btn">10</button>
+                        <button class="page-btn">▶</button>
+                    </div>
+                </div>
+
+                <!-- GitHub-style Invite -->
+                <div class="github-invite-card">
+                    <div class="github-invite-header">
+                        <div class="github-icon">📧</div>
+                        <div>
+                            <div class="github-invite-title">Mời qua Email hoặc Username</div>
+                            <div class="github-invite-desc">Gửi lời mời trực tiếp đến email của người bạn muốn mời</div>
+                        </div>
+                    </div>
+
+                    <div class="invite-input-group">
+                        <input type="text" class="invite-input" placeholder="email@example.com hoặc @username" id="inviteEmail">
+                        <button class="invite-btn" onclick="sendInvite()">Gửi lời mời</button>
+                    </div>
+
+                    <div class="pending-invites">
+                        <div class="pending-title">LỜI MỜI ĐÃ GỬI</div>
+                        <div class="pending-item">
+                            <span class="pending-email">john@example.com</span>
+                            <span class="pending-badge">Chờ xác nhận</span>
+                        </div>
+                        <div class="pending-item">
+                            <span class="pending-email">@sarah_nguyen</span>
+                            <span class="pending-badge">Đã xem</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community Invite -->
+            <div class="section" style="padding: 0; overflow: hidden;">
+                <div class="community-card">
+                    <div class="community-header">
+                        <h3>🌍 Tìm Bạn Đồng Hành</h3>
+                        <p>Kết nối với những người có cùng sở thích du lịch</p>
+                    </div>
+
+                    <div class="filter-card">
+                        <div class="filter-label">👥 Giới tính</div>
+                        <div class="tag-container">
+                            <div class="tag-chip selected">👨👩 Tất cả</div>
+                            <div class="tag-chip">👨 Nam</div>
+                            <div class="tag-chip">👩 Nữ</div>
+                            <div class="tag-chip">🏳️‍🌈 Khác</div>
+                        </div>
+                    </div>
+
+                    <div class="filter-card">
+                        <div class="filter-label">🎂 Độ tuổi</div>
+                        <div class="age-slider-container">
+                            <div class="age-display">
+                                <span>18 tuổi</span>
+                                <span>45 tuổi</span>
+                            </div>
+                            <input type="range" min="18" max="60" value="45" style="width: 100%;">
+                        </div>
+                    </div>
+
+                    <div class="filter-card">
+                        <div class="filter-label">💖 Sở thích du lịch</div>
+                        <div class="tag-container">
+                            <div class="tag-chip selected">🏖️ Biển</div>
+                            <div class="tag-chip">⛰️ Núi</div>
+                            <div class="tag-chip selected">📸 Nhiếp ảnh</div>
+                            <div class="tag-chip">🍜 Ẩm thực</div>
+                            <div class="tag-chip">🏛️ Văn hóa</div>
+                            <div class="tag-chip">🎒 Phượt</div>
+                            <div class="tag-chip">🏕️ Camping</div>
+                            <div class="tag-chip">🎨 Nghệ thuật</div>
+                        </div>
+                    </div>
+                    <div class="filter-card">
+                        <div class="filter-label">📝 Ghi chú (nếu cần)</div>
+                        <textarea class="form-textarea" style="background: rgba(255,255,255,0.9); color: #212121; min-height: 60px; font-size: 12px;" placeholder="VD: Tìm người thích chụp ảnh phong cảnh, có kinh nghiệm leo núi..."></textarea>
+                    </div>
+                    <div class="match-result">
+                        <div class="match-number">127</div>
+                        <div class="match-label">người phù hợp đang tìm bạn đồng hành</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: Notes Section -->
+            <div class="section">
+                <div class="comments-section">
+                    <div class="comments-header">
+                        <div class="comments-title">💬 Thảo Luận Nhóm</div>
+                        <div class="comments-count">5 bình luận</div>
+                    </div>
+
+                    <div class="comment-input-wrapper">
+                        <textarea class="comment-input" placeholder="Viết bình luận của bạn..."></textarea>
+                        <button class="comment-btn">Đăng bình luận</button>
+                    </div>
+
+                    <!-- Comment 1 with replies -->
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-avatar" style="background: #FF6B35;">LA</div>
+                            <div class="comment-author-info">
+                                <div class="comment-author">Lan Anh</div>
+                                <div class="comment-time">10 phút trước</div>
+                            </div>
+                        </div>
+                        <div class="comment-content">
+                            Nhớ đặt vé máy bay sớm để có giá tốt nhé mọi người! Tôi thấy giá đang tăng dần rồi.
+                        </div>
+                        <div class="comment-actions">
+                            <div class="comment-action" onclick="toggleReply('reply1')">
+                                <span>💬</span>
+                                <span>Trả lời</span>
+                            </div>
+                            <div class="comment-action">
+                                <span>👍</span>
+                                <span>3</span>
+                            </div>
+                        </div>
+
+                        <!-- Reply input -->
+                        <div class="reply-input-wrapper" id="reply1">
+                            <textarea class="reply-input" placeholder="Viết câu trả lời..."></textarea>
+                            <div class="reply-actions">
+                                <button class="reply-btn">Gửi</button>
+                                <button class="cancel-reply-btn" onclick="toggleReply('reply1')">Hủy</button>
+                            </div>
+                        </div>
+
+                        <!-- Replies -->
+                        <div class="comment-replies">
+                            <div class="reply-item">
+                                <div class="comment-header">
+                                    <div class="comment-avatar" style="background: #4ECDC4;">TH</div>
+                                    <div class="comment-author-info">
+                                        <div class="comment-author">Tuấn Hùng</div>
+                                        <div class="comment-time">5 phút trước</div>
+                                    </div>
+                                </div>
+                                <div class="comment-content">
+                                    Đồng ý! Mình thấy giá vé đang từ 1.5tr lên 2tr rồi 😱
+                                </div>
+                                <div class="comment-actions">
+                                    <div class="comment-action">
+                                        <span>👍</span>
+                                        <span>1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comment 2 -->
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-avatar" style="background: #E91E63;">MP</div>
+                            <div class="comment-author-info">
+                                <div class="comment-author">Mai Phương</div>
+                                <div class="comment-time">2 giờ trước</div>
+                            </div>
+                        </div>
+                        <div class="comment-content">
+                            Link khách sạn đánh giá tốt: https://booking.com/nhatrang-hotel-xyz
+                        </div>
+                        <div class="comment-actions">
+                            <div class="comment-action" onclick="toggleReply('reply2')">
+                                <span>💬</span>
+                                <span>Trả lời</span>
+                            </div>
+                            <div class="comment-action">
+                                <span>👍</span>
+                                <span>2</span>
+                            </div>
+                        </div>
+
+                        <div class="reply-input-wrapper" id="reply2">
+                            <textarea class="reply-input" placeholder="Viết câu trả lời..."></textarea>
+                            <div class="reply-actions">
+                                <button class="reply-btn">Gửi</button>
+                                <button class="cancel-reply-btn" onclick="toggleReply('reply2')">Hủy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: Summary Section with 3 Tabs -->
+            <div class="section">
+                <div class="section-title">📊 Tổng Kết Hành Trình</div>
+
+                <div class="summary-tabs">
+                    <button class="summary-tab active" onclick="switchSummaryTab('overview')">📋 Tổng quan</button>
+                    <button class="summary-tab" onclick="switchSummaryTab('destinations')">📍 Địa điểm</button>
+                    <button class="summary-tab" onclick="switchSummaryTab('members')">👥 Thành viên</button>
+                </div>
+
+                <!-- Tab 1: Tổng quan -->
+                <div class="summary-content active" id="overviewContent">
+                    <div class="info-card" style="margin-bottom: 12px;">
+                        <div class="info-title">📋 Thông tin chung</div>
+                        <div class="info-row">
+                            <span>Thời gian:</span>
+                            <span class="info-value">3 ngày 2 đêm</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Số địa điểm:</span>
+                            <span class="info-value">1 địa điểm</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Người tham gia:</span>
+                            <span class="info-value">5/6 người (83%)</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Hạn vote:</span>
+                            <span class="info-value">⏰ Còn 15 ngày</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Quyền riêng tư:</span>
+                            <span class="info-value">Riêng tư + Cộng đồng</span>
+                        </div>
+                    </div>
+
+                    <div class="overview-card">
+                        <div class="overview-title">💰 Chi Phí Dự Kiến</div>
+                        <div class="overview-row">
+                            <span>Di chuyển:</span>
+                            <span>2,000,000đ</span>
+                        </div>
+                        <div class="overview-row">
+                            <span>Chỗ ở:</span>
+                            <span>800,000đ</span>
+                        </div>
+                        <div class="overview-row">
+                            <span>Ăn uống:</span>
+                            <span>300,000đ</span>
+                        </div>
+                        <div class="overview-row">
+                            <span>Vé tham quan:</span>
+                            <span>1,000,000đ</span>
+                        </div>
+                        <div class="overview-total">
+                            <span>Tổng:</span>
+                            <span>4,100,000đ</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 12px; border-radius: 8px; margin-top: 12px; text-align: center;">
+                            <div style="font-size: 11px; opacity: 0.9; margin-bottom: 4px;">Chi phí mỗi người (5 người)</div>
+                            <div style="font-size: 24px; font-weight: 700;">820,000đ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Địa điểm -->
+                <div class="summary-content" id="destinationsContent">
+                    <div style="font-size: 12px; color: #666; margin-bottom: 12px;">
+                        Thứ tự ưu tiên dựa trên số vote
+                    </div>
+
+                    <div class="destination-vote-card">
+                        <div class="hot-badge">🔥 HOT NHẤT</div>
+                        <div class="vote-header">
+                            <div>
+                                <div class="destination-title">🏖️ Nha Trang</div>
+                                <div class="destination-details">
+                                    🇻🇳 Việt Nam • ✈️ Máy bay • 🏨 Hotel
+                                </div>
+                            </div>
+                            <div class="vote-count">5 votes</div>
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-bottom: 6px;">Đã vote:</div>
+                        <div class="voter-list">
+                            <div class="voter-avatar" style="background: #FF6B35;" title="Lan Anh">LA</div>
+                            <div class="voter-avatar" style="background: #4ECDC4;" title="Tuấn Hùng">TH</div>
+                            <div class="voter-avatar" style="background: #E91E63;" title="Mai Phương">MP</div>
+                            <div class="voter-avatar" style="background: #9C27B0;" title="Thu Linh">TL</div>
+                            <div class="voter-avatar" style="background: #2196F3;" title="Hoàng Nam">HN</div>
+                        </div>
+                    </div>
+
+                    <div class="destination-vote-card">
+                        <div class="vote-header">
+                            <div>
+                                <div class="destination-title">🌆 Đà Nẵng</div>
+                                <div class="destination-details">
+                                    🇻🇳 Việt Nam • 🚗 Xe riêng • 🏠 Homestay
+                                </div>
+                            </div>
+                            <div class="vote-count">2 votes</div>
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-bottom: 6px;">Đã vote:</div>
+                        <div class="voter-list">
+                            <div class="voter-avatar" style="background: #FF6B35;" title="Lan Anh">LA</div>
+                            <div class="voter-avatar" style="background: #2196F3;" title="Hoàng Nam">HN</div>
+                        </div>
+                    </div>
+
+                    <div class="destination-vote-card">
+                        <div class="vote-header">
+                            <div>
+                                <div class="destination-title">🏝️ Phú Quốc</div>
+                                <div class="destination-details">
+                                    🇻🇳 Việt Nam • ✈️ Máy bay • 🏖️ Resort
+                                </div>
+                            </div>
+                            <div class="vote-count">1 vote</div>
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-bottom: 6px;">Đã vote:</div>
+                        <div class="voter-list">
+                            <div class="voter-avatar" style="background: #4ECDC4;" title="Tuấn Hùng">TH</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Thành viên -->
+                <div class="summary-content" id="membersContent">
+                    <div style="font-size: 12px; color: #666; margin-bottom: 12px;">
+                        Danh sách thành viên và trạng thái vote
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #FF6B35;">LA</div>
+                        <div class="member-info">
+                            <div class="member-name">Lan Anh (Admin)</div>
+                            <div class="member-type">👥 Bạn bè</div>
+                            <div class="member-votes-detail">
+                                Đã vote: <span class="vote-location">🏖️ Nha Trang</span><span class="vote-location">🌆 Đà Nẵng</span>
+                            </div>
+                        </div>
+                        <span class="type-badge">Bạn bè</span>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #4ECDC4;">TH</div>
+                        <div class="member-info">
+                            <div class="member-name">Tuấn Hùng</div>
+                            <div class="member-type">👥 Bạn bè</div>
+                            <div class="member-votes-detail">
+                                Đã vote: <span class="vote-location">🏖️ Nha Trang</span><span class="vote-location">🏝️ Phú Quốc</span>
+                            </div>
+                        </div>
+                        <span class="type-badge">Bạn bè</span>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #E91E63;">MP</div>
+                        <div class="member-info">
+                            <div class="member-name">Mai Phương</div>
+                            <div class="member-type">🌍 Cộng đồng</div>
+                            <div class="member-votes-detail">
+                                Đã vote: <span class="vote-location">🏖️ Nha Trang</span>
+                            </div>
+                        </div>
+                        <span class="type-badge community">Cộng đồng</span>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #2196F3;">HN</div>
+                        <div class="member-info">
+                            <div class="member-name">Hoàng Nam</div>
+                            <div class="member-type">👥 Bạn bè</div>
+                            <div class="member-votes-detail">
+                                Đã vote: <span class="vote-location">🏖️ Nha Trang</span><span class="vote-location">🌆 Đà Nẵng</span>
+                            </div>
+                        </div>
+                        <span class="type-badge">Bạn bè</span>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #9C27B0;">TL</div>
+                        <div class="member-info">
+                            <div class="member-name">Thu Linh</div>
+                            <div class="member-type">🌍 Cộng đồng</div>
+                            <div class="member-votes-detail">
+                                Đã vote: <span class="vote-location">🏖️ Nha Trang</span>
+                            </div>
+                        </div>
+                        <span class="type-badge community">Cộng đồng</span>
+                    </div>
+
+                    <div style="background: #FFF3E0; border: 1px solid #FFB74D; border-radius: 8px; padding: 12px; text-align: center; margin-top: 12px;">
+                        <div style="font-size: 13px; font-weight: 600; color: #E65100; margin-bottom: 4px;">
+                            📊 Tổng kết Vote
+                        </div>
+                        <div style="font-size: 11px; color: #666;">
+                            5/5 người đã vote (100%) • Địa điểm phổ biến nhất: 🔥 Nha Trang
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <button class="submit-btn" onclick="createTrip()">
+                🚀 Tạo Chuyến Đi & Gửi Lời Mời
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentMonth = 11; // December (0-indexed)
+        let currentYear = 2024;
+        let selectedDate = null;
+        let datePickerType = 'start';
+
+        const allDestinations = {
+            'vn': ['Nha Trang', 'Đà Nẵng', 'Phú Quốc', 'Hội An', 'Đà Lạt', 'Sapa', 'Hạ Long', 'Vũng Tàu'],
+            'th': ['Bangkok', 'Phuket', 'Pattaya', 'Chiang Mai', 'Krabi', 'Ayutthaya'],
+            'jp': ['Tokyo', 'Kyoto', 'Osaka', 'Hokkaido', 'Nara', 'Okinawa'],
+            'kr': ['Seoul', 'Jeju', 'Busan', 'Gyeongju', 'Gangwon', 'Incheon'],
+            'sg': ['Marina Bay', 'Gardens', 'Sentosa', 'Chinatown', 'Orchard', 'Universal'],
+            'my': ['KL', 'Langkawi', 'Penang', 'Cameron', 'Sabah', 'Perhentian']
+        };
+
+        // Expanded destination list with emojis
+        const destinationsWithEmojis = [
+            { name: 'Nha Trang', emoji: '🏖️', country: 'Việt Nam' },
+            { name: 'Đà Nẵng', emoji: '🌉', country: 'Việt Nam' },
+            { name: 'Phú Quốc', emoji: '🏝️', country: 'Việt Nam' },
+            { name: 'Hội An', emoji: '🏛️', country: 'Việt Nam' },
+            { name: 'Đà Lạt', emoji: '🌲', country: 'Việt Nam' },
+            { name: 'Sapa', emoji: '⛰️', country: 'Việt Nam' },
+            { name: 'Hạ Long', emoji: '⛵', country: 'Việt Nam' },
+            { name: 'Vũng Tàu', emoji: '🌊', country: 'Việt Nam' },
+            { name: 'Bangkok', emoji: '🕌', country: 'Thái Lan' },
+            { name: 'Phuket', emoji: '🏝️', country: 'Thái Lan' },
+            { name: 'Pattaya', emoji: '🏖️', country: 'Thái Lan' },
+            { name: 'Chiang Mai', emoji: '🌺', country: 'Thái Lan' },
+            { name: 'Krabi', emoji: '⛰️', country: 'Thái Lan' },
+            { name: 'Ayutthaya', emoji: '🏛️', country: 'Thái Lan' },
+            { name: 'Tokyo', emoji: '🗼', country: 'Nhật Bản' },
+            { name: 'Kyoto', emoji: '⛩️', country: 'Nhật Bản' },
+            { name: 'Osaka', emoji: '🏯', country: 'Nhật Bản' },
+            { name: 'Hokkaido', emoji: '❄️', country: 'Nhật Bản' },
+            { name: 'Nara', emoji: '🦌', country: 'Nhật Bản' },
+            { name: 'Okinawa', emoji: '🌴', country: 'Nhật Bản' },
+            { name: 'Seoul', emoji: '🏙️', country: 'Hàn Quốc' },
+            { name: 'Jeju', emoji: '🌋', country: 'Hàn Quốc' },
+            { name: 'Busan', emoji: '🌊', country: 'Hàn Quốc' },
+            { name: 'Gyeongju', emoji: '🏛️', country: 'Hàn Quốc' },
+            { name: 'Gangwon', emoji: '⛷️', country: 'Hàn Quốc' },
+            { name: 'Incheon', emoji: '✈️', country: 'Hàn Quốc' },
+            { name: 'Marina Bay', emoji: '🌃', country: 'Singapore' },
+            { name: 'Gardens', emoji: '🌳', country: 'Singapore' },
+            { name: 'Sentosa', emoji: '🎢', country: 'Singapore' },
+            { name: 'Chinatown', emoji: '🏮', country: 'Singapore' },
+            { name: 'Orchard', emoji: '🛍️', country: 'Singapore' },
+            { name: 'Universal', emoji: '🎡', country: 'Singapore' },
+            { name: 'KL', emoji: '🏙️', country: 'Malaysia' },
+            { name: 'Langkawi', emoji: '🏝️', country: 'Malaysia' },
+            { name: 'Penang', emoji: '🍜', country: 'Malaysia' },
+            { name: 'Cameron', emoji: '☕', country: 'Malaysia' },
+            { name: 'Sabah', emoji: '🏞️', country: 'Malaysia' },
+            { name: 'Perhentian', emoji: '🤿', country: 'Malaysia' }
+        ];
+
+        // Popup state
+        let currentRouteCard = null;
+        let currentPage = 1;
+        let itemsPerPage = 8;
+        let filteredDestinations = [...destinationsWithEmojis];
+
+        function openDestinationPopup(routeCard) {
+            currentRouteCard = routeCard;
+            filteredDestinations = [...destinationsWithEmojis];
+            currentPage = 1;
+            document.getElementById('popupSearchInput').value = '';
+            renderDestinations();
+            document.getElementById('destinationPopup').classList.add('active');
+        }
+
+        function closeDestinationPopup() {
+            document.getElementById('destinationPopup').classList.remove('active');
+            currentRouteCard = null;
+        }
+
+        function filterDestinations() {
+            const searchValue = document.getElementById('popupSearchInput').value.toLowerCase();
+            filteredDestinations = destinationsWithEmojis.filter(dest =>
+                dest.name.toLowerCase().includes(searchValue) ||
+                dest.country.toLowerCase().includes(searchValue)
+            );
+            currentPage = 1;
+            renderDestinations();
+        }
+
+        function renderDestinations() {
+            const totalPages = Math.ceil(filteredDestinations.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageDestinations = filteredDestinations.slice(startIndex, endIndex);
+
+            const destinationList = document.getElementById('destinationList');
+            destinationList.innerHTML = pageDestinations.map(dest => `
+                <div class="destination-item" onclick="selectDestination('${dest.name}')">
+                    <span class="destination-emoji">${dest.emoji}</span>
+                    <div style="flex: 1;">
+                        <div style="font-size: 15px; font-weight: 700; color: #212121; margin-bottom: 4px;">${dest.name}</div>
+                        <div style="font-size: 12px; color: #667EEA; font-weight: 600;">📍 ${dest.country}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update pagination
+            document.getElementById('pageInfo').textContent = `Trang ${currentPage} / ${totalPages || 1}`;
+            document.getElementById('prevPageBtn').disabled = currentPage === 1;
+            document.getElementById('nextPageBtn').disabled = currentPage === totalPages || totalPages === 0;
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredDestinations.length / itemsPerPage);
+            currentPage += direction;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            renderDestinations();
+        }
+
+        function selectDestination(destinationName) {
+            if (currentRouteCard) {
+                addStopToRouteCard(currentRouteCard, destinationName);
+                closeDestinationPopup();
+            }
+        }
+
+        // Deadline DateTime Picker
+        let deadlinePickerType = 'date'; // 'date' or 'time'
+        let selectedDeadlineDate = new Date(2024, 11, 10); // December 10, 2024
+        let selectedHour = 23;
+        let selectedMinute = 59;
+
+        function openDeadlinePicker(type) {
+            deadlinePickerType = type;
+
+            if (type === 'date') {
+                switchDatetimeTab('date');
+                renderDeadlineCalendar();
+            } else {
+                switchDatetimeTab('time');
+                renderTimePicker();
+            }
+
+            document.getElementById('deadlineDatetimePopup').classList.add('active');
+        }
+
+        function closeDeadlinePicker() {
+            document.getElementById('deadlineDatetimePopup').classList.remove('active');
+        }
+
+        function switchDatetimeTab(tab) {
+            // Update tab buttons
+            document.getElementById('dateTabBtn').classList.remove('active');
+            document.getElementById('timeTabBtn').classList.remove('active');
+
+            if (tab === 'date') {
+                document.getElementById('dateTabBtn').classList.add('active');
+                document.getElementById('datetimePickerIcon').textContent = '📅';
+                document.getElementById('datetimePickerTitle').textContent = 'Chọn Ngày';
+            } else {
+                document.getElementById('timeTabBtn').classList.add('active');
+                document.getElementById('datetimePickerIcon').textContent = '🕐';
+                document.getElementById('datetimePickerTitle').textContent = 'Chọn Giờ';
+            }
+
+            // Update content
+            document.getElementById('dateContent').classList.remove('active');
+            document.getElementById('timeContent').classList.remove('active');
+
+            if (tab === 'date') {
+                document.getElementById('dateContent').classList.add('active');
+                renderDeadlineCalendar();
+            } else {
+                document.getElementById('timeContent').classList.add('active');
+                renderTimePicker();
+            }
+        }
+
+        function renderDeadlineCalendar() {
+            const calendar = document.getElementById('deadlineCalendar');
+            const year = selectedDeadlineDate.getFullYear();
+            const month = selectedDeadlineDate.getMonth();
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
+            let html = `
+                <div style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <button class="nav-btn" onclick="changeDeadlineMonth(-1)">◀</button>
+                    <div class="current-month">${['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'][month]} ${year}</div>
+                    <button class="nav-btn" onclick="changeDeadlineMonth(1)">▶</button>
+                </div>
+            `;
+
+            ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'].forEach(day => {
+                html += `<div class="calendar-day-header">${day}</div>`;
+            });
+
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="calendar-day empty"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const isSelected = selectedDeadlineDate.getDate() === day &&
+                                 selectedDeadlineDate.getMonth() === month &&
+                                 selectedDeadlineDate.getFullYear() === year;
+                const isToday = today.getDate() === day &&
+                               today.getMonth() === month &&
+                               today.getFullYear() === year;
+
+                let classes = 'calendar-day';
+                if (isSelected) classes += ' selected';
+                if (isToday) classes += ' today';
+
+                html += `<div class="${classes}" onclick="selectDeadlineDate(${year}, ${month}, ${day})">${day}</div>`;
+            }
+
+            calendar.innerHTML = html;
+        }
+
+        function changeDeadlineMonth(delta) {
+            selectedDeadlineDate.setMonth(selectedDeadlineDate.getMonth() + delta);
+            renderDeadlineCalendar();
+        }
+
+        function selectDeadlineDate(year, month, day) {
+            selectedDeadlineDate = new Date(year, month, day);
+            renderDeadlineCalendar();
+        }
+
+        function renderTimePicker() {
+            const hourScroll = document.getElementById('hourScroll');
+            const minuteScroll = document.getElementById('minuteScroll');
+
+            // Render hours (00-23)
+            let hourHtml = '';
+            for (let h = 0; h < 24; h++) {
+                const hourStr = h.toString().padStart(2, '0');
+                const isSelected = h === selectedHour;
+                hourHtml += `<div class="time-option ${isSelected ? 'selected' : ''}" onclick="selectHour(${h})">${hourStr}</div>`;
+            }
+            hourScroll.innerHTML = hourHtml;
+
+            // Render minutes (00-59)
+            let minuteHtml = '';
+            for (let m = 0; m < 60; m++) {
+                const minuteStr = m.toString().padStart(2, '0');
+                const isSelected = m === selectedMinute;
+                minuteHtml += `<div class="time-option ${isSelected ? 'selected' : ''}" onclick="selectMinute(${m})">${minuteStr}</div>`;
+            }
+            minuteScroll.innerHTML = minuteHtml;
+
+            // Scroll to selected time
+            setTimeout(() => {
+                const selectedHourEl = hourScroll.querySelector('.selected');
+                const selectedMinuteEl = minuteScroll.querySelector('.selected');
+                if (selectedHourEl) selectedHourEl.scrollIntoView({ block: 'center' });
+                if (selectedMinuteEl) selectedMinuteEl.scrollIntoView({ block: 'center' });
+            }, 100);
+        }
+
+        function selectHour(hour) {
+            selectedHour = hour;
+            renderTimePicker();
+        }
+
+        function selectMinute(minute) {
+            selectedMinute = minute;
+            renderTimePicker();
+        }
+
+        function confirmDeadlinePicker() {
+            // Update display
+            const months = ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'];
+            const dateStr = `${selectedDeadlineDate.getDate()} ${months[selectedDeadlineDate.getMonth()]}`;
+            const timeStr = `${selectedHour.toString().padStart(2, '0')}:${selectedMinute.toString().padStart(2, '0')}`;
+
+            document.getElementById('deadlineDateDisplay').textContent = dateStr;
+            document.getElementById('deadlineTimeDisplay').textContent = timeStr;
+
+            closeDeadlinePicker();
+            updateCountdown();
+        }
+
+        function updateCountdown() {
+            const deadline = new Date(
+                selectedDeadlineDate.getFullYear(),
+                selectedDeadlineDate.getMonth(),
+                selectedDeadlineDate.getDate(),
+                selectedHour,
+                selectedMinute
+            );
+
+            const now = new Date();
+            const diff = deadline - now;
+
+            if (diff <= 0) {
+                document.getElementById('countdown').innerHTML = `
+                    <span style="font-size: 20px;">⏰</span>
+                    <span>Đã hết hạn bình chọn!</span>
+                `;
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+            document.getElementById('countdown').innerHTML = `
+                <span style="font-size: 20px;">⏳</span>
+                <span>Còn ${days} ngày ${hours} giờ để bình chọn</span>
+            `;
+        }
+
+        // Initialize countdown
+        updateCountdown();
+
+        function openDatePicker(type) {
+            datePickerType = type;
+            document.getElementById('dateModal').classList.add('active');
+            renderCalendar();
+        }
+
+        function closeDatePicker() {
+            document.getElementById('dateModal').classList.remove('active');
+        }
+
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+            document.getElementById('currentMonth').textContent = `${monthNames[currentMonth]}, ${currentYear}`;
+
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            // Day headers
+            ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'].forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const today = new Date();
+
+            // Empty cells
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-day empty';
+                grid.appendChild(empty);
+            }
+
+            // Days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = day;
+
+                if (today.getDate() === day && today.getMonth() === currentMonth && today.getFullYear() === currentYear) {
+                    dayEl.classList.add('today');
+                }
+
+                dayEl.onclick = function () {
+                    document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const monthShort = ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'];
+                    const displayDate = `${day} ${monthShort[currentMonth]}`;
+                    document.getElementById(datePickerType + 'DateDisplay').textContent = displayDate;
+                };
+
+                grid.appendChild(dayEl);
+            }
+        }
+
+        function toggleCollapse(header) {
+            const icon = header.querySelector('.collapse-icon');
+            const content = header.nextElementSibling;
+
+            icon.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+
+        function toggleFriend(item) {
+            item.classList.toggle('selected');
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const selected = document.querySelectorAll('.friend-item.selected').length;
+            document.getElementById('selectedCount').textContent = selected;
+        }
+
+        function updateHotDestinations(country) {
+            const destinations = {
+                'vn': ['🏖️ Nha Trang', '🌆 Đà Nẵng', '🏝️ Phú Quốc', '🏛️ Hội An', '🌲 Đà Lạt', '⛰️ Sapa'],
+                'th': ['🏯 Bangkok', '🏝️ Phuket', '🌴 Pattaya', '⛰️ Chiang Mai', '🏖️ Krabi', '🏛️ Ayutthaya'],
+                'jp': ['🗼 Tokyo', '⛩️ Kyoto', '🗻 Osaka', '🌸 Hokkaido', '🏯 Nara', '🌊 Okinawa'],
+                'kr': ['🏙️ Seoul', '🏝️ Jeju', '🏛️ Busan', '🌸 Gyeongju', '⛰️ Gangwon', '🎨 Incheon'],
+                'sg': ['🦁 Marina Bay', '🌳 Gardens', '🎡 Sentosa', '🏛️ Chinatown', '🌺 Orchard', '🎪 Universal'],
+                'my': ['🗼 KL', '🏝️ Langkawi', '🏛️ Penang', '⛰️ Cameron', '🌴 Sabah', '🏖️ Perhentian']
+            };
+
+            const container = document.getElementById('hotDestinations');
+            container.innerHTML = destinations[country].map(dest =>
+                `<div class="hot-chip" onclick="addDestination('${dest.split(' ')[1]}')">${dest}</div>`
+            ).join('');
+        }
+
+        function showSuggestions(value) {
+            const suggestions = document.getElementById('suggestions');
+            const country = document.querySelector('.country-select').value;
+
+            if (!value) {
+                suggestions.classList.remove('active');
+                return;
+            }
+
+            const filtered = allDestinations[country].filter(dest =>
+                dest.toLowerCase().includes(value.toLowerCase())
+            );
+
+            if (filtered.length > 0) {
+                suggestions.innerHTML = filtered.map(dest =>
+                    `<div class="suggestion-item" onclick="addDestination('${dest}')">${dest}</div>`
+                ).join('');
+                suggestions.classList.add('active');
+            } else {
+                suggestions.classList.remove('active');
+            }
+        }
+
+        let routeCounter = 1;
+        let currentEditingRoute = null;
+
+        // Quick add destination to current route being edited
+        function quickAddToCurrentRoute(name) {
+            const routes = document.querySelectorAll('.route-option-card');
+            const lastRoute = routes[routes.length - 1];
+
+            if (!lastRoute) return;
+
+            addStopToRouteCard(lastRoute, name);
+        }
+
+        // Add stop button clicked
+        function addStopToRoute(btn) {
+            const routeCard = btn.closest('.route-option-card');
+            openDestinationPopup(routeCard);
+        }
+
+        // Add stop to a specific route card
+        function addStopToRouteCard(routeCard, stopName) {
+            const routePath = routeCard.querySelector('.route-path');
+            const addBtn = routePath.querySelector('.add-stop-btn');
+
+            // Create arrow if not first stop
+            const existingStops = routePath.querySelectorAll('.route-stop');
+            if (existingStops.length > 0) {
+                const arrow = document.createElement('span');
+                arrow.className = 'route-arrow';
+                arrow.textContent = '→';
+                routePath.insertBefore(arrow, addBtn);
+            }
+
+            // Create new stop
+            const stop = document.createElement('div');
+            stop.className = 'route-stop';
+            stop.innerHTML = `
+                🏖️ ${stopName}
+                <button class="stop-remove-btn" onclick="removeStop(this)">×</button>
+            `;
+
+            routePath.insertBefore(stop, addBtn);
+
+            // Show remove buttons for all stops except if only one
+            updateStopRemoveButtons(routeCard);
+        }
+
+        // Remove a stop from route
+        function removeStop(btn) {
+            const stop = btn.closest('.route-stop');
+            const routePath = stop.closest('.route-path');
+            const routeCard = stop.closest('.route-option-card');
+
+            // Check if this is the last stop
+            const stops = routePath.querySelectorAll('.route-stop');
+            if (stops.length === 1) {
+                alert('⚠️ Phải có ít nhất 1 điểm dừng!');
+                return;
+            }
+
+            // Remove arrow before or after
+            const prevSibling = stop.previousElementSibling;
+            const nextSibling = stop.nextElementSibling;
+
+            if (prevSibling && prevSibling.classList.contains('route-arrow')) {
+                prevSibling.remove();
+            } else if (nextSibling && nextSibling.classList.contains('route-arrow')) {
+                nextSibling.remove();
+            }
+
+            stop.remove();
+            updateStopRemoveButtons(routeCard);
+        }
+
+        // Show/hide remove buttons based on number of stops
+        function updateStopRemoveButtons(routeCard) {
+            const stops = routeCard.querySelectorAll('.route-stop');
+            const removeButtons = routeCard.querySelectorAll('.stop-remove-btn');
+
+            if (stops.length === 1) {
+                removeButtons.forEach(btn => btn.style.display = 'none');
+            } else {
+                removeButtons.forEach(btn => btn.style.display = 'flex');
+            }
+        }
+
+        // Add new route option
+        function addNewRoute() {
+            routeCounter++;
+            const routesList = document.getElementById('routeOptionsList');
+
+            const newRoute = document.createElement('div');
+            newRoute.className = 'route-option-card';
+            newRoute.setAttribute('data-route-id', routeCounter);
+
+            newRoute.innerHTML = `
+                <div class="route-badge">🗳️ LỰA CHỌN #${routeCounter}</div>
+                <div class="route-header">
+                    <button class="delete-route-btn" onclick="removeRoute(this)">×</button>
+                </div>
+                <div class="route-path">
+                    <button class="add-stop-btn" onclick="addStopToRoute(this)">+ Thêm điểm dừng</button>
+                </div>
+                <div class="collapsible-section">
+                    <div class="collapse-header" onclick="toggleCollapse(this)">
+                        <span class="collapse-title">🚗 Phương tiện & Chi tiết</span>
+                        <span class="collapse-icon">▼</span>
+                    </div>
+                    <div class="collapse-content">
+                        <div class="form-group">
+                            <label class="form-label">Phương tiện</label>
+                            <div class="option-grid">
+                                <div class="option-item selected" onclick="selectOption(this)">
+                                    <div class="option-icon">✈️</div>
+                                    <div class="option-label">Máy bay</div>
+                                </div>
+                                <div class="option-item" onclick="selectOption(this)">
+                                    <div class="option-icon">🚗</div>
+                                    <div class="option-label">Xe riêng</div>
+                                </div>
+                                <div class="option-item" onclick="selectOption(this)">
+                                    <div class="option-icon">🚌</div>
+                                    <div class="option-label">Xe khách</div>
+                                </div>
+                                <div class="option-item" onclick="selectOption(this)">
+                                    <div class="option-icon">🚂</div>
+                                    <div class="option-label">Tàu hỏa</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Chỗ ở</label>
+                            <div class="option-grid">
+                                <div class="option-item" onclick="selectOption(this)">
+                                    <div class="option-icon">🏖️</div>
+                                    <div class="option-label">Resort</div>
+                                </div>
+                                <div class="option-item selected" onclick="selectOption(this)">
+                                    <div class="option-icon">🏨</div>
+                                    <div class="option-label">Hotel</div>
+                                </div>
+                                <div class="option-item" onclick="selectOption(this)">
+                                    <div class="option-icon">🏠</div>
+                                    <div class="option-label">Homestay</div>
+                                </div>
+                                <div class="option-item" onclick="selectOption(this)">
+                                    <div class="option-icon">🛏️</div>
+                                    <div class="option-label">Hostel</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Ăn uống</label>
+                            <div class="option-grid">
+                                <div class="option-item" onclick="selectOption(this)">
+                                    <div class="option-icon">⭐</div>
+                                    <div class="option-label">Cao cấp</div>
+                                </div>
+                                <div class="option-item selected" onclick="selectOption(this)">
+                                    <div class="option-icon">🍜</div>
+                                    <div class="option-label">Bình dân</div>
+                                </div>
+                                <div class="option-item" onclick="selectOption(this)">
+                                    <div class="option-icon">🌮</div>
+                                    <div class="option-label">Ăn vặt</div>
+                                </div>
+                                <div class="option-item" onclick="selectOption(this)">
+                                    <div class="option-icon">🍳</div>
+                                    <div class="option-label">Tự nấu</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">🎫 Vé tham quan (ước tính/người)</label>
+                            <div class="ticket-options">
+                                <div class="ticket-option" onclick="selectTicket(this)">500K</div>
+                                <div class="ticket-option selected" onclick="selectTicket(this)">1 triệu</div>
+                                <div class="ticket-option" onclick="selectTicket(this)">2 triệu</div>
+                                <div class="ticket-option" onclick="selectTicket(this)">3 triệu</div>
+                                <div class="ticket-option" onclick="selectTicket(this)">5 triệu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            routesList.appendChild(newRoute);
+            updateRouteNumbers();
+        }
+
+        // Remove a route option
+        function removeRoute(btn) {
+            const routeCard = btn.closest('.route-option-card');
+            const routesList = document.getElementById('routeOptionsList');
+            const routes = routesList.querySelectorAll('.route-option-card');
+
+            if (routes.length === 1) {
+                alert('⚠️ Phải có ít nhất 1 lựa chọn hành trình!');
+                return;
+            }
+
+            routeCard.remove();
+            updateRouteNumbers();
+        }
+
+        // Update route numbers
+        function updateRouteNumbers() {
+            const routes = document.querySelectorAll('.route-option-card');
+            routes.forEach((route, index) => {
+                route.setAttribute('data-route-id', index + 1);
+                const badge = route.querySelector('.route-badge');
+                badge.textContent = `🗳️ LỰA CHỌN #${index + 1}`;
+            });
+        }
+
+        function selectOption(item) {
+            const grid = item.parentElement;
+            grid.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+            item.classList.add('selected');
+        }
+
+        function switchSummaryTab(tab) {
+            document.querySelectorAll('.summary-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.summary-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Content').classList.add('active');
+        }
+
+        function sendInvite() {
+            const email = document.getElementById('inviteEmail').value;
+            if (email) {
+                alert(`✅ Đã gửi lời mời đến: ${email}`);
+                document.getElementById('inviteEmail').value = '';
+            }
+        }
+
+        function createTrip() {
+            alert('✅ Tạo chuyến đi thành công!\n\n' +
+                'Đã gửi lời mời đến 2 bạn bè\n' +
+                'Đã gửi 2 lời mời qua email\n' +
+                'Đã đăng lên cộng đồng - 127 người phù hợp');
+        }
+
+        // NEW: Participant Counter
+        let participantCount = 6;
+        const minParticipants = 4;
+        const maxParticipants = 10;
+
+        function changeParticipants(delta) {
+            participantCount += delta;
+            if (participantCount < minParticipants) participantCount = minParticipants;
+            if (participantCount > maxParticipants) participantCount = maxParticipants;
+            document.getElementById('participantCount').textContent = participantCount;
+        }
+
+        // NEW: Countdown Timer
+        function updateCountdown() {
+            const deadlineDate = document.getElementById('deadlineDate').value;
+            const deadlineTime = document.getElementById('deadlineTime').value;
+
+            if (deadlineDate && deadlineTime) {
+                const deadline = new Date(deadlineDate + ' ' + deadlineTime);
+                const now = new Date();
+                const diff = deadline - now;
+
+                if (diff > 0) {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    document.getElementById('countdown').textContent = `⏳ Còn ${days} ngày ${hours} giờ để bình chọn`;
+                } else {
+                    document.getElementById('countdown').textContent = '⏰ Đã hết hạn bình chọn';
+                }
+            }
+        }
+
+        // Update countdown on date/time change
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('deadlineDate').addEventListener('change', updateCountdown);
+            document.getElementById('deadlineTime').addEventListener('change', updateCountdown);
+            updateCountdown();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('dateModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeDatePicker();
+            }
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.destination-combobox-wrapper')) {
+                document.getElementById('suggestions').classList.remove('active');
+            }
+        });
+
+        // Add interactive tag selection
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.tag-chip').forEach(chip => {
+                chip.addEventListener('click', function () {
+                    this.classList.toggle('selected');
+                });
+            });
+
+            // Option items for default destination card only
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    selectOption(this);
+                });
+            });
+        });
+
+        function selectTicket(ticketOption) {
+            const parent = ticketOption.parentElement;
+            parent.querySelectorAll('.ticket-option').forEach(opt => opt.classList.remove('selected'));
+            ticketOption.classList.add('selected');
+        }
+
+        function toggleReply(replyId) {
+            const replyWrapper = document.getElementById(replyId);
+            replyWrapper.classList.toggle('active');
+        }
+    </script>
+
+    <!-- Destination Selection Popup -->
+    <div class="destination-popup" id="destinationPopup">
+        <div class="destination-popup-container">
+            <div class="destination-popup-header">
+                <div class="destination-popup-title">🗺️ Chọn Điểm Đến</div>
+                <button class="popup-close-btn" onclick="closeDestinationPopup()">×</button>
+            </div>
+            <div class="destination-search-box" style="position: relative;">
+                <span class="search-icon-popup">🔍</span>
+                <input type="text" class="destination-search-input" id="popupSearchInput" placeholder="Tìm kiếm địa điểm..." oninput="filterDestinations()">
+            </div>
+            <div class="destination-list" id="destinationList">
+                <!-- Destinations will be populated here -->
+            </div>
+            <div class="popup-pagination">
+                <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">←</button>
+                <span class="popup-page-info" id="pageInfo">Trang 1 / 1</span>
+                <button class="page-btn" id="nextPageBtn" onclick="changePage(1)">→</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deadline DateTime Picker Popup -->
+    <div class="deadline-datetime-popup" id="deadlineDatetimePopup">
+        <div class="datetime-picker-container">
+            <div class="datetime-picker-header">
+                <div class="datetime-picker-title">
+                    <span id="datetimePickerIcon">📅</span>
+                    <span id="datetimePickerTitle">Chọn Ngày</span>
+                </div>
+            </div>
+            <div class="datetime-picker-body">
+                <div class="datetime-tab-buttons">
+                    <button class="datetime-tab-btn active" id="dateTabBtn" onclick="switchDatetimeTab('date')">📅 Ngày</button>
+                    <button class="datetime-tab-btn" id="timeTabBtn" onclick="switchDatetimeTab('time')">🕐 Giờ</button>
+                </div>
+
+                <!-- Date Content -->
+                <div class="datetime-content active" id="dateContent">
+                    <div class="calendar-grid" id="deadlineCalendar">
+                        <!-- Calendar will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Time Content -->
+                <div class="datetime-content" id="timeContent">
+                    <div class="time-picker-grid">
+                        <div class="time-scroll-container" id="hourScroll">
+                            <!-- Hours 00-23 -->
+                        </div>
+                        <div class="time-separator">:</div>
+                        <div class="time-scroll-container" id="minuteScroll">
+                            <!-- Minutes 00-59 -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="datetime-actions">
+                    <button class="datetime-btn datetime-btn-cancel" onclick="closeDeadlinePicker()">Hủy</button>
+                    <button class="datetime-btn datetime-btn-confirm" onclick="confirmDeadlinePicker()">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelVote - Lên kế hoạch du lịch thông minh</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #FAFAFA;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: #FAFAFA;
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            padding: 20px 16px 40px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-pattern {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 200px;
+            height: 200px;
+            opacity: 0.15;
+            font-size: 180px;
+        }
+
+        .hero-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .login-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid white;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .hero-subtitle {
+            font-size: 15px;
+            opacity: 0.95;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 32px;
+            background: white;
+            color: #FF6B35;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 16px;
+            background: white;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FF6B35;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* Content Sections */
+        .section {
+            margin: 16px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 20px 16px;
+        }
+
+        .section-header {
+            margin-bottom: 16px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #FFF3E0;
+            color: #FF6B35;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 6px;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Features Scroll */
+        .features-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .feature-card {
+            flex-shrink: 0;
+            width: 140px;
+            padding: 16px 12px;
+            background: linear-gradient(135deg, #F8F9FA, #FFFFFF);
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .feature-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .feature-desc {
+            font-size: 10px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* News Feed Posts */
+        .post-preview {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .post-header {
+            display: flex;
+            gap: 10px;
+            padding: 12px;
+        }
+
+        .post-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-author {
+            font-size: 13px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .post-meta {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+        }
+
+        .post-content {
+            padding: 12px;
+        }
+
+        .post-text {
+            font-size: 13px;
+            color: #212121;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .view-more-cta {
+            text-align: center;
+            padding: 20px 16px;
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.95));
+            margin-top: -40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .view-more-btn {
+            padding: 14px 24px;
+            background: #FF6B35;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        /* Destinations Carousel */
+        .destinations-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .dest-card {
+            flex-shrink: 0;
+            width: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            height: 160px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .dest-bg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            padding: 12px;
+            font-size: 64px;
+            justify-content: center;
+            position: relative;
+        }
+
+        .dest-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+        }
+
+        .dest-info {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            color: white;
+            z-index: 1;
+        }
+
+        .dest-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .dest-trips {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        /* Tours Grid */
+        .tours-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .tour-card {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .tour-image {
+            width: 100%;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+        }
+
+        .tour-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #FF6B35;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .tour-info {
+            padding: 10px;
+        }
+
+        .tour-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tour-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #FF6B35;
+        }
+
+        .tour-rating {
+            font-size: 11px;
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        /* How It Works - Interactive Cards */
+        .how-it-works-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .work-card {
+            background: linear-gradient(135deg, #f6f8fc, #ffffff);
+            border: 2px solid #E3E8F0;
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .work-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+            border-color: #667EEA;
+        }
+
+        .work-card-number {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            opacity: 0.15;
+        }
+
+        .work-card-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .work-card:nth-child(1) .work-card-icon { animation-delay: 0s; }
+        .work-card:nth-child(2) .work-card-icon { animation-delay: 0.2s; }
+        .work-card:nth-child(3) .work-card-icon { animation-delay: 0.4s; }
+        .work-card:nth-child(4) .work-card-icon { animation-delay: 0.6s; }
+
+        .work-card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .work-card-desc {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .work-card-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            color: #FF6B35;
+        }
+
+        /* Travel Buddy Cards */
+        .buddy-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        /* Use Cases */
+        .use-case-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .use-case-card {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .use-case-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .use-case-content {
+            flex: 1;
+        }
+
+        .use-case-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 6px;
+        }
+
+        .use-case-desc {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .use-case-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .use-case-feature {
+            font-size: 10px;
+            color: #FF6B35;
+            background: #FFF3E0;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Social Proof Numbers */
+        .social-proof-numbers {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .proof-number-card {
+            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+            border: 1px solid #FFB74D;
+            border-radius: 8px;
+            padding: 20px 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .proof-number-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+
+        .proof-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #FF6B35;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .proof-number-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .proof-number-sublabel {
+            font-size: 10px;
+            color: #999;
+            margin-top: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Detailed Testimonials */
+        .testimonial-detailed-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-top: 16px;
+        }
+
+        .testimonial-detailed-card {
+            flex-shrink: 0;
+            width: 320px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .testimonial-header-detailed {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .testimonial-avatar-detailed {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .testimonial-user-info {
+            flex: 1;
+        }
+
+        .testimonial-user-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .testimonial-user-meta {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+
+        .testimonial-rating {
+            display: flex;
+            gap: 2px;
+            font-size: 14px;
+        }
+
+        .testimonial-trip-info {
+            background: #F8F9FA;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .testimonial-trip-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .testimonial-trip-date {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .testimonial-text-detailed {
+            font-size: 13px;
+            color: #424242;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .testimonial-helpful {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .testimonial-helpful-text {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .testimonial-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        /* Blog Preview */
+        .blog-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .blog-card {
+            flex-shrink: 0;
+            width: 280px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            position: relative;
+        }
+
+        .blog-category {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #FF6B35;
+        }
+
+        .blog-content {
+            padding: 12px;
+        }
+
+        .blog-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 6px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-excerpt {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .blog-author {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .blog-author-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .blog-read-time {
+            color: #999;
+        }
+
+        /* Travel Buddy Cards */
+
+        .buddy-card {
+            flex-shrink: 0;
+            width: 300px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .buddy-banner {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .buddy-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .buddy-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .buddy-info {
+            flex: 1;
+        }
+
+        .buddy-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .buddy-status {
+            font-size: 10px;
+            color: #999;
+        }
+
+        .buddy-content {
+            padding: 12px;
+        }
+
+        .buddy-trip {
+            background: #F8F9FA;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .buddy-trip-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 6px;
+        }
+
+        .buddy-trip-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .buddy-trip-detail-item {
+            font-size: 10px;
+            color: #666;
+            background: white;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .buddy-description {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .buddy-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .buddy-tag {
+            font-size: 10px;
+            color: #666;
+            background: #F0F0F0;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .buddy-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .buddy-slots {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .buddy-slots.available {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+
+        .buddy-slots.urgent {
+            background: #FFEBEE;
+            color: #F44336;
+        }
+
+        .buddy-join-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .locked-overlay {
+            position: relative;
+        }
+
+        .locked-overlay::after {
+            content: '🔒';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+        }
+
+        /* Final CTA */
+        .cta-section {
+            text-align: center;
+            padding: 40px 16px;
+            margin: 20px 16px;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .cta-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .cta-subtitle {
+            font-size: 14px;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+
+        .cta-btn-white {
+            padding: 14px 32px;
+            background: white;
+            color: #667EEA;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #E0E0E0;
+            display: flex;
+            justify-content: space-around;
+            max-width: 428px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            font-size: 11px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #FF6B35;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        /* Hide scrollbars but keep functionality */
+        .features-scroll::-webkit-scrollbar,
+        .destinations-scroll::-webkit-scrollbar,
+        .tours-grid::-webkit-scrollbar,
+        .buddy-scroll::-webkit-scrollbar,
+        .blog-scroll::-webkit-scrollbar,
+        .testimonial-detailed-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .features-scroll,
+        .destinations-scroll,
+        .tours-grid,
+        .buddy-scroll,
+        .blog-scroll,
+        .testimonial-detailed-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-pattern">✈️</div>
+            <div class="hero-nav">
+                <div class="logo">
+                    <div class="logo-icon">✈️</div>
+                    <div class="logo-text">TravelVote</div>
+                </div>
+                <button class="login-btn" onclick="login()">Đăng nhập</button>
+            </div>
+            <div class="hero-content">
+                <div class="hero-title">Lên kế hoạch du lịch<br>dễ dàng cùng bạn bè</div>
+                <div class="hero-subtitle">Vote điểm đến, chia chi phí & tạo lịch trình hoàn hảo trong vài phút</div>
+                <button class="cta-button" onclick="signup()">
+                    <span>Bắt đầu miễn phí</span>
+                    <span>→</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number">50K+</div>
+                <div class="stat-label">Người dùng</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">120K</div>
+                <div class="stat-label">Chuyến đi</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">180</div>
+                <div class="stat-label">Điểm đến</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4.8★</div>
+                <div class="stat-label">Đánh giá</div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">✨ TÍNH NĂNG</div>
+                <div class="section-title">Mọi thứ bạn cần</div>
+                <div class="section-subtitle">Từ bỏ phiếu đến quản lý chi tiêu</div>
+            </div>
+            <div class="features-scroll">
+                <div class="feature-card">
+                    <div class="feature-icon">🗳️</div>
+                    <div class="feature-title">Vote Điểm Đến</div>
+                    <div class="feature-desc">Mọi người bỏ phiếu, hệ thống tự chọn nơi phù hợp nhất</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <div class="feature-title">Chia Chi Phí</div>
+                    <div class="feature-desc">Tính toán tự động, thanh toán công bằng</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <div class="feature-title">Lịch Trình Chi Tiết</div>
+                    <div class="feature-desc">Timeline rõ ràng cho từng ngày du lịch</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📸</div>
+                    <div class="feature-title">Album Chung</div>
+                    <div class="feature-desc">Lưu và chia sẻ ảnh cùng nhóm bạn</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <div class="feature-title">Chat Nhóm</div>
+                    <div class="feature-desc">Thảo luận mọi quyết định trong app</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <div class="feature-title">Huy Hiệu</div>
+                    <div class="feature-desc">Nhận thành tích khi hoàn thành chuyến đi</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Use Cases Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">💡 DÀNH CHO AI?</div>
+                <div class="section-title">Phù hợp mọi nhóm</div>
+                <div class="section-subtitle">TravelVote giúp lên kế hoạch dễ dàng cho mọi loại chuyến đi</div>
+            </div>
+            <div class="use-case-grid">
+                <div class="use-case-card">
+                    <div class="use-case-icon" style="background: linear-gradient(135deg, #667EEA, #764BA2);">
+                        👥
+                    </div>
+                    <div class="use-case-content">
+                        <div class="use-case-title">Nhóm bạn thân</div>
+                        <div class="use-case-desc">Vote điểm đến dân chủ, không ai phải chịu thiệt. Chia tiền minh bạch, giữ tình bạn lâu dài.</div>
+                        <div class="use-case-features">
+                            <div class="use-case-feature">Vote công bằng</div>
+                            <div class="use-case-feature">Chia bill tự động</div>
+                            <div class="use-case-feature">Album nhóm</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-case-card">
+                    <div class="use-case-icon" style="background: linear-gradient(135deg, #F093FB, #F5576C);">
+                        👨‍👩‍👧‍👦
+                    </div>
+                    <div class="use-case-content">
+                        <div class="use-case-title">Gia đình</div>
+                        <div class="use-case-desc">Lên kế hoạch phù hợp với mọi lứa tuổi. Quản lý ngân sách rõ ràng, lịch trình linh hoạt cho cả nhà.</div>
+                        <div class="use-case-features">
+                            <div class="use-case-feature">An toàn cho trẻ</div>
+                            <div class="use-case-feature">Quản lý chi phí</div>
+                            <div class="use-case-feature">Lưu kỷ niệm</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-case-card">
+                    <div class="use-case-icon" style="background: linear-gradient(135deg, #4FACFE, #00F2FE);">
+                        💼
+                    </div>
+                    <div class="use-case-content">
+                        <div class="use-case-title">Team Building Công ty</div>
+                        <div class="use-case-desc">Tổ chức team building chuyên nghiệp. Tracking ngân sách, phân công công việc, báo cáo chi tiết.</div>
+                        <div class="use-case-features">
+                            <div class="use-case-feature">Quản lý đội nhóm</div>
+                            <div class="use-case-feature">Báo cáo chi phí</div>
+                            <div class="use-case-feature">Lên lịch pro</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-case-card">
+                    <div class="use-case-icon" style="background: linear-gradient(135deg, #FA709A, #FEE140);">
+                        💑
+                    </div>
+                    <div class="use-case-content">
+                        <div class="use-case-title">Cặp đôi</div>
+                        <div class="use-case-desc">Lên kế hoạch honeymoon hoặc kỷ niệm lãng mạn. Lưu giữ từng khoảnh khắc đáng nhớ của hai người.</div>
+                        <div class="use-case-features">
+                            <div class="use-case-feature">Riêng tư</div>
+                            <div class="use-case-feature">Lãng mạn</div>
+                            <div class="use-case-feature">Album couple</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Proof Numbers -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">📊 CON SỐ ẤN TƯỢNG</div>
+                <div class="section-title">Được tin dùng bởi hàng ngàn người</div>
+                <div class="section-subtitle">Những con số nói lên tất cả</div>
+            </div>
+            <div class="social-proof-numbers">
+                <div class="proof-number-card">
+                    <div class="proof-number">50,000+</div>
+                    <div class="proof-number-label">Người dùng</div>
+                    <div class="proof-number-sublabel">Đang sử dụng TravelVote</div>
+                </div>
+                <div class="proof-number-card">
+                    <div class="proof-number">120,000+</div>
+                    <div class="proof-number-label">Chuyến đi</div>
+                    <div class="proof-number-sublabel">Đã được lên kế hoạch</div>
+                </div>
+                <div class="proof-number-card">
+                    <div class="proof-number">4.8⭐</div>
+                    <div class="proof-number-label">Đánh giá</div>
+                    <div class="proof-number-sublabel">Từ 12,000+ reviews</div>
+                </div>
+                <div class="proof-number-card">
+                    <div class="proof-number">98%</div>
+                    <div class="proof-number-label">Hài lòng</div>
+                    <div class="proof-number-sublabel">Sẽ giới thiệu cho bạn bè</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- News Feed Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">📱 NEWSFEED</div>
+                <div class="section-title">Cộng đồng du lịch</div>
+                <div class="section-subtitle">Khám phá trải nghiệm từ mọi người</div>
+            </div>
+
+            <div class="post-preview">
+                <div class="post-header">
+                    <div class="post-avatar" style="background: #4ECDC4;">TH</div>
+                    <div class="post-info">
+                        <div class="post-author">Tuấn Hùng</div>
+                        <div class="post-meta">📍 Đà Lạt • 2 giờ trước</div>
+                    </div>
+                </div>
+                <div class="post-image" style="background: linear-gradient(135deg, #4ECDC4, #44A08D);">🏰</div>
+                <div class="post-content">
+                    <div class="post-text">Crazy House quá đỉnh! Kiến trúc độc đáo 🏰✨</div>
+                    <div class="post-stats">
+                        <span>❤️ 45</span>
+                        <span>💬 12</span>
+                        <span>📖 23</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-preview">
+                <div class="post-header">
+                    <div class="post-avatar" style="background: #2196F3;">HN</div>
+                    <div class="post-info">
+                        <div class="post-author">Hoàng Nam</div>
+                        <div class="post-meta">3 giờ trước</div>
+                    </div>
+                </div>
+                <div class="post-content" style="padding: 16px 12px;">
+                    <div class="post-text" style="font-size: 14px; margin-bottom: 8px;">
+                        Mình có mấy tips cho ai định đi Phú Quốc:<br>
+                        ✅ Nên đi tháng 11-3 (thời tiết đẹp)<br>
+                        ✅ Thuê xe máy tự do hơn<br>
+                        ✅ Đặt resort sớm để có giá tốt<br>
+                        ✅ Đừng bỏ qua chợ đêm và vinpearl<br><br>
+                        Có gì inbox mình nhé! 🖖
+                    </div>
+                    <div class="post-stats">
+                        <span>❤️ 89</span>
+                        <span>💬 34</span>
+                        <span>📖 67</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-preview">
+                <div class="post-header">
+                    <div class="post-avatar" style="background: #E91E63;">MP</div>
+                    <div class="post-info">
+                        <div class="post-author">Mai Phương</div>
+                        <div class="post-meta">📍 Hội An • 1 ngày trước</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2px; height: 160px;">
+                    <div style="background: linear-gradient(135deg, #FF9800, #F57C00); display: flex; align-items: center; justify-content: center; font-size: 56px;">🏮</div>
+                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                        <div style="flex: 1; background: linear-gradient(135deg, #4ECDC4, #44A08D); display: flex; align-items: center; justify-content: center; font-size: 32px;">🌉</div>
+                        <div style="flex: 1; background: linear-gradient(135deg, #667EEA, #764BA2); display: flex; align-items: center; justify-content: center; font-size: 32px; position: relative;">
+                            🚣
+                            <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700;">
+                                <div>+8</div>
+                                <div style="font-size: 9px;">ảnh</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <div class="post-text">Phố cổ Hội An đẹp mê hồn! Đặc biệt là lúc đêm 🏮✨</div>
+                    <div class="post-stats">
+                        <span>❤️ 156</span>
+                        <span>💬 42</span>
+                        <span>📖 89</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view-more-cta">
+                <button class="view-more-btn" onclick="signup()">Đăng nhập để xem thêm →</button>
+            </div>
+        </div>
+
+        <!-- Detailed Testimonials -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">⭐ ĐÁNH GIÁ THỰC TẾ</div>
+                <div class="section-title">Trải nghiệm từ người dùng</div>
+                <div class="section-subtitle">Câu chuyện của những chuyến đi thành công</div>
+            </div>
+            <div class="testimonial-detailed-scroll">
+                <div class="testimonial-detailed-card">
+                    <div class="testimonial-header-detailed">
+                        <div class="testimonial-avatar-detailed">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23667EEA' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='40' fill='white' text-anchor='middle' dy='0.35em' font-family='system-ui'%3EMH%3C/text%3E%3C/svg%3E" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="testimonial-user-info">
+                            <div class="testimonial-user-name">Minh Hoàng</div>
+                            <div class="testimonial-user-meta">26 tuổi • Hà Nội</div>
+                            <div class="testimonial-rating">
+                                ⭐⭐⭐⭐⭐
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-trip-info">
+                        <div>
+                            <div class="testimonial-trip-name">🏖️ Phú Quốc 4N3Đ</div>
+                            <div class="testimonial-trip-date">Tháng 10, 2024</div>
+                        </div>
+                        <div style="font-size: 12px; font-weight: 700; color: #FF6B35;">8 người</div>
+                    </div>
+                    <div class="testimonial-text-detailed">
+                        "App này cứu cả nhóm tôi! Trước đây mỗi lần đi du lịch là cãi nhau về tiền bạc, ai trả bao nhiêu, chia thế nào. Giờ mọi thứ tự động, minh bạch 100%. Nhóm 8 người mà không ai phàn nàn gì cả. Tính năng vote điểm đến cũng hay lắm, dân chủ thật sự!"
+                    </div>
+                    <div class="testimonial-helpful">
+                        <div class="testimonial-helpful-text">👍 234 người thấy hữu ích</div>
+                        <div class="testimonial-verified">✓ Đã xác minh</div>
+                    </div>
+                </div>
+
+                <div class="testimonial-detailed-card">
+                    <div class="testimonial-header-detailed">
+                        <div class="testimonial-avatar-detailed" style="background: linear-gradient(135deg, #F093FB, #F5576C);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23F093FB' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='40' fill='white' text-anchor='middle' dy='0.35em' font-family='system-ui'%3ETA%3C/text%3E%3C/svg%3E" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="testimonial-user-info">
+                            <div class="testimonial-user-name">Thanh Anh</div>
+                            <div class="testimonial-user-meta">31 tuổi • TP.HCM</div>
+                            <div class="testimonial-rating">
+                                ⭐⭐⭐⭐⭐
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-trip-info">
+                        <div>
+                            <div class="testimonial-trip-name">⛰️ Đà Lạt 3N2Đ</div>
+                            <div class="testimonial-trip-date">Tháng 11, 2024</div>
+                        </div>
+                        <div style="font-size: 12px; font-weight: 700; color: #FF6B35;">6 người</div>
+                    </div>
+                    <div class="testimonial-text-detailed">
+                        "Lần đầu đi du lịch gia đình mà không stress! Bố mẹ, anh chị em đều vote được, ai cũng hài lòng. Lịch trình được sắp xếp rất khoa học, phù hợp với cả người lớn tuổi. Tính năng album chung giúp cả nhà lưu lại kỷ niệm đẹp. Rất đáng dùng!"
+                    </div>
+                    <div class="testimonial-helpful">
+                        <div class="testimonial-helpful-text">👍 189 người thấy hữu ích</div>
+                        <div class="testimonial-verified">✓ Đã xác minh</div>
+                    </div>
+                </div>
+
+                <div class="testimonial-detailed-card">
+                    <div class="testimonial-header-detailed">
+                        <div class="testimonial-avatar-detailed" style="background: linear-gradient(135deg, #4FACFE, #00F2FE);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%234FACFE' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='40' fill='white' text-anchor='middle' dy='0.35em' font-family='system-ui'%3EQD%3C/text%3E%3C/svg%3E" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="testimonial-user-info">
+                            <div class="testimonial-user-name">Quang Đạt</div>
+                            <div class="testimonial-user-meta">28 tuổi • Đà Nẵng</div>
+                            <div class="testimonial-rating">
+                                ⭐⭐⭐⭐⭐
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-trip-info">
+                        <div>
+                            <div class="testimonial-trip-name">🏮 Hội An 2N1Đ</div>
+                            <div class="testimonial-trip-date">Tháng 9, 2024</div>
+                        </div>
+                        <div style="font-size: 12px; font-weight: 700; color: #FF6B35;">4 người</div>
+                    </div>
+                    <div class="testimonial-text-detailed">
+                        "UI/UX cực kỳ thân thiện, bố cục khoa học. Tính năng chat trong app rất tiện, không cần nhảy qua lại nhiều ứng dụng. Phần quản lý chi phí chi tiết từng đồng, xuất báo cáo rất pro. Team building công ty dùng app này là hợp lý nhất!"
+                    </div>
+                    <div class="testimonial-helpful">
+                        <div class="testimonial-helpful-text">👍 312 người thấy hữu ích</div>
+                        <div class="testimonial-verified">✓ Đã xác minh</div>
+                    </div>
+                </div>
+
+                <div class="testimonial-detailed-card">
+                    <div class="testimonial-header-detailed">
+                        <div class="testimonial-avatar-detailed" style="background: linear-gradient(135deg, #FA709A, #FEE140);">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23FA709A' width='100' height='100'/%3E%3Ctext x='50' y='50' font-size='40' fill='white' text-anchor='middle' dy='0.35em' font-family='system-ui'%3ELH%3C/text%3E%3C/svg%3E" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="testimonial-user-info">
+                            <div class="testimonial-user-name">Linh Hương</div>
+                            <div class="testimonial-user-meta">24 tuổi • Cần Thơ</div>
+                            <div class="testimonial-rating">
+                                ⭐⭐⭐⭐⭐
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-trip-info">
+                        <div>
+                            <div class="testimonial-trip-name">🌸 Sapa 3N2Đ</div>
+                            <div class="testimonial-trip-date">Tháng 12, 2024</div>
+                        </div>
+                        <div style="font-size: 12px; font-weight: 700; color: #FF6B35;">2 người</div>
+                    </div>
+                    <div class="testimonial-text-detailed">
+                        "Honeymoon trip hoàn hảo! App giúp mình và chồng lên kế hoạch rất chi tiết mà không tốn nhiều thời gian. Tính năng album couple rất lãng mạn, lưu giữ từng khoảnh khắc đáng nhớ. Cảm ơn TravelVote đã làm chuyến đi thêm ý nghĩa! 💕"
+                    </div>
+                    <div class="testimonial-helpful">
+                        <div class="testimonial-helpful-text">👍 267 người thấy hữu ích</div>
+                        <div class="testimonial-verified">✓ Đã xác minh</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hot Destinations -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">🔥 HOT</div>
+                <div class="section-title">Điểm đến phổ biến</div>
+                <div class="section-subtitle">Nơi mọi người đang khám phá</div>
+            </div>
+            <div class="destinations-scroll">
+                <div class="dest-card">
+                    <div class="dest-bg" style="background: linear-gradient(135deg, #FF6B6B, #C44569);">
+                        🏖️
+                        <div class="dest-overlay"></div>
+                        <div class="dest-info">
+                            <div class="dest-name">Nha Trang</div>
+                            <div class="dest-trips">✈️ 1,234 chuyến đi</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dest-card">
+                    <div class="dest-bg" style="background: linear-gradient(135deg, #4ECDC4, #44A08D);">
+                        ⛰️
+                        <div class="dest-overlay"></div>
+                        <div class="dest-info">
+                            <div class="dest-name">Đà Lạt</div>
+                            <div class="dest-trips">✈️ 987 chuyến đi</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dest-card">
+                    <div class="dest-bg" style="background: linear-gradient(135deg, #667EEA, #764BA2);">
+                        🌸
+                        <div class="dest-overlay"></div>
+                        <div class="dest-info">
+                            <div class="dest-name">Sapa</div>
+                            <div class="dest-trips">✈️ 756 chuyến đi</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dest-card">
+                    <div class="dest-bg" style="background: linear-gradient(135deg, #FF9800, #F57C00);">
+                        🛕
+                        <div class="dest-overlay"></div>
+                        <div class="dest-info">
+                            <div class="dest-name">Hội An</div>
+                            <div class="dest-trips">✈️ 643 chuyến đi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Tours -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">🎯 TOUR</div>
+                <div class="section-title">Tour được yêu thích</div>
+                <div class="section-subtitle">Gói tour tiết kiệm, tiện lợi</div>
+            </div>
+            <div class="tours-grid">
+                <div class="tour-card">
+                    <div class="tour-image" style="background: linear-gradient(135deg, #4ECDC4, #44A08D);">
+                        🏖️
+                        <div class="tour-badge">-25%</div>
+                    </div>
+                    <div class="tour-info">
+                        <div class="tour-name">Phú Quốc 4N3Đ</div>
+                        <div class="tour-price">6.5tr/người</div>
+                        <div class="tour-rating">⭐ 4.8 (120)</div>
+                    </div>
+                </div>
+                <div class="tour-card">
+                    <div class="tour-image" style="background: linear-gradient(135deg, #667EEA, #764BA2);">
+                        ⛰️
+                        <div class="tour-badge">HOT</div>
+                    </div>
+                    <div class="tour-info">
+                        <div class="tour-name">Sapa Trekking</div>
+                        <div class="tour-price">3.2tr/người</div>
+                        <div class="tour-rating">⭐ 4.9 (89)</div>
+                    </div>
+                </div>
+                <div class="tour-card">
+                    <div class="tour-image" style="background: linear-gradient(135deg, #FF9800, #F57C00);">
+                        🛕
+                        <div class="tour-badge">NEW</div>
+                    </div>
+                    <div class="tour-info">
+                        <div class="tour-name">Khám phá Huế</div>
+                        <div class="tour-price">4.8tr/người</div>
+                        <div class="tour-rating">⭐ 4.7 (65)</div>
+                    </div>
+                </div>
+                <div class="tour-card">
+                    <div class="tour-image" style="background: linear-gradient(135deg, #E91E63, #C44569);">
+                        🌅
+                        <div class="tour-badge">-15%</div>
+                    </div>
+                    <div class="tour-info">
+                        <div class="tour-name">Hạ Long Bay</div>
+                        <div class="tour-price">5.2tr/người</div>
+                        <div class="tour-rating">⭐ 4.9 (143)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Travel Buddies Community -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">👥 CỘNG ĐỒNG</div>
+                <div class="section-title">Tìm bạn đồng hành</div>
+                <div class="section-subtitle">Kết nối với người có cùng sở thích</div>
+            </div>
+            <div class="buddy-scroll">
+                <div class="buddy-card">
+                    <div class="buddy-banner" style="background: linear-gradient(135deg, #667EEA, #764BA2);">
+                        🏖️
+                    </div>
+                    <div class="buddy-header">
+                        <div class="buddy-avatar" style="background: linear-gradient(135deg, #667EEA, #764BA2);">NL</div>
+                        <div class="buddy-info">
+                            <div class="buddy-name">Ngọc Linh</div>
+                            <div class="buddy-status">✓ Đã xác minh • ⭐ 4.9 (23 đánh giá)</div>
+                        </div>
+                    </div>
+                    <div class="buddy-content">
+                        <div class="buddy-trip">
+                            <div class="buddy-trip-title">
+                                <span>🏖️</span>
+                                <span>Phú Quốc 4N3Đ</span>
+                            </div>
+                            <div class="buddy-trip-details">
+                                <div class="buddy-trip-detail-item">📅 15-18/12</div>
+                                <div class="buddy-trip-detail-item">💰 3.5M/người</div>
+                                <div class="buddy-trip-detail-item">👥 Tổng 6 người</div>
+                                <div class="buddy-trip-detail-item">🎯 Còn 2 chỗ</div>
+                            </div>
+                        </div>
+                        <div class="buddy-description">
+                            Đi biển thư giãn! Lặn ngắm san hô, xem hoàng hôn, BBQ tối. Resort 4* gần biển. Phù hợp người thích nghỉ dưỡng, chụp ảnh đẹp. 🌅📸
+                        </div>
+                        <div class="buddy-tags">
+                            <div class="buddy-tag">🏖️ Biển</div>
+                            <div class="buddy-tag">🤿 Lặn biển</div>
+                            <div class="buddy-tag">📸 Chụp ảnh</div>
+                            <div class="buddy-tag">🍹 Thư giãn</div>
+                        </div>
+                        <div class="buddy-footer">
+                            <div class="buddy-slots available">⏰ Còn 2 chỗ trống</div>
+                            <button class="buddy-join-btn locked-overlay" onclick="signup()">Tham gia ngay</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buddy-card">
+                    <div class="buddy-banner" style="background: linear-gradient(135deg, #F093FB, #F5576C);">
+                        ⛰️
+                    </div>
+                    <div class="buddy-header">
+                        <div class="buddy-avatar" style="background: linear-gradient(135deg, #F093FB, #F5576C);">TH</div>
+                        <div class="buddy-info">
+                            <div class="buddy-name">Tuấn Hùng</div>
+                            <div class="buddy-status">✓ Đã xác minh • ⭐ 5.0 (31 đánh giá)</div>
+                        </div>
+                    </div>
+                    <div class="buddy-content">
+                        <div class="buddy-trip">
+                            <div class="buddy-trip-title">
+                                <span>⛰️</span>
+                                <span>Sapa Trekking 3N2Đ</span>
+                            </div>
+                            <div class="buddy-trip-details">
+                                <div class="buddy-trip-detail-item">📅 22-24/12</div>
+                                <div class="buddy-trip-detail-item">💰 2.8M/người</div>
+                                <div class="buddy-trip-detail-item">👥 Tổng 8 người</div>
+                                <div class="buddy-trip-detail-item">🎯 Còn 3 chỗ</div>
+                            </div>
+                        </div>
+                        <div class="buddy-description">
+                            Chinh phục đỉnh Fansipan! Trekking qua ruộng bậc thang, ngủ homestay người dân tộc, ăn món đặc sản vùng cao. Phù hợp người yêu phiêu lưu, thích khám phá. ⛰️🌸
+                        </div>
+                        <div class="buddy-tags">
+                            <div class="buddy-tag">🥾 Trekking</div>
+                            <div class="buddy-tag">🏔️ Leo núi</div>
+                            <div class="buddy-tag">📷 Nhiếp ảnh</div>
+                            <div class="buddy-tag">🌾 Ruộng bậc thang</div>
+                        </div>
+                        <div class="buddy-footer">
+                            <div class="buddy-slots available">⏰ Còn 3 chỗ trống</div>
+                            <button class="buddy-join-btn locked-overlay" onclick="signup()">Tham gia ngay</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buddy-card">
+                    <div class="buddy-banner" style="background: linear-gradient(135deg, #FF9800, #F57C00);">
+                        🛕
+                    </div>
+                    <div class="buddy-header">
+                        <div class="buddy-avatar" style="background: linear-gradient(135deg, #FF9800, #F57C00);">MP</div>
+                        <div class="buddy-info">
+                            <div class="buddy-name">Mai Phương</div>
+                            <div class="buddy-status">✓ Đã xác minh • ⭐ 4.8 (18 đánh giá)</div>
+                        </div>
+                    </div>
+                    <div class="buddy-content">
+                        <div class="buddy-trip">
+                            <div class="buddy-trip-title">
+                                <span>🛕</span>
+                                <span>Hội An - Huế 5N4Đ</span>
+                            </div>
+                            <div class="buddy-trip-details">
+                                <div class="buddy-trip-detail-item">📅 28/12-1/1</div>
+                                <div class="buddy-trip-detail-item">💰 5.2M/người</div>
+                                <div class="buddy-trip-detail-item">👥 Tổng 5 người</div>
+                                <div class="buddy-trip-detail-item">🎯 Còn 1 chỗ</div>
+                            </div>
+                        </div>
+                        <div class="buddy-description">
+                            Đón năm mới tại phố cổ Hội An! Thả đèn lồng, ăn cao lầu, dạo phố Huế xưa. Khách sạn trung tâm, gần chợ đêm. Lịch trình vừa phải, phù hợp mọi lứa tuổi. 🏮✨
+                        </div>
+                        <div class="buddy-tags">
+                            <div class="buddy-tag">🏮 Phố cổ</div>
+                            <div class="buddy-tag">🍜 Ẩm thực</div>
+                            <div class="buddy-tag">🎆 Đón năm mới</div>
+                            <div class="buddy-tag">🛕 Văn hóa</div>
+                        </div>
+                        <div class="buddy-footer">
+                            <div class="buddy-slots urgent">🔥 Sắp đầy - Chỉ còn 1 chỗ!</div>
+                            <button class="buddy-join-btn locked-overlay" onclick="signup()">Tham gia ngay</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Travel Blog & Tips -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">📝 BLOG & TIPS</div>
+                <div class="section-title">Cẩm nang du lịch</div>
+                <div class="section-subtitle">Kinh nghiệm và gợi ý từ cộng đồng</div>
+            </div>
+            <div class="blog-scroll">
+                <div class="blog-card">
+                    <div class="blog-image" style="background: linear-gradient(135deg, #4ECDC4, #44A08D);">
+                        🏖️
+                        <div class="blog-category">HƯỚNG DẪN</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-title">10 bãi biển đẹp nhất Việt Nam năm 2024</div>
+                        <div class="blog-excerpt">Khám phá những bãi biển hoang sơ, nước trong xanh và cát trắng mịn màng. Từ Phú Quốc đến Quy Nhơn...</div>
+                        <div class="blog-meta">
+                            <div class="blog-author">
+                                <div class="blog-author-avatar" style="background: linear-gradient(135deg, #667EEA, #764BA2);">TH</div>
+                                <span>Thanh Hà</span>
+                            </div>
+                            <div class="blog-read-time">5 phút đọc</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image" style="background: linear-gradient(135deg, #FA709A, #FEE140);">
+                        💰
+                        <div class="blog-category">TIẾT KIỆM</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-title">Du lịch Đà Lạt chỉ với 2 triệu/người</div>
+                        <div class="blog-excerpt">Bí quyết đi Đà Lạt tiết kiệm mà vẫn trọn vẹn. Ăn uống, nghỉ ngơi và tham quan với ngân sách hợp lý...</div>
+                        <div class="blog-meta">
+                            <div class="blog-author">
+                                <div class="blog-author-avatar" style="background: linear-gradient(135deg, #F093FB, #F5576C);">MN</div>
+                                <span>Minh Ngọc</span>
+                            </div>
+                            <div class="blog-read-time">7 phút đọc</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image" style="background: linear-gradient(135deg, #667EEA, #764BA2);">
+                        📸
+                        <div class="blog-category">NHIẾP ẢNH</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-title">Góc chụp ảnh đẹp ở Hội An mà ít ai biết</div>
+                        <div class="blog-excerpt">Tránh đám đông, tìm những góc chụp độc đáo tại phố cổ Hội An. Check-in sống ảo cùng ánh đèn lồng...</div>
+                        <div class="blog-meta">
+                            <div class="blog-author">
+                                <div class="blog-author-avatar" style="background: linear-gradient(135deg, #4FACFE, #00F2FE);">DK</div>
+                                <span>Duy Khánh</span>
+                            </div>
+                            <div class="blog-read-time">6 phút đọc</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image" style="background: linear-gradient(135deg, #FF9800, #F57C00);">
+                        🍜
+                        <div class="blog-category">ẨM THỰC</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-title">15 món ăn vặt Sài Gòn bạn phải thử</div>
+                        <div class="blog-excerpt">Food tour khắp Sài Gòn với những món ăn đường phố hấp dẫn. Từ bánh tráng trộn đến chè khúc bạch...</div>
+                        <div class="blog-meta">
+                            <div class="blog-author">
+                                <div class="blog-author-avatar" style="background: linear-gradient(135deg, #FA709A, #FEE140);">HL</div>
+                                <span>Hương Ly</span>
+                            </div>
+                            <div class="blog-read-time">8 phút đọc</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blog-card">
+                    <div class="blog-image" style="background: linear-gradient(135deg, #11998E, #38EF7D);">
+                        ⛰️
+                        <div class="blog-category">PHIÊU LƯU</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-title">Chinh phục Fansipan - Nóc nhà Đông Dương</div>
+                        <div class="blog-excerpt">Hành trình 2 ngày 1 đêm trekking lên đỉnh cao nhất Việt Nam. Chuẩn bị gì và lưu ý những điều quan trọng...</div>
+                        <div class="blog-meta">
+                            <div class="blog-author">
+                                <div class="blog-author-avatar" style="background: linear-gradient(135deg, #667EEA, #764BA2);">QT</div>
+                                <span>Quang Trung</span>
+                            </div>
+                            <div class="blog-read-time">10 phút đọc</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works - Creative Interactive Cards -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-tag">🎯 HƯỚNG DẪN</div>
+                <div class="section-title">Cách hoạt động</div>
+                <div class="section-subtitle">Đơn giản và hiệu quả</div>
+            </div>
+            <div class="how-it-works-grid">
+                <div class="work-card">
+                    <div class="work-card-number">1</div>
+                    <div class="work-card-icon">🎯</div>
+                    <div class="work-card-title">Tạo chuyến đi</div>
+                    <div class="work-card-desc">Thêm bạn bè, đặt ngân sách và bắt đầu</div>
+                    <div class="work-card-badge">30 giây</div>
+                </div>
+
+                <div class="work-card">
+                    <div class="work-card-number">2</div>
+                    <div class="work-card-icon">🗳️</div>
+                    <div class="work-card-title">Vote điểm đến</div>
+                    <div class="work-card-desc">Mọi người bỏ phiếu, AI chọn tự động</div>
+                    <div class="work-card-badge">Dân chủ</div>
+                </div>
+
+                <div class="work-card">
+                    <div class="work-card-number">3</div>
+                    <div class="work-card-icon">📅</div>
+                    <div class="work-card-title">Lên lịch trình</div>
+                    <div class="work-card-desc">Timeline chi tiết, chia chi phí tự động</div>
+                    <div class="work-card-badge">Tự động</div>
+                </div>
+
+                <div class="work-card">
+                    <div class="work-card-number">4</div>
+                    <div class="work-card-icon">📸</div>
+                    <div class="work-card-title">Tận hưởng & Chia sẻ</div>
+                    <div class="work-card-desc">Đăng ảnh, nhận huy hiệu thành tích</div>
+                    <div class="work-card-badge">Vui vẻ!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final CTA -->
+        <div class="cta-section">
+            <div class="cta-title">🎉 Sẵn sàng khám phá?</div>
+            <div class="cta-subtitle">Tham gia 50,000+ người yêu du lịch ngay hôm nay</div>
+            <button class="cta-btn-white" onclick="signup()">Đăng ký miễn phí</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <div class="nav-icon">🏠</div>
+            <div>Trang chủ</div>
+        </div>
+        <div class="nav-item" onclick="alert('Đăng nhập để khám phá')">
+            <div class="nav-icon">🎯</div>
+            <div>Khám phá</div>
+        </div>
+        <div class="nav-item" onclick="alert('Đăng nhập để xem tour')">
+            <div class="nav-icon">💼</div>
+            <div>Tour</div>
+        </div>
+        <div class="nav-item" onclick="login()">
+            <div class="nav-icon">👤</div>
+            <div>Đăng nhập</div>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            alert('🔐 Chuyển đến trang đăng nhập');
+        }
+
+        function signup() {
+            alert('✨ Chuyển đến trang đăng ký');
+        }
+    </script>
+</body>
+</html>
