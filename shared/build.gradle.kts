@@ -7,6 +7,11 @@ plugins {
 }
 
 kotlin {
+    // Apply Default Hierarchy Template explicitly for Kotlin 2.0+
+    // This automatically creates iosMain and sets up all dependencies
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+    applyDefaultHierarchyTemplate()
+
     androidTarget {
         @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -59,16 +64,13 @@ kotlin {
             }
         }
 
-        // iOS source sets - using Default Hierarchy Template (Kotlin 1.9.20+)
-        // No manual dependsOn needed - Kotlin handles it automatically
+        // iOS source sets - automatically created by Default Hierarchy Template
+        // All dependencies (iosMain -> commonMain, iosX64Main -> iosMain, etc.) are automatic
         val iosMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:3.3.2")
             }
         }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
     }
 }
 
