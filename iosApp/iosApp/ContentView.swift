@@ -3,62 +3,7 @@ import shared
 
 struct ContentView: View {
     var body: some View {
-        VStack(spacing: 0) {
-            // Test HeaderBar from shared module
-            HeaderBarView()
-
-            // Content
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("🎉 Compose is working on iOS!")
-                        .font(.title2)
-                        .padding(.horizontal)
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("HeaderBar Component Test")
-                            .font(.headline)
-                        Text("The HeaderBar component from shared module is rendering correctly on iOS!")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .shadow(radius: 2)
-                    .padding(.horizontal)
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("✅ Kotlin 2.2.21")
-                        Text("✅ Compose Multiplatform 1.9.3")
-                        Text("✅ Shared module components working")
-                        Text("✅ iOS SwiftUI integration")
-                    }
-                    .font(.body)
-                    .padding(.horizontal)
-                }
-                .padding(.vertical, 16)
-            }
-            .background(Color(hex: "FAFAFA"))
-        }
-        .edgesIgnoringSafeArea(.top)
-    }
-}
-
-// Simple wrapper to use Compose HeaderBar in SwiftUI
-struct HeaderBarView: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Xin chào, Minh! 👋")
-                .font(.title2)
-                .fontWeight(.bold)
-            Text("Sẵn sàng cho chuyến phiêu lưu tiếp theo?")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(Color(hex: "FAFAFA"))
+        HomeView()
     }
 }
 
@@ -68,7 +13,7 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-// Color extension for hex colors
+// MARK: - Color Extension
 extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
