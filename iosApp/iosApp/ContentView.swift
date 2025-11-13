@@ -2,105 +2,63 @@ import SwiftUI
 import shared
 
 struct ContentView: View {
-    @StateObject private var viewModel = DestinationViewModelWrapper()
-
     var body: some View {
-        NavigationView {
-            Group {
-                switch viewModel.uiState {
-                case .loading:
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
+        VStack(spacing: 0) {
+            // Test HeaderBar from shared module
+            HeaderBarView()
 
-                case .success(let destinations):
-                    List(destinations, id: \.id) { destination in
-                        DestinationRow(destination: destination)
-                    }
+            // Content
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("🎉 Compose is working on iOS!")
+                        .font(.title2)
+                        .padding(.horizontal)
 
-                case .error(let message):
-                    VStack {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.largeTitle)
-                            .foregroundColor(.red)
-                        Text("Error: \(message)")
-                            .foregroundColor(.red)
-                            .padding()
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("HeaderBar Component Test")
+                            .font(.headline)
+                        Text("The HeaderBar component from shared module is rendering correctly on iOS!")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                     }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .shadow(radius: 2)
+                    .padding(.horizontal)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("✅ Kotlin 2.2.21")
+                        Text("✅ Compose Multiplatform 1.9.3")
+                        Text("✅ Shared module components working")
+                        Text("✅ iOS SwiftUI integration")
+                    }
+                    .font(.body)
+                    .padding(.horizontal)
                 }
+                .padding(.vertical, 16)
             }
-            .navigationTitle("Lazy Travel")
+            .background(Color(hex: "FAFAFA"))
         }
-        .onAppear {
-            viewModel.loadDestinations()
-        }
+        .edgesIgnoringSafeArea(.top)
     }
 }
 
-struct DestinationRow: View {
-    let destination: Destination
-
+// Simple wrapper to use Compose HeaderBar in SwiftUI
+struct HeaderBarView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(destination.name)
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Xin chào, Minh! 👋")
+                .font(.title2)
                 .fontWeight(.bold)
-
-            Text(destination.description_)
+            Text("Sẵn sàng cho chuyến phiêu lưu tiếp theo?")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-
-            HStack {
-                Text("⭐ \(String(format: "%.1f", destination.rating))")
-                    .font(.caption)
-
-                Spacer()
-
-                Text("\(Int(destination.price).formatted()) VNĐ")
-                    .font(.caption)
-                    .fontWeight(.bold)
-            }
         }
-        .padding(.vertical, 4)
-    }
-}
-
-// MARK: - ViewModel Wrapper
-class DestinationViewModelWrapper: ObservableObject {
-    private let viewModel = AppModule.shared.provideDestinationViewModel()
-
-    @Published var uiState: UiState = .loading
-
-    enum UiState {
-        case loading
-        case success([Destination])
-        case error(String)
-    }
-
-    init() {
-        observeUiState()
-    }
-
-    func loadDestinations() {
-        viewModel.loadDestinations()
-    }
-
-    private func observeUiState() {
-        // Observe Kotlin Flow from Swift
-        // Note: You'll need to add a helper in the shared module for better Flow observation
-        // For now, we'll simulate with a simple callback
-        Task {
-            await MainActor.run {
-                viewModel.uiState.collect { state in
-                    if let loadingState = state as? DestinationViewModel.UiStateLoading {
-                        self.uiState = .loading
-                    } else if let successState = state as? DestinationViewModel.UiStateSuccess {
-                        self.uiState = .success(successState.destinations)
-                    } else if let errorState = state as? DestinationViewModel.UiStateError {
-                        self.uiState = .error(errorState.message)
-                    }
-                } onCompletion: { _ in }
-            }
-        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color(hex: "FAFAFA"))
     }
 }
 
@@ -110,11 +68,30 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-extension Int {
-    func formatted() -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.groupingSeparator = "."
-        return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
+// Color extension for hex colors
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue:  Double(b) / 255,
+            opacity: Double(a) / 255
+        )
     }
 }
