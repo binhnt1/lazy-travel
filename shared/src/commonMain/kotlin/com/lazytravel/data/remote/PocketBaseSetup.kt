@@ -1,68 +1,92 @@
 package com.lazytravel.data.remote
 
+import com.lazytravel.data.remote.schema.SchemaMigration
+import com.lazytravel.data.remote.schema.destinationsSchema
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
  * Auto Collection Setup Helper
- * Automatically creates collections if they don't exist
+ * Automatically creates collections with schemas if they don't exist
+ *
+ * Now uses Schema Migration System for better type safety and validation.
  */
 object PocketBaseSetup {
 
     /**
-     * List of all collections needed by the app
-     * Add new collection names here when creating new models
+     * List of all collections that don't have schema definitions yet
+     * These will be created with empty schemas (schema-less mode)
+     *
+     * When you create a schema definition for a collection, remove it from this list
+     * and add it to the schemas list in ensureCollectionsExist()
      */
-    private val requiredCollections = listOf(
-        PocketBaseConfig.Collections.DESTINATIONS,
+    private val legacyCollections = listOf(
         PocketBaseConfig.Collections.HOTELS,
         PocketBaseConfig.Collections.REVIEWS
     )
 
     /**
      * Ensure all required collections exist
-     * Creates them if they don't exist
+     * Creates them with proper schemas if they don't exist
+     *
+     * This runs automatically when app starts.
      */
     suspend fun ensureCollectionsExist() = withContext(Dispatchers.Default) {
         try {
             println("🔍 Checking PocketBase collections...")
+            println("📋 Using Schema Migration System...")
 
-            // Login as admin
-            val authResult = PocketBaseApi.adminAuth(
-                PocketBaseConfig.Admin.EMAIL,
-                PocketBaseConfig.Admin.PASSWORD
+            // Run schema migrations for collections with defined schemas
+            val migrationResult = SchemaMigration.migrate(
+                destinationsSchema
+                // Add more schemas here as you define them:
+                // hotelsSchema,
+                // reviewsSchema,
             )
 
-            if (authResult.isFailure) {
-                println("⚠️ Admin auth failed: ${authResult.exceptionOrNull()?.message}")
-                println("⚠️ Skipping auto-collection setup. Please create collections manually.")
-                return@withContext
+            if (!migrationResult) {
+                println("⚠️ Some schema migrations failed. Check logs above.")
             }
 
-            println("✅ Admin authenticated")
+            // Create legacy collections without schemas (backward compatibility)
+            if (legacyCollections.isNotEmpty()) {
+                println("\n📦 Creating legacy collections (schema-less)...")
 
-            // Check and create each collection
-            requiredCollections.forEach { collectionName ->
-                try {
-                    val exists = PocketBaseApi.collectionExists(collectionName)
+                // Login as admin if not already authenticated
+                val authResult = PocketBaseApi.adminAuth(
+                    PocketBaseConfig.Admin.EMAIL,
+                    PocketBaseConfig.Admin.PASSWORD
+                )
 
-                    if (exists) {
-                        println("✅ Collection '$collectionName' already exists")
-                    } else {
-                        // Create collection
-                        val createResult = PocketBaseApi.createCollection(collectionName)
-                        if (createResult.isSuccess) {
-                            println("✅ Created collection '$collectionName'")
-                        } else {
-                            println("❌ Failed to create collection '$collectionName': ${createResult.exceptionOrNull()?.message}")
+                if (authResult.isFailure) {
+                    println("⚠️ Admin auth failed: ${authResult.exceptionOrNull()?.message}")
+                    println("⚠️ Skipping legacy collection setup.")
+                } else {
+                    legacyCollections.forEach { collectionName ->
+                        try {
+                            val exists = PocketBaseApi.collectionExists(collectionName)
+
+                            if (exists) {
+                                println("✅ Collection '$collectionName' already exists")
+                            } else {
+                                // Create collection with empty schema
+                                val createResult = PocketBaseApi.createCollection(collectionName)
+                                if (createResult.isSuccess) {
+                                    println("✅ Created collection '$collectionName' (schema-less)")
+                                } else {
+                                    println("❌ Failed to create collection '$collectionName': ${createResult.exceptionOrNull()?.message}")
+                                }
+                            }
+                        } catch (e: Exception) {
+                            println("❌ Error checking collection '$collectionName': ${e.message}")
                         }
                     }
-                } catch (e: Exception) {
-                    println("❌ Error checking collection '$collectionName': ${e.message}")
                 }
             }
 
-            println("✅ Collection setup complete!")
+            println("\n✅ Collection setup complete!")
+            println("💡 To add schema for legacy collections, create schema definitions")
+            println("   in data/remote/schema/ and add them to ensureCollectionsExist()")
 
         } catch (e: Exception) {
             println("❌ Collection setup failed: ${e.message}")
@@ -71,8 +95,13 @@ object PocketBaseSetup {
     }
 
     /**
-     * Create a single collection programmatically
+     * Create a single collection programmatically (legacy method)
+     * Consider creating a schema definition instead for better type safety
      */
+    @Deprecated(
+        message = "Use schema definitions instead for better validation and type safety",
+        replaceWith = ReplaceWith("SchemaMigration.migrate(yourSchema)")
+    )
     suspend fun createCollection(name: String): Boolean {
         return try {
             val exists = PocketBaseApi.collectionExists(name)
