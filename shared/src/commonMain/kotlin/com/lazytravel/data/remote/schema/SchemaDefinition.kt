@@ -1,5 +1,6 @@
 package com.lazytravel.data.remote.schema
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 /**
@@ -79,7 +80,7 @@ data class FieldSchema(
     val name: String,
     val type: FieldType,
     var required: Boolean = false,
-    val options: MutableMap<String, Any> = mutableMapOf()
+    val options: MutableMap<String, @Contextual Any> = mutableMapOf()
 )
 
 /**
@@ -251,8 +252,8 @@ abstract class BaseFieldBuilder(
     protected val field = FieldSchema(name, type)
 
     var required: Boolean
-        get() = field.required
-        set(value) { field.required = value }
+        get() = this.field.required
+        set(value) { this.field.required = value }
 
     fun build(): FieldSchema = field
 }
@@ -264,19 +265,19 @@ class TextFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.TEXT) {
     var min: Int? = null
         set(value) {
             field = value
-            value?.let { field.options["min"] = it }
+            value?.let { this.field.options["min"] = it }
         }
 
     var max: Int? = null
         set(value) {
             field = value
-            value?.let { field.options["max"] = it }
+            value?.let { this.field.options["max"] = it }
         }
 
     var pattern: String? = null
         set(value) {
             field = value
-            value?.let { field.options["pattern"] = it }
+            value?.let { this.field.options["pattern"] = it }
         }
 }
 
@@ -287,19 +288,19 @@ class NumberFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.NUMBER
     var min: Double? = null
         set(value) {
             field = value
-            value?.let { field.options["min"] = it }
+            value?.let { this.field.options["min"] = it }
         }
 
     var max: Double? = null
         set(value) {
             field = value
-            value?.let { field.options["max"] = it }
+            value?.let { this.field.options["max"] = it }
         }
 
     var onlyInt: Boolean = false
         set(value) {
             field = value
-            field.options["onlyInt"] = value
+            this.field.options["onlyInt"] = value
         }
 }
 
@@ -316,7 +317,7 @@ class EmailFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.EMAIL) 
         set(value) {
             field = value
             if (value.isNotEmpty()) {
-                field.options["exceptDomains"] = value
+                this.field.options["exceptDomains"] = value
             }
         }
 
@@ -324,7 +325,7 @@ class EmailFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.EMAIL) 
         set(value) {
             field = value
             if (value.isNotEmpty()) {
-                field.options["onlyDomains"] = value
+                this.field.options["onlyDomains"] = value
             }
         }
 }
@@ -337,7 +338,7 @@ class UrlFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.URL) {
         set(value) {
             field = value
             if (value.isNotEmpty()) {
-                field.options["exceptDomains"] = value
+                this.field.options["exceptDomains"] = value
             }
         }
 
@@ -345,7 +346,7 @@ class UrlFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.URL) {
         set(value) {
             field = value
             if (value.isNotEmpty()) {
-                field.options["onlyDomains"] = value
+                this.field.options["onlyDomains"] = value
             }
         }
 }
@@ -357,13 +358,13 @@ class DateFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.DATE) {
     var min: String? = null
         set(value) {
             field = value
-            value?.let { field.options["min"] = it }
+            value?.let { this.field.options["min"] = it }
         }
 
     var max: String? = null
         set(value) {
             field = value
-            value?.let { field.options["max"] = it }
+            value?.let { this.field.options["max"] = it }
         }
 }
 
@@ -374,13 +375,13 @@ class SelectFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.SELECT
     var values: List<String> = emptyList()
         set(value) {
             field = value
-            field.options["values"] = value
+            this.field.options["values"] = value
         }
 
     var maxSelect: Int = 1
         set(value) {
             field = value
-            field.options["maxSelect"] = value
+            this.field.options["maxSelect"] = value
         }
 }
 
@@ -391,7 +392,7 @@ class JsonFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.JSON) {
     var maxSize: Int? = null
         set(value) {
             field = value
-            value?.let { field.options["maxSize"] = it }
+            value?.let { this.field.options["maxSize"] = it }
         }
 }
 
@@ -402,20 +403,20 @@ class FileFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.FILE) {
     var maxSelect: Int = 1
         set(value) {
             field = value
-            field.options["maxSelect"] = value
+            this.field.options["maxSelect"] = value
         }
 
     var maxSize: Int = 5242880  // 5MB default
         set(value) {
             field = value
-            field.options["maxSize"] = value
+            this.field.options["maxSize"] = value
         }
 
     var mimeTypes: List<String> = emptyList()
         set(value) {
             field = value
             if (value.isNotEmpty()) {
-                field.options["mimeTypes"] = value
+                this.field.options["mimeTypes"] = value
             }
         }
 
@@ -423,7 +424,7 @@ class FileFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.FILE) {
         set(value) {
             field = value
             if (value.isNotEmpty()) {
-                field.options["thumbs"] = value
+                this.field.options["thumbs"] = value
             }
         }
 }
@@ -435,25 +436,25 @@ class RelationFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.RELA
     var collectionId: String = ""
         set(value) {
             field = value
-            field.options["collectionId"] = value
+            this.field.options["collectionId"] = value
         }
 
     var cascadeDelete: Boolean = false
         set(value) {
             field = value
-            field.options["cascadeDelete"] = value
+            this.field.options["cascadeDelete"] = value
         }
 
     var maxSelect: Int = 1
         set(value) {
             field = value
-            field.options["maxSelect"] = value
+            this.field.options["maxSelect"] = value
         }
 
     var minSelect: Int = 0
         set(value) {
             field = value
-            field.options["minSelect"] = value
+            this.field.options["minSelect"] = value
         }
 }
 
@@ -464,7 +465,7 @@ class EditorFieldBuilder(name: String) : BaseFieldBuilder(name, FieldType.EDITOR
     var convertUrls: Boolean = false
         set(value) {
             field = value
-            field.options["convertUrls"] = value
+            this.field.options["convertUrls"] = value
         }
 }
 

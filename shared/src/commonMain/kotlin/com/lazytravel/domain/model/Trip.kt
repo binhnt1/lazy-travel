@@ -1,5 +1,6 @@
 package com.lazytravel.domain.model
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 /**
@@ -18,8 +19,8 @@ data class Trip(
     val budgetSpent: Double = 0.0,
     val description: String? = null,
     val coverImage: String? = null,
-    val weatherInfo: Map<String, Any>? = null,
-    val flightInfo: Map<String, Any>? = null,
+    val weatherInfo: Map<String, @Contextual Any>? = null,
+    val flightInfo: Map<String, @Contextual Any>? = null,
     val created: String? = null,
     val updated: String? = null
 )
