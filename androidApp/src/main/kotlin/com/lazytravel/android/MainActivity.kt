@@ -4,44 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import com.lazytravel.data.remote.PocketBaseClient
-import com.lazytravel.data.remote.PocketBaseSetup
-import com.lazytravel.di.AppModule
-import com.lazytravel.domain.model.Destination
-import com.lazytravel.presentation.DestinationViewModel
-import kotlinx.coroutines.launch
+import com.lazytravel.ui.components.layout.HeaderBar
+import com.lazytravel.ui.components.layout.HeaderType
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize PocketBase client
-        PocketBaseClient.initialize()
-
-        // Auto-create collections (optional, for development)
-        lifecycleScope.launch {
-            PocketBaseSetup.ensureCollectionsExist()
-        }
-
-        val viewModel = AppModule.provideDestinationViewModel()
-
         setContent {
             MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = Color(0xFFFAFAFA)
                 ) {
-                    DestinationScreen(viewModel)
+                    TestScreen()
                 }
             }
         }
@@ -49,102 +30,60 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun DestinationScreen(viewModel: DestinationViewModel) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.loadDestinations()
-    }
-
+fun TestScreen() {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            text = "Lazy Travel",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
+        // Test HeaderBar - Greeting variant
+        HeaderBar(
+            type = HeaderType.Greeting(
+                userName = "Minh",
+                subtitle = "Sẵn sàng cho chuyến phiêu lưu tiếp theo?"
+            )
         )
 
-        when (val state = uiState) {
-            is DestinationViewModel.UiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
+        // Content
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = "🎉 Compose is working!",
+                style = MaterialTheme.typography.headlineMedium
+            )
 
-            is DestinationViewModel.UiState.Success -> {
-                DestinationList(destinations = state.destinations)
-            }
-
-            is DestinationViewModel.UiState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Error: ${state.message}",
-                        color = MaterialTheme.colorScheme.error
+                        text = "HeaderBar Component Test",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "The HeaderBar component from shared module is rendering correctly!",
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
-        }
-    }
-}
 
-@Composable
-fun DestinationList(destinations: List<Destination>) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(destinations) { destination ->
-            DestinationCard(destination)
-        }
-    }
-}
-
-@Composable
-fun DestinationCard(destination: Destination) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
             Text(
-                text = destination.name,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                text = "✅ Kotlin 2.2.21",
+                style = MaterialTheme.typography.bodyLarge
             )
-            Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = destination.description,
-                style = MaterialTheme.typography.bodyMedium
+                text = "✅ Compose Multiplatform 1.9.3",
+                style = MaterialTheme.typography.bodyLarge
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "⭐ ${destination.rating}",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = "${destination.price.toInt().formatPrice()} VNĐ",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            Text(
+                text = "✅ Shared module components working",
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
-}
-
-fun Int.formatPrice(): String {
-    return "%,d".format(this).replace(',', '.')
 }
