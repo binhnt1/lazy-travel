@@ -38,3 +38,5 @@ Pods/
 # Kotlin
 *.kotlin_module
 *.kotlin_metadata
+/.kotlin/
+*.hprof
