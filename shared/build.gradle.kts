@@ -2,7 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.library")
     kotlin("plugin.serialization") version "1.9.20"
-    id("org.jetbrains.compose") version "1.5.11"
+    id("org.jetbrains.compose") version "1.9.3"
 }
 
 kotlin {
@@ -28,17 +28,17 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
                 // Ktor for HTTP requests
-                implementation("io.ktor:ktor-client-core:2.3.7")
-                implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
-                implementation("io.ktor:ktor-client-logging:2.3.7")
+                implementation("io.ktor:ktor-client-core:3.3.2")
+                implementation("io.ktor:ktor-client-content-negotiation:3.3.2")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.2")
+                implementation("io.ktor:ktor-client-logging:3.3.2")
 
                 // Koin for Dependency Injection
-                implementation("io.insert-koin:koin-core:3.5.3")
+                implementation("io.insert-koin:koin-core:4.1.1")
 
                 // Compose Multiplatform
                 implementation(compose.runtime)
@@ -51,11 +51,11 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-                implementation("io.ktor:ktor-client-android:2.3.7")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+                implementation("io.ktor:ktor-client-android:3.3.2")
 
                 // Koin for Android
-                implementation("io.insert-koin:koin-android:3.5.3")
+                implementation("io.insert-koin:koin-android:4.1.1")
             }
         }
         val iosX64Main by getting
@@ -67,7 +67,7 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:2.3.7")
+                implementation("io.ktor:ktor-client-darwin:3.3.2")
             }
         }
     }
