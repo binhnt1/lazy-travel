@@ -58,18 +58,17 @@ kotlin {
                 implementation("io.insert-koin:koin-android:4.1.1")
             }
         }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+
+        // iOS source sets - using Default Hierarchy Template (Kotlin 1.9.20+)
+        // No manual dependsOn needed - Kotlin handles it automatically
+        val iosMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:3.3.2")
             }
         }
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
     }
 }
 
