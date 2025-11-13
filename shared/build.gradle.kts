@@ -2,6 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.library")
     kotlin("plugin.serialization") version "1.9.20"
+    id("org.jetbrains.compose") version "1.5.11"
 }
 
 kotlin {
@@ -38,6 +39,14 @@ kotlin {
 
                 // Koin for Dependency Injection
                 implementation("io.insert-koin:koin-core:3.5.3")
+
+                // Compose Multiplatform
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
             }
         }
         val androidMain by getting {
@@ -73,5 +82,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
 }
