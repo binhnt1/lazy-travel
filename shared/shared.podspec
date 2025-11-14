@@ -26,6 +26,11 @@ Pod::Spec.new do |spec|
                   exit 0
                 fi
                 set -ev
+
+                # Set JAVA_HOME for Gradle
+                export JAVA_HOME=$(/usr/libexec/java_home -v 21 2>/dev/null || /usr/libexec/java_home 2>/dev/null)
+                echo "Using Java: $JAVA_HOME"
+
                 REPO_ROOT="$PODS_TARGET_SRCROOT"
                 "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:assembleSharedDebugXCFramework
             SCRIPT
