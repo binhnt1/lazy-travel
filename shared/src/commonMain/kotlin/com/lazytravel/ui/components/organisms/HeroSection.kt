@@ -38,13 +38,11 @@ fun HeroSection(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                brush = Brush.linearGradient(
+                brush = Brush.horizontalGradient(
                     colors = listOf(
                         AppColors.PrimaryGradientStart, // #FF6B35
                         AppColors.PrimaryGradientEnd    // #F7931E
-                    ),
-                    start = androidx.compose.ui.geometry.Offset.Zero,
-                    end = androidx.compose.ui.geometry.Offset.Infinite
+                    )
                 )
             )
             .padding(
