@@ -1,0 +1,155 @@
+package com.lazytravel.ui.components.organisms
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.lazytravel.ui.components.atoms.PrimaryButton
+import com.lazytravel.ui.components.atoms.SecondaryButton
+import com.lazytravel.ui.components.molecules.Logo
+import com.lazytravel.ui.theme.AppColors
+import com.lazytravel.ui.theme.AppSpacing
+import com.lazytravel.ui.theme.AppTypography
+
+/**
+ * Hero Section - Landing section with gradient background
+ * Based on home_noauth.html .hero
+ *
+ * Contains:
+ * - Logo + Login button
+ * - Hero title & subtitle
+ * - CTA button
+ * - Decorative pattern
+ */
+@Composable
+fun HeroSection(
+    onLoginClick: () -> Unit,
+    onSignupClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        AppColors.PrimaryGradientStart, // #FF6B35
+                        AppColors.PrimaryGradientEnd    // #F7931E
+                    ),
+                    start = androidx.compose.ui.geometry.Offset.Zero,
+                    end = androidx.compose.ui.geometry.Offset.Infinite
+                )
+            )
+            .padding(
+                start = AppSpacing.lg,
+                end = AppSpacing.lg,
+                top = AppSpacing.xl,
+                bottom = AppSpacing.huge
+            )
+    ) {
+        // Decorative pattern (airplane emoji in background)
+        Text(
+            text = "✈️",
+            fontSize = 180.sp,
+            color = Color.White.copy(alpha = 0.15f),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .offset(x = 20.dp, y = (-20).dp)
+        )
+
+        // Main content
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Hero Navigation - Logo + Login button
+            HeroNavigation(
+                onLoginClick = onLoginClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = AppSpacing.xxxl)
+            )
+
+            // Hero Content - Title, Subtitle, CTA
+            HeroContent(
+                onSignupClick = onSignupClick,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+/**
+ * Hero Navigation - Top bar with Logo and Login button
+ */
+@Composable
+private fun HeroNavigation(
+    onLoginClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Logo
+        Logo(
+            iconSize = 24,
+            textColor = Color.White
+        )
+
+        // Login Button
+        SecondaryButton(
+            text = "Đăng nhập",
+            onClick = onLoginClick
+        )
+    }
+}
+
+/**
+ * Hero Content - Main message and CTA
+ */
+@Composable
+private fun HeroContent(
+    onSignupClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.md)
+    ) {
+        // Hero Title
+        Text(
+            text = "Lên kế hoạch du lịch\ndễ dàng cùng bạn bè",
+            style = AppTypography.HeroTitle,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            lineHeight = 38.sp
+        )
+
+        // Hero Subtitle
+        Text(
+            text = "Vote điểm đến, chia chi phí & tạo lịch trình hoàn hảo trong vài phút",
+            style = AppTypography.HeroSubtitle,
+            color = Color.White.copy(alpha = 0.95f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = AppSpacing.md)
+        )
+
+        // CTA Button
+        PrimaryButton(
+            text = "Bắt đầu miễn phí",
+            icon = "→",
+            onClick = onSignupClick,
+            modifier = Modifier.padding(top = AppSpacing.sm)
+        )
+    }
+}
