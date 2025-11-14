@@ -4,13 +4,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.lazytravel.ui.components.organisms.HeroSection
-import com.lazytravel.ui.theme.AppColors
+import androidx.compose.ui.unit.sp
+// Temporarily disabled for iOS testing
+// import com.lazytravel.ui.components.organisms.HeroSection
+// import com.lazytravel.ui.theme.AppColors
 
 /**
  * Home Screen - No Authentication
@@ -18,73 +24,53 @@ import com.lazytravel.ui.theme.AppColors
  *
  * Based on home_noauth.html
  *
- * Sections:
- * 1. ✅ HeroSection - Main hero with CTA
- * 2. ⏳ StatsBar - Usage statistics
- * 3. ⏳ FeaturesSection - Key features
- * 4. ⏳ HowItWorksSection - 3-step process
- * 5. ⏳ PopularDestinationsSection - Trending destinations
- * 6. ⏳ TestimonialsSection - User testimonials
- * 7. ⏳ CTASection - Final call to action
- * 8. ⏳ Footer - Links and info
+ * TEMPORARY: Using minimal UI to test Compose iOS compatibility
  */
 @Composable
 fun HomeNoAuthScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppColors.Background)
-            .verticalScroll(rememberScrollState())
+            .background(Color(0xFFFAFAFA))
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
-        // 1. Hero Section
-        HeroSection(
-            onLoginClick = {
-                // TODO: Navigate to login screen
-                println("Login clicked")
-            },
-            onSignupClick = {
-                // TODO: Navigate to signup screen
-                println("Signup clicked")
-            }
+        // Minimal test UI
+        Text(
+            text = "✈️",
+            fontSize = 64.sp
         )
 
-        // Placeholder for remaining sections
+        Text(
+            text = "LazyTravel",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF212121)
+        )
+
+        Text(
+            text = "Compose Multiplatform iOS Test",
+            fontSize = 16.sp,
+            color = Color(0xFF666666)
+        )
+
+        Button(
+            onClick = {
+                println("Button clicked on iOS!")
+            }
+        ) {
+            Text("Test Button")
+        }
+
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(top = 24.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = "✅ HeroSection - Completed",
-                color = Color(0xFF4CAF50)
-            )
-            Text(
-                text = "⏳ StatsBar - Coming next",
-                color = Color(0xFF666666)
-            )
-            Text(
-                text = "⏳ Features Section - Planned",
-                color = Color(0xFF666666)
-            )
-            Text(
-                text = "⏳ How It Works - Planned",
-                color = Color(0xFF666666)
-            )
-            Text(
-                text = "⏳ Popular Destinations - Planned",
-                color = Color(0xFF666666)
-            )
-            Text(
-                text = "⏳ Testimonials - Planned",
-                color = Color(0xFF666666)
-            )
-            Text(
-                text = "⏳ Final CTA - Planned",
-                color = Color(0xFF666666)
-            )
-            Text(
-                text = "⏳ Footer - Planned",
-                color = Color(0xFF666666)
-            )
+            Text("✅ Compose runtime working", color = Color(0xFF4CAF50))
+            Text("✅ Material3 components working", color = Color(0xFF4CAF50))
+            Text("✅ Button interactions working", color = Color(0xFF4CAF50))
+            Text("⏳ Testing HeroSection next...", color = Color(0xFFFF9800))
         }
     }
 }
