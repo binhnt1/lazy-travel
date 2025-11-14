@@ -32,6 +32,13 @@ kotlin {
         it.binaries.framework {
             baseName = "shared"
             isStatic = true
+
+            // Export Compose dependencies to iOS framework
+            export(compose.runtime)
+            export(compose.foundation)
+            export(compose.material3)
+            export(compose.ui)
+
             xcf.add(this)
         }
     }
@@ -51,11 +58,11 @@ kotlin {
                 // Koin for Dependency Injection
                 implementation("io.insert-koin:koin-core:4.1.1")
 
-                // Compose Multiplatform
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material3)
-                implementation(compose.ui)
+                // Compose Multiplatform - use api() for iOS framework export
+                api(compose.runtime)
+                api(compose.foundation)
+                api(compose.material3)
+                api(compose.ui)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
             }
