@@ -19,6 +19,9 @@ kotlin {
         }
     }
 
+    // Create XCFramework for iOS
+    val xcf = XCFramework("shared")
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -27,6 +30,7 @@ kotlin {
         it.binaries.framework {
             baseName = "shared"
             isStatic = true
+            xcf.add(this)
         }
     }
 
