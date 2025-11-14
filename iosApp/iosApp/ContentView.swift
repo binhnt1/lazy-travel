@@ -3,40 +3,41 @@ import shared
 
 struct ContentView: View {
     var body: some View {
-        HomeView()
+        VStack(spacing: 20) {
+            Text("🎉 LazyTravel iOS")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+
+            Text("Shared module đã được integrate!")
+                .font(.title3)
+                .foregroundColor(.secondary)
+
+            VStack(alignment: .leading, spacing: 12) {
+                Label("✅ Kotlin 2.2.21", systemImage: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+                Label("✅ Compose Multiplatform 1.9.3", systemImage: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+                Label("✅ Shared framework working", systemImage: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+                Label("✅ CocoaPods configured", systemImage: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+            }
+            .padding()
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(12)
+
+            Text("Tiếp theo: Add HomeView và các components vào Xcode!")
+                .font(.caption)
+                .foregroundColor(.orange)
+                .padding(.top)
+                .multilineTextAlignment(.center)
+        }
+        .padding()
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-    }
-}
-
-// MARK: - Color Extension
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (1, 1, 1, 0)
-        }
-
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue:  Double(b) / 255,
-            opacity: Double(a) / 255
-        )
     }
 }
