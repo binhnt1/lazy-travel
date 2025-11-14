@@ -41,9 +41,32 @@ open iosApp.xcodeproj
 
 Hoặc double-click file `iosApp.xcodeproj` trong Finder.
 
-## Bước 3: Configure Xcode Settings
+## Bước 3: Add Framework to Xcode Project
 
-### 3.1. Chọn Team/Signing
+**QUAN TRỌNG:** Bạn cần add shared framework vào Xcode project lần đầu tiên.
+
+1. **Project Navigator** (⌘ + 1) → Click **iosApp** (root project)
+2. Select target **iosApp**
+3. Tab **General**
+4. Scroll xuống **"Frameworks, Libraries, and Embedded Content"**
+5. Click nút **+**
+6. Click **"Add Other..."** → **"Add Files..."**
+7. Navigate đến: `shared/build/XCFrameworks/debug/shared.xcframework`
+8. Click **Open**
+9. Đảm bảo **"Embed & Sign"** được chọn trong dropdown
+
+### Add Framework Search Path
+
+1. Tab **Build Settings**
+2. Search: `Framework Search Paths`
+3. Double-click **Framework Search Paths** row
+4. Click **+**
+5. Add: `$(PROJECT_DIR)/../shared/build/XCFrameworks/debug`
+6. Select **recursive** nếu có option
+
+## Bước 4: Configure Xcode Settings
+
+### 4.1. Chọn Team/Signing
 
 1. Click vào **iosApp** project trong Project Navigator
 2. Chọn tab **Signing & Capabilities**
@@ -53,12 +76,12 @@ Hoặc double-click file `iosApp.xcodeproj` trong Finder.
    - Đăng nhập bằng Apple ID
    - Hoặc chọn **Personal Team** (free)
 
-### 3.2. Chọn Device/Simulator
+### 4.2. Chọn Device/Simulator
 
 - Ở thanh toolbar phía trên, chọn device hoặc simulator
 - Recommended: Chọn **iPhone 15 Pro** simulator để test
 
-### 3.3. Build Settings (Important!)
+### 4.3. Build Settings (Important!)
 
 Verify các settings sau:
 
@@ -70,14 +93,14 @@ Verify các settings sau:
    - Phải có phase: "Compile Kotlin Framework"
    - Nếu không có → see troubleshooting below
 
-## Bước 4: Build và Run
+## Bước 5: Build và Run
 
 1. Press **⌘ + B** để build
 2. Press **⌘ + R** để run
 
 Hoặc click nút ▶️ (Play) ở toolbar.
 
-## Bước 5: Verify App Works
+## Bước 6: Verify App Works
 
 Khi app chạy thành công, bạn sẽ thấy:
 

@@ -1,5 +1,5 @@
 import SwiftUI
-// import shared  // TODO: Uncomment when shared framework is built
+import shared
 
 @main
 struct iOSApp: App {

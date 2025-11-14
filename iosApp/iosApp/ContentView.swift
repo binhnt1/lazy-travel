@@ -1,5 +1,5 @@
 import SwiftUI
-// import shared  // TODO: Uncomment when shared framework is built
+import shared
 
 struct ContentView: View {
     var body: some View {
