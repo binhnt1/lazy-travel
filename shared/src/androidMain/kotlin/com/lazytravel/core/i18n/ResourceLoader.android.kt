@@ -4,6 +4,7 @@ package com.lazytravel.core.i18n
  * Android implementation of ResourceLoader
  * Loads JSON files from resources using ClassLoader
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual object ResourceLoader {
     actual fun loadJsonFile(fileName: String): String {
         return try {

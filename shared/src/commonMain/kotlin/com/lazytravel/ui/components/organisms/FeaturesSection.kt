@@ -1,10 +1,9 @@
 package com.lazytravel.ui.components.organisms
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -24,7 +23,7 @@ import kotlinx.coroutines.launch
  * Features Section - Organism
  *
  * Displays app features from PocketBase "features" collection
- * Shows 4 features in 2x2 grid layout
+ * Horizontal scroll layout (like HTML version)
  * Features contain translation keys, translations loaded from LocalizationManager
  */
 @Composable
@@ -44,10 +43,8 @@ fun FeaturesSection(
                 onSuccess = { fetchedFeatures ->
                     features = fetchedFeatures
                     isLoading = false
-                    println("✅ Loaded ${features.size} features from PocketBase")
                 },
                 onFailure = { error ->
-                    println("❌ Failed to load features: ${error.message}")
                     isLoading = false
                 }
             )
@@ -58,33 +55,65 @@ fun FeaturesSection(
         modifier = modifier
             .fillMaxWidth()
             .background(AppColors.Background)
-            .padding(16.dp),
+            .padding(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Section Title
-        Text(
-            text = localizedString("features_title"),
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = AppColors.TextPrimary
-        )
+        // Section Header
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Section Tag
+            Text(
+                text = "✨ ${localizedString("features_tag")}",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFFF6B35),
+                modifier = Modifier
+                    .background(
+                        color = Color(0xFFFFF3E0),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(6.dp)
+                    )
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+            )
 
-        // Features Grid (2x2)
+            // Section Title
+            Text(
+                text = localizedString("features_title"),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = AppColors.TextPrimary
+            )
+
+            // Section Subtitle
+            Text(
+                text = localizedString("features_subtitle"),
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+        }
+
+        // Features Horizontal Scroll
         if (isLoading) {
-            Text("Loading features...", color = Color.Gray)
+            Text(
+                text = "Loading features...",
+                color = Color.Gray,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.heightIn(max = 400.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(features) { feature ->
+                features.forEach { feature ->
                     // Use translation keys from DB
                     FeatureCard(
                         icon = feature.icon,
-                        title = localizedString(feature.title),  // "feature_voting" → translated
-                        description = localizedString(feature.description)  // "feature_voting_desc" → translated
+                        title = feature.title,  // "feature_voting" → translated
+                        description = feature.description  // "feature_voting_desc" → translated
                     )
                 }
             }

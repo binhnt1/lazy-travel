@@ -16,12 +16,7 @@ class MainActivity : ComponentActivity() {
 
         // Initialize PocketBase client
         PocketBaseClient.initialize()
-        println("✅ PocketBase client initialized for Android")
-
-        // Run production data setup (one-time execution)
-        // TODO: Remove after first successful run
         GlobalScope.launch {
-            println("\n🔧 Running one-time setup for production data...")
             val result = SetupFeaturesCollection.setup()
             result.fold(
                 onSuccess = { message -> println("$message\n") },
@@ -31,7 +26,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                // Home_noauth screen with all sections
                 HomeNoAuthScreen()
             }
         }

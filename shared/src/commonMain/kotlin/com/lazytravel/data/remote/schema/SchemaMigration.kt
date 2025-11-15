@@ -25,13 +25,10 @@ object SchemaMigration {
             try {
                 val result = migrateCollection(schema)
                 if (result) successCount++ else failCount++
-            } catch (e: Exception) {
-                println("❌ Migration failed for '${schema.name}': ${e.message}")
+            } catch (_: Exception) {
                 failCount++
             }
         }
-
-        println("✅ Schema migration complete: $successCount succeeded, $failCount failed")
         return failCount == 0
     }
 
@@ -43,14 +40,11 @@ object SchemaMigration {
             val exists = PocketBaseApi.collectionExists(schema.name)
 
             if (exists) {
-                println("🔄 Updating collection '${schema.name}'...")
                 updateCollectionSchema(schema)
             } else {
-                println("📦 Creating collection '${schema.name}'...")
                 createCollectionWithSchema(schema)
             }
         } catch (e: Exception) {
-            println("❌ Error migrating '${schema.name}': ${e.message}")
             e.printStackTrace()
             false
         }
@@ -64,11 +58,6 @@ object SchemaMigration {
 
         // Convert schema to JSON
         val schemaJson = buildSchemaJson(schema)
-
-        // DEBUG: Print schema JSON being sent
-        println("📤 Sending schema JSON:")
-        println(schemaJson.toString())
-
         try {
             val response: HttpResponse = client.post("/api/collections") {
                 contentType(ContentType.Application.Json)
@@ -77,18 +66,8 @@ object SchemaMigration {
             }
 
             val success = response.status.isSuccess()
-            if (success) {
-                val responseBody = response.bodyAsText()
-                println("✅ Created collection '${schema.name}'")
-                println("📥 Response: $responseBody")
-            } else {
-                val body = response.bodyAsText()
-                println("❌ Failed to create '${schema.name}': ${response.status}")
-                println("   Response: $body")
-            }
             return success
         } catch (e: Exception) {
-            println("❌ Error creating '${schema.name}': ${e.message}")
             e.printStackTrace()
             return false
         }
@@ -107,22 +86,12 @@ object SchemaMigration {
             }
 
             if (!getResponse.status.isSuccess()) {
-                println("❌ Failed to fetch collection '${schema.name}'")
                 return false
             }
 
             val currentData = Json.parseToJsonElement(getResponse.bodyAsText()).jsonObject
-            val collectionId = currentData["id"]?.jsonPrimitive?.content
-
-            if (collectionId == null) {
-                println("❌ Could not get collection ID for '${schema.name}'")
-                return false
-            }
-
-            // Build update JSON (merge with current data)
+            val collectionId = currentData["id"]?.jsonPrimitive?.content ?: return false
             val updateJson = buildSchemaJson(schema)
-
-            // Update collection
             val updateResponse: HttpResponse = client.patch("/api/collections/$collectionId") {
                 contentType(ContentType.Application.Json)
                 PocketBaseClient.adminToken?.let { header("Authorization", it) }
@@ -130,16 +99,8 @@ object SchemaMigration {
             }
 
             val success = updateResponse.status.isSuccess()
-            if (success) {
-                println("✅ Updated collection '${schema.name}'")
-            } else {
-                val body = updateResponse.bodyAsText()
-                println("❌ Failed to update '${schema.name}': ${updateResponse.status}")
-                println("   Response: $body")
-            }
             return success
         } catch (e: Exception) {
-            println("❌ Error updating '${schema.name}': ${e.message}")
             e.printStackTrace()
             return false
         }

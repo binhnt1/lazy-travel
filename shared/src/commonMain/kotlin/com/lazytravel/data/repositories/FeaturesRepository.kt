@@ -28,9 +28,6 @@ class FeaturesRepository {
     suspend fun getFeatures(): Result<List<Feature>> {
         return try {
             val client = PocketBaseClient.getClient()
-
-            println("📡 Fetching features from PocketBase...")
-
             val httpResponse: HttpResponse = client.get(
                 "/api/collections/${PocketBaseConfig.Collections.FEATURES}/records"
             ) {
@@ -41,19 +38,10 @@ class FeaturesRepository {
 
             // Log raw response for debugging
             val rawBody = httpResponse.bodyAsText()
-            println("📡 Response status: ${httpResponse.status}")
-            println("📡 Raw response body: $rawBody")
-
-            // Parse response manually after logging
             val response: PocketBaseListResponse<Feature> = json.decodeFromString(rawBody)
-
-            println("✅ Fetched ${response.items.size} features from database")
             Result.success(response.items)
         } catch (e: Exception) {
-            println("❌ Error fetching features from database: ${e.message}")
             e.printStackTrace()
-
-            // NO FALLBACK - Return error to let app handle it properly
             Result.failure(e)
         }
     }
