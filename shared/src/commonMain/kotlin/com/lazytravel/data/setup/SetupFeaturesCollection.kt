@@ -65,6 +65,10 @@ object SetupFeaturesCollection {
             println("🌱 Seeding production features data...")
             seedFeaturesData()
 
+            // 7. Verify a seeded record has all fields
+            println("🔍 Verifying seeded records...")
+            verifySeededRecord()
+
             Result.success("✅ Features collection setup complete!")
         } catch (e: Exception) {
             println("❌ Setup failed: ${e.message}")
@@ -101,58 +105,37 @@ object SetupFeaturesCollection {
     private suspend fun createFeaturesCollectionWithSchema(): String? {
         val client = PocketBaseClient.getClient()
 
-        // Build schema array (like JS SDK example)
+        // Build schema array - MINIMAL format (no options)
         val schema = buildJsonArray {
             // icon field - text
             add(buildJsonObject {
                 put("name", "icon")
                 put("type", "text")
                 put("required", true)
-                put("options", buildJsonObject {
-                    put("min", JsonNull)
-                    put("max", 50)
-                    put("pattern", "")
-                })
             })
             // title field - translation key
             add(buildJsonObject {
                 put("name", "title")
                 put("type", "text")
                 put("required", true)
-                put("options", buildJsonObject {
-                    put("min", JsonNull)
-                    put("max", 100)
-                    put("pattern", "")
-                })
             })
             // description field - translation key
             add(buildJsonObject {
                 put("name", "description")
                 put("type", "text")
                 put("required", true)
-                put("options", buildJsonObject {
-                    put("min", JsonNull)
-                    put("max", 200)
-                    put("pattern", "")
-                })
             })
             // order field - number
             add(buildJsonObject {
                 put("name", "order")
                 put("type", "number")
                 put("required", true)
-                put("options", buildJsonObject {
-                    put("min", JsonNull)
-                    put("max", JsonNull)
-                    put("noDecimal", false)
-                })
             })
             // active field - bool
             add(buildJsonObject {
                 put("name", "active")
                 put("type", "bool")
                 put("required", false)
-                put("options", buildJsonObject {})
             })
         }
 
@@ -222,6 +205,62 @@ object SetupFeaturesCollection {
         }
     }
 
+
+    /**
+     * Verify seeded records have all custom fields
+     */
+    private suspend fun verifySeededRecord() {
+        val client = PocketBaseClient.getClient()
+        try {
+            // Fetch first record
+            val response: HttpResponse = client.get("/api/collections/features/records") {
+                parameter("perPage", 1)
+                PocketBaseClient.adminToken?.let { header("Authorization", it) }
+            }
+
+            if (response.status.isSuccess()) {
+                val responseBody = response.bodyAsText()
+                println("🔍 First record response:")
+                println("   $responseBody")
+
+                val json = Json.parseToJsonElement(responseBody).jsonObject
+                val items = json["items"]?.jsonArray
+                if (items != null && items.isNotEmpty()) {
+                    val firstRecord = items[0].jsonObject
+                    println("🔍 First record fields:")
+                    firstRecord.keys.forEach { key ->
+                        val value = firstRecord[key]
+                        println("   ✓ $key: $value")
+                    }
+
+                    // Check for our custom fields
+                    val hasIcon = firstRecord.containsKey("icon")
+                    val hasTitle = firstRecord.containsKey("title")
+                    val hasDescription = firstRecord.containsKey("description")
+                    val hasOrder = firstRecord.containsKey("order")
+                    val hasActive = firstRecord.containsKey("active")
+
+                    if (hasIcon && hasTitle && hasDescription && hasOrder && hasActive) {
+                        println("✅ Record has ALL custom fields!")
+                    } else {
+                        println("❌ Record MISSING fields:")
+                        if (!hasIcon) println("   ❌ icon")
+                        if (!hasTitle) println("   ❌ title")
+                        if (!hasDescription) println("   ❌ description")
+                        if (!hasOrder) println("   ❌ order")
+                        if (!hasActive) println("   ❌ active")
+                    }
+                } else {
+                    println("⚠️ No records found")
+                }
+            } else {
+                println("⚠️ Failed to fetch records: ${response.status}")
+            }
+        } catch (e: Exception) {
+            println("⚠️ Verify seeded record error: ${e.message}")
+            e.printStackTrace()
+        }
+    }
 
     /**
      * Seed production features data
