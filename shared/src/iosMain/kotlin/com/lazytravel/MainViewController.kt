@@ -1,6 +1,7 @@
 package com.lazytravel
 
 import androidx.compose.ui.window.ComposeUIViewController
+import com.lazytravel.data.remote.PocketBaseClient
 import com.lazytravel.ui.screens.HomeNoAuthScreen
 import platform.UIKit.UIViewController
 
@@ -14,6 +15,10 @@ import platform.UIKit.UIViewController
  * CADisableMinimumFrameDurationOnPhone check (already added to Info.plist)
  */
 fun MainViewController(): UIViewController {
+    // Initialize PocketBase client (only once)
+    PocketBaseClient.initialize()
+    println("✅ PocketBase client initialized for iOS")
+
     return ComposeUIViewController(
         configure = {
             // Disable strict plist check - we've already added the key to Info.plist
