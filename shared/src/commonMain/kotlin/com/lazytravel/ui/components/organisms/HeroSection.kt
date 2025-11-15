@@ -17,6 +17,8 @@ import com.lazytravel.ui.components.molecules.Logo
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.theme.AppSpacing
 import com.lazytravel.ui.theme.AppTypography
+import com.lazytravel.core.i18n.Strings
+import com.lazytravel.core.i18n.localizedString
 
 /**
  * Hero Section - Landing section with gradient background
@@ -105,7 +107,7 @@ private fun HeroNavigation(
 
         // Login Button
         SecondaryButton(
-            text = "Đăng nhập",
+            text = localizedString(Strings.login),
             onClick = onLoginClick
         )
     }
@@ -126,7 +128,7 @@ private fun HeroContent(
     ) {
         // Hero Title
         Text(
-            text = "Lên kế hoạch du lịch\ndễ dàng cùng bạn bè",
+            text = localizedString(Strings.heroTitle),
             style = AppTypography.HeroTitle,
             color = Color.White,
             textAlign = TextAlign.Center,
@@ -135,7 +137,7 @@ private fun HeroContent(
 
         // Hero Subtitle
         Text(
-            text = "Vote điểm đến, chia chi phí & tạo lịch trình hoàn hảo trong vài phút",
+            text = localizedString(Strings.heroSubtitle),
             style = AppTypography.HeroSubtitle,
             color = Color.White.copy(alpha = 0.95f),
             textAlign = TextAlign.Center,
@@ -144,8 +146,7 @@ private fun HeroContent(
 
         // CTA Button
         PrimaryButton(
-            text = "Bắt đầu miễn phí",
-            icon = "→",
+            text = localizedString(Strings.getStartedFree),
             onClick = onSignupClick,
             modifier = Modifier.padding(top = AppSpacing.sm)
         )
