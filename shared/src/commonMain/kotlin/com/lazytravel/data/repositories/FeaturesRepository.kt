@@ -6,6 +6,8 @@ import com.lazytravel.data.remote.PocketBaseClient
 import com.lazytravel.data.remote.PocketBaseConfig
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import kotlinx.serialization.json.Json
 
 /**
  * Features Repository
@@ -13,6 +15,8 @@ import io.ktor.client.request.*
  * NO FALLBACK - Real data only from database
  */
 class FeaturesRepository {
+
+    private val json = Json { ignoreUnknownKeys = true }
 
     /**
      * Get all active features from PocketBase
@@ -27,13 +31,21 @@ class FeaturesRepository {
 
             println("📡 Fetching features from PocketBase...")
 
-            val response: PocketBaseListResponse<Feature> = client.get(
+            val httpResponse: HttpResponse = client.get(
                 "/api/collections/${PocketBaseConfig.Collections.FEATURES}/records"
             ) {
                 parameter("perPage", 100)
                 parameter("filter", "active=true")
                 parameter("sort", "+order")
-            }.body()
+            }
+
+            // Log raw response for debugging
+            val rawBody = httpResponse.bodyAsText()
+            println("📡 Response status: ${httpResponse.status}")
+            println("📡 Raw response body: $rawBody")
+
+            // Parse response manually after logging
+            val response: PocketBaseListResponse<Feature> = json.decodeFromString(rawBody)
 
             println("✅ Fetched ${response.items.size} features from database")
             Result.success(response.items)
