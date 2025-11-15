@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lazytravel.ui.components.atoms.LanguageSwitcher
 import com.lazytravel.ui.components.atoms.PrimaryButton
 import com.lazytravel.ui.components.atoms.SecondaryButton
 import com.lazytravel.ui.components.molecules.Logo
@@ -102,6 +103,11 @@ private fun HeroNavigation(
         // Logo
         Logo(
             iconSize = 24,
+            textColor = Color.White
+        )
+
+        // Language Switcher (EN | VI)
+        LanguageSwitcher(
             textColor = Color.White
         )
 
