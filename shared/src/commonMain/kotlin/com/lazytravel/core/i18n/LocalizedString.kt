@@ -7,19 +7,12 @@ import androidx.compose.runtime.getValue
 /**
  * Composable helper to get localized string
  * Auto-recomposes when language changes
+ *
+ * Usage: localizedString("hero_title")
  */
 @Composable
-fun localizedString(key: StringKey): String {
+fun localizedString(key: String): String {
     val currentLanguage by LocalizationManager.currentLanguage.collectAsState()
-    return when (currentLanguage) {
-        Language.VIETNAMESE -> key.vi
-        Language.ENGLISH -> key.en
-    }
-}
-
-/**
- * Non-composable version for ViewModel/Repository
- */
-fun StringKey.localized(): String {
-    return LocalizationManager.getString(this)
+    // Trigger recomposition when language changes
+    return LocalizationManager.getString(key)
 }

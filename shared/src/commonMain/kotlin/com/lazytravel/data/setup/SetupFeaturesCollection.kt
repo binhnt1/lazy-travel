@@ -154,16 +154,78 @@ object SetupFeaturesCollection {
     /**
      * Update schema of features collection
      * Uses adminToken for authorization
+     *
+     * PocketBase schema format requires specific field structure
      */
     private suspend fun updateFeaturesSchema(collectionId: String) {
+        // Build schema using correct PocketBase format
         val schema = buildJsonArray {
-            add(buildJsonObject { put("name", "icon"); put("type", "text"); put("required", true) })
-            add(buildJsonObject { put("name", "title_en"); put("type", "text"); put("required", true) })
-            add(buildJsonObject { put("name", "title_vi"); put("type", "text"); put("required", true) })
-            add(buildJsonObject { put("name", "description_en"); put("type", "text"); put("required", true) })
-            add(buildJsonObject { put("name", "description_vi"); put("type", "text"); put("required", true) })
-            add(buildJsonObject { put("name", "order"); put("type", "number"); put("required", true) })
-            add(buildJsonObject { put("name", "active"); put("type", "bool"); put("required", false) })
+            // icon field - text
+            add(buildJsonObject {
+                put("id", "text_icon")
+                put("name", "icon")
+                put("type", "text")
+                put("required", true)
+                put("presentable", false)
+                put("unique", false)
+                put("options", buildJsonObject {
+                    put("min", JsonNull)
+                    put("max", JsonNull)
+                    put("pattern", "")
+                })
+            })
+            // title field - translation key
+            add(buildJsonObject {
+                put("id", "text_title")
+                put("name", "title")
+                put("type", "text")
+                put("required", true)
+                put("presentable", true)
+                put("unique", false)
+                put("options", buildJsonObject {
+                    put("min", JsonNull)
+                    put("max", JsonNull)
+                    put("pattern", "")
+                })
+            })
+            // description field - translation key
+            add(buildJsonObject {
+                put("id", "text_desc")
+                put("name", "description")
+                put("type", "text")
+                put("required", true)
+                put("presentable", false)
+                put("unique", false)
+                put("options", buildJsonObject {
+                    put("min", JsonNull)
+                    put("max", JsonNull)
+                    put("pattern", "")
+                })
+            })
+            // order field - number
+            add(buildJsonObject {
+                put("id", "number_order")
+                put("name", "order")
+                put("type", "number")
+                put("required", true)
+                put("presentable", false)
+                put("unique", false)
+                put("options", buildJsonObject {
+                    put("min", JsonNull)
+                    put("max", JsonNull)
+                    put("noDecimal", false)
+                })
+            })
+            // active field - bool
+            add(buildJsonObject {
+                put("id", "bool_active")
+                put("name", "active")
+                put("type", "bool")
+                put("required", false)
+                put("presentable", false)
+                put("unique", false)
+                put("options", buildJsonObject {})
+            })
         }
 
         // Update both schema AND list/view rules for public read access
@@ -175,6 +237,7 @@ object SetupFeaturesCollection {
         }
 
         println("🔧 Updating schema and rules for collection id: $collectionId")
+        println("🔧 Schema JSON: $schema")
 
         val patchResponse: HttpResponse = PocketBaseClient.getClient().patch("/api/collections/$collectionId") {
             contentType(ContentType.Application.Json)
@@ -184,10 +247,19 @@ object SetupFeaturesCollection {
         }
 
         val patchBody = patchResponse.bodyAsText()
-        println("🔧 Update response: ${patchResponse.status} - $patchBody")
+        println("🔧 Update response: ${patchResponse.status}")
+        println("🔧 Response body: $patchBody")
 
         if (patchResponse.status.isSuccess()) {
-            println("✅ Schema and rules updated successfully for collection id: $collectionId")
+            // Verify schema was applied
+            val responseJson = Json.parseToJsonElement(patchBody).jsonObject
+            val fields = responseJson["fields"]?.jsonArray
+            println("✅ Schema updated - Fields count: ${fields?.size ?: 0}")
+            if (fields != null && fields.size > 1) {
+                println("✅ Schema and rules updated successfully!")
+            } else {
+                println("⚠️ Schema update may have failed - only ${fields?.size ?: 0} fields")
+            }
         } else {
             println("❌ Failed to update schema: ${patchResponse.status}")
         }
@@ -244,46 +316,38 @@ object SetupFeaturesCollection {
 
     /**
      * Seed production features data
-     * Note: If collection has auth rules, you may need collectionToken
-     * For now, using adminToken as it has full permissions
+     * Uses translation keys for title/description (not bilingual data)
      */
     private suspend fun seedFeaturesData() {
         val client = PocketBaseClient.getClient()
 
+        // Data with translation keys (translated in app, not in DB)
         val features = listOf(
             buildJsonObject {
                 put("icon", "🗳️")
-                put("title_en", "Democratic Voting")
-                put("title_vi", "Vote dân chủ")
-                put("description_en", "Everyone votes on destinations, hotels & activities")
-                put("description_vi", "Mọi người vote điểm đến, khách sạn & hoạt động")
+                put("title", "feature_voting")  // Translation key
+                put("description", "feature_voting_desc")  // Translation key
                 put("order", 1)
                 put("active", true)
             },
             buildJsonObject {
                 put("icon", "💰")
-                put("title_en", "Smart Cost Splitting")
-                put("title_vi", "Chia chi phí thông minh")
-                put("description_en", "Auto-calculate and split expenses fairly")
-                put("description_vi", "Tự động tính toán và chia chi phí công bằng")
+                put("title", "feature_cost_splitting")
+                put("description", "feature_cost_splitting_desc")
                 put("order", 2)
                 put("active", true)
             },
             buildJsonObject {
                 put("icon", "📅")
-                put("title_en", "AI Itinerary")
-                put("title_vi", "Lịch trình AI")
-                put("description_en", "Generate optimized day-by-day plans")
-                put("description_vi", "Tạo kế hoạch tối ưu theo từng ngày")
+                put("title", "feature_ai_itinerary")
+                put("description", "feature_ai_itinerary_desc")
                 put("order", 3)
                 put("active", true)
             },
             buildJsonObject {
                 put("icon", "📸")
-                put("title_en", "Shared Album")
-                put("title_vi", "Album chung")
-                put("description_en", "Save and share photos with group")
-                put("description_vi", "Lưu và chia sẻ ảnh cùng nhóm bạn")
+                put("title", "feature_shared_album")
+                put("description", "feature_shared_album_desc")
                 put("order", 4)
                 put("active", true)
             }
@@ -294,15 +358,16 @@ object SetupFeaturesCollection {
                 val response: HttpResponse = client.post("/api/collections/features/records") {
                     contentType(ContentType.Application.Json)
                     // Use adminToken for creating records (admin has full permissions)
-                    // If collection had specific auth rules, we'd use collectionToken instead
                     PocketBaseClient.adminToken?.let { header("Authorization", it) }
                     setBody(feature)
                 }
 
                 if (response.status.isSuccess()) {
-                    println("  ✅ Created: ${feature["title_en"]}")
+                    val responseBody = response.bodyAsText()
+                    println("  ✅ Created: ${feature["title"]}")
+                    println("  📝 Response: $responseBody")
                 } else {
-                    println("  ⚠️ Failed to create: ${feature["title_en"]} - ${response.status}")
+                    println("  ⚠️ Failed to create: ${feature["title"]} - ${response.status}")
                 }
 
                 delay(200) // Avoid rate limiting

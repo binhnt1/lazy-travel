@@ -1,0 +1,33 @@
+{
+  "app_name": "LazyTravel",
+
+  "hero_title": "Lên kế hoạch du lịch dễ dàng cùng bạn bè",
+  "hero_subtitle": "Vote dân chủ, chia chi phí công bằng, và tận hưởng chuyến đi nhóm không rắc rối",
+  "get_started_free": "Bắt đầu miễn phí",
+  "login": "Đăng nhập",
+
+  "stats_users": "Người dùng",
+  "stats_trips": "Chuyến đi",
+  "stats_destinations": "Điểm đến",
+  "stats_rating": "Đánh giá",
+
+  "features_title": "Tại sao chọn TravelVote?",
+  "feature_voting": "Vote dân chủ",
+  "feature_voting_desc": "Mọi người vote điểm đến, khách sạn & hoạt động",
+  "feature_cost_splitting": "Chia chi phí thông minh",
+  "feature_cost_splitting_desc": "Tự động tính toán và chia chi phí công bằng",
+  "feature_ai_itinerary": "Lịch trình AI",
+  "feature_ai_itinerary_desc": "Tạo kế hoạch tối ưu theo từng ngày",
+  "feature_shared_album": "Album chung",
+  "feature_shared_album_desc": "Lưu và chia sẻ ảnh cùng nhóm bạn",
+
+  "how_it_works": "Cách hoạt động",
+  "popular_destinations": "Điểm đến phổ biến",
+  "testimonials": "Khách du lịch nói gì",
+  "cta_title": "Sẵn sàng bắt đầu chuyến phiêu lưu tiếp theo?",
+  "cta_button": "Tạo tài khoản miễn phí",
+  "footer_about": "Về chúng tôi",
+  "footer_features": "Tính năng",
+  "footer_pricing": "Giá cả",
+  "footer_contact": "Liên hệ"
+}

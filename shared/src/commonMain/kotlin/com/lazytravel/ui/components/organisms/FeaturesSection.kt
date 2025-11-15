@@ -12,9 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lazytravel.core.i18n.Language
 import com.lazytravel.core.i18n.LocalizationManager
-import com.lazytravel.core.i18n.Strings
 import com.lazytravel.core.i18n.localizedString
 import com.lazytravel.data.models.Feature
 import com.lazytravel.data.repositories.FeaturesRepository
@@ -27,6 +25,7 @@ import kotlinx.coroutines.launch
  *
  * Displays app features from PocketBase "features" collection
  * Shows 4 features in 2x2 grid layout
+ * Features contain translation keys, translations loaded from LocalizationManager
  */
 @Composable
 fun FeaturesSection(
@@ -45,10 +44,10 @@ fun FeaturesSection(
                 onSuccess = { fetchedFeatures ->
                     features = fetchedFeatures
                     isLoading = false
-                    println(" Loaded ${features.size} features from PocketBase")
+                    println("✅ Loaded ${features.size} features from PocketBase")
                 },
                 onFailure = { error ->
-                    println("L Failed to load features: ${error.message}")
+                    println("❌ Failed to load features: ${error.message}")
                     isLoading = false
                 }
             )
@@ -64,7 +63,7 @@ fun FeaturesSection(
     ) {
         // Section Title
         Text(
-            text = localizedString(Strings.featuresTitle),
+            text = localizedString("features_title"),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = AppColors.TextPrimary
@@ -81,10 +80,11 @@ fun FeaturesSection(
                 modifier = Modifier.heightIn(max = 400.dp)
             ) {
                 items(features) { feature ->
+                    // Use translation keys from DB
                     FeatureCard(
                         icon = feature.icon,
-                        title = if (currentLanguage == Language.VIETNAMESE) feature.titleVi else feature.titleEn,
-                        description = if (currentLanguage == Language.VIETNAMESE) feature.descriptionVi else feature.descriptionEn
+                        title = localizedString(feature.title),  // "feature_voting" → translated
+                        description = localizedString(feature.description)  // "feature_voting_desc" → translated
                     )
                 }
             }

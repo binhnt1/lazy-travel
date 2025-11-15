@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * Feature Model - from PocketBase "features" collection
+ * Single language - translations handled in app
  */
 @Serializable
 data class Feature(
@@ -13,17 +14,11 @@ data class Feature(
     @SerialName("icon")
     val icon: String,  // Emoji icon (🗳️, 💰, 📅, 📸)
 
-    @SerialName("title_en")
-    val titleEn: String,
+    @SerialName("title")
+    val title: String,  // Translation key (e.g., "feature_voting")
 
-    @SerialName("title_vi")
-    val titleVi: String,
-
-    @SerialName("description_en")
-    val descriptionEn: String,
-
-    @SerialName("description_vi")
-    val descriptionVi: String,
+    @SerialName("description")
+    val description: String,  // Translation key (e.g., "feature_voting_desc")
 
     @SerialName("order")
     val order: Int = 0,  // Display order
