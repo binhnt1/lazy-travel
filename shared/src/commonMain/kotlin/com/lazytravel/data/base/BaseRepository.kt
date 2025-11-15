@@ -96,3 +96,7 @@ open class BaseRepository(val collectionName: String) {
 fun featuresRepository() = BaseRepository(
     collectionName = PocketBaseConfig.Collections.FEATURES
 )
+
+fun useCaseRepository() = BaseRepository(
+    collectionName = PocketBaseConfig.Collections.USE_CASES
+)
