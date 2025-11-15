@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.lazytravel.ui.components.organisms.FeaturesSection
 import com.lazytravel.ui.components.organisms.HeroSection
 import com.lazytravel.ui.components.organisms.StatsBar
+import com.lazytravel.ui.components.organisms.UseCasesSection
 import com.lazytravel.ui.theme.AppColors
 
 /**
@@ -24,11 +25,12 @@ import com.lazytravel.ui.theme.AppColors
  * 1. ✅ HeroSection - Main hero with CTA
  * 2. ✅ StatsBar - Usage statistics
  * 3. ✅ FeaturesSection - Key features (from PocketBase)
- * 4. ⏳ HowItWorksSection - 3-step process (Next)
- * 5. ⏳ PopularDestinationsSection - Trending destinations
- * 6. ⏳ TestimonialsSection - User testimonials
- * 7. ⏳ CTASection - Final call to action
- * 8. ⏳ Footer - Links and info
+ * 4. ✅ UseCasesSection - DÀNH CHO AI section (from PocketBase)
+ * 5. ⏳ HowItWorksSection - 3-step process (Next)
+ * 6. ⏳ PopularDestinationsSection - Trending destinations
+ * 7. ⏳ TestimonialsSection - User testimonials
+ * 8. ⏳ CTASection - Final call to action
+ * 9. ⏳ Footer - Links and info
  */
 @Composable
 fun HomeNoAuthScreen() {
@@ -56,6 +58,9 @@ fun HomeNoAuthScreen() {
         // 3. Features Section - Fetches from PocketBase
         FeaturesSection()
 
+        // 4. Use Cases Section - DÀNH CHO AI
+        UseCasesSection()
+
         // Placeholder for remaining sections
         Column(
             modifier = Modifier.padding(16.dp),
@@ -71,6 +76,10 @@ fun HomeNoAuthScreen() {
             )
             Text(
                 text = "✅ FeaturesSection - Completed (PocketBase)",
+                color = Color(0xFF4CAF50)
+            )
+            Text(
+                text = "✅ UseCasesSection - Completed (PocketBase)",
                 color = Color(0xFF4CAF50)
             )
             Text(
