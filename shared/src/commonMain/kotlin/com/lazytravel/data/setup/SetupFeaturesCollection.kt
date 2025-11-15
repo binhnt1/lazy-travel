@@ -43,25 +43,9 @@ object SetupFeaturesCollection {
             println("📋 Collection 'features' exists: $collectionExists")
 
             // 4. Create collection if not exists
-            val collectionId = if (!collectionExists) {
-                println("📦 Creating 'features' collection...")
+            if (!collectionExists) {
                 createFeaturesCollection()
-            } else {
-                println("📋 Collection 'features' already exists, getting id...")
-                // Get collection id if exists
-                PocketBaseApi.getCollectionId(PocketBaseConfig.Collections.FEATURES)
             }
-
-            if (collectionId == null) {
-                println("❌ Failed to get collection id")
-                return Result.failure(Exception("Failed to get collection id"))
-            }
-
-            println("✅ Working with collection id: $collectionId")
-
-            // 5. Update schema and rules (always update to ensure correct structure)
-            println("🔧 Updating schema and public access rules...")
-            updateFeaturesSchema(collectionId)
 
             // 6. Seed production data (only if collection is empty)
             println("🌱 Checking if data seeding is needed...")
