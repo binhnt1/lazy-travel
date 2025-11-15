@@ -14,7 +14,7 @@ import com.lazytravel.ui.theme.AppTypography
 
 /**
  * Logo Component - Brand identity
- * Icon (✈️) + Text ("TravelVote")
+ * Icon (✈️) + Text ("Lazy Travel")
  * Based on home_noauth.html .logo
  */
 @Composable
@@ -38,7 +38,7 @@ fun Logo(
         // Logo Text
         if (showText) {
             Text(
-                text = "TravelVote",
+                text = "Lazy Travel",
                 style = AppTypography.LogoText,
                 color = textColor
             )

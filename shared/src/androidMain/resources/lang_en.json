@@ -11,7 +11,9 @@
   "stats_destinations": "Destinations",
   "stats_rating": "Rating",
 
-  "features_title": "Why Choose TravelVote?",
+  "features_tag": "Features",
+  "features_subtitle": "Explore, Plan, and Manage Expenses...",
+  "features_title": "Why Choose Lazy Travel?",
   "feature_voting": "Democratic Voting",
   "feature_voting_desc": "Everyone votes on destinations, hotels & activities",
   "feature_cost_splitting": "Smart Cost Splitting",

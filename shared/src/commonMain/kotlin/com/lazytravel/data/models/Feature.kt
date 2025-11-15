@@ -1,40 +1,36 @@
 package com.lazytravel.data.models
 
-import kotlinx.serialization.SerialName
+import com.lazytravel.data.base.BaseModel
+import com.lazytravel.data.base.baseCollection
+import com.lazytravel.data.base.collectionName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
-/**
- * Feature Model - from PocketBase "features" collection
- * Single language - translations handled in app
- */
 @Serializable
 data class Feature(
-    val id: String,
+    val icon: String = "",
+    val title: String = "",
+    val order: Int = 0,
+    val description: String = ""
+) : BaseModel() {
 
-    @SerialName("icon")
-    val icon: String,  // Emoji icon (🗳️, 💰, 📅, 📸)
+    override fun serializeToJson(item: BaseModel): String {
+        return Json.encodeToString(item as Feature)
+    }
 
-    @SerialName("title")
-    val title: String,  // Translation key (e.g., "feature_voting")
+    override fun getSchema() = baseCollection(collectionName()) {
+        text("icon") { required = true; max = 10 }
+        text("title") { required = true; max = 100 }
+        text("description") { required = true; max = 200 }
+        number("order") { required = true; min = 0.0; onlyInt = true }
+    }
 
-    @SerialName("description")
-    val description: String,  // Translation key (e.g., "feature_voting_desc")
-
-    @SerialName("order")
-    val order: Int = 0,  // Display order
-
-    @SerialName("active")
-    val active: Boolean = true
-)
-
-/**
- * PocketBase API Response wrapper
- */
-@Serializable
-data class PocketBaseListResponse<T>(
-    val page: Int,
-    val perPage: Int,
-    val totalItems: Int,
-    val totalPages: Int,
-    val items: List<T>
-)
+    override suspend fun getSeedData(): List<Feature> = listOf(
+        Feature("🗳️", "Vote Điểm Đến", 1, "Mọi người bỏ phiếu, hệ thống tự chọn nơi phù hợp nhất"),
+        Feature("💰", "Chia Chi Phí", 2, "Tính toán tự động, thanh toán công bằng"),
+        Feature("📅", "Lịch Trình Chi Tiết", 3, "Timeline rõ ràng cho từng ngày du lịch"),
+        Feature("📸", "Album Chung", 4, "Lưu và chia sẻ ảnh cùng nhóm bạn"),
+        Feature("💬", "Chat Nhóm", 5, "Thảo luận mọi quyết định trong app"),
+        Feature("🏆", "Huy Hiệu", 6, "Nhận thành tích khi hoàn thành chuyến đi")
+    )
+}

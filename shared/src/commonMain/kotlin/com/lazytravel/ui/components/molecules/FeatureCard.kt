@@ -14,23 +14,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lazytravel.core.i18n.localizedString
 
-/**
- * Feature Card - Molecule
- * Displays a single feature with icon, title and description
- * Fixed width for horizontal scroll (140dp like HTML)
- */
 @Composable
 fun FeatureCard(
     icon: String,
-    title: String,        // Translation key
-    description: String,  // Translation key
+    title: String,
+    description: String,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .width(140.dp)
+            .fillMaxHeight()
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
@@ -49,14 +44,12 @@ fun FeatureCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Icon emoji
         Text(
             text = icon,
             fontSize = 32.sp,
             textAlign = TextAlign.Center
         )
 
-        // Title (translated)
         Text(
             text = title,
             fontSize = 12.sp,
@@ -66,7 +59,6 @@ fun FeatureCard(
             lineHeight = 16.sp
         )
 
-        // Description (translated)
         Text(
             text = description,
             fontSize = 10.sp,

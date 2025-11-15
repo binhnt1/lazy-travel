@@ -163,6 +163,9 @@ object PocketBaseApi {
             val client = PocketBaseClient.getClient()
             val response: HttpResponse = client.post("/api/collections/$collection/records") {
                 contentType(ContentType.Application.Json)
+                PocketBaseClient.adminToken?.let {
+                    header("Authorization", it)
+                }
                 setBody(data)
             }
 
@@ -184,6 +187,9 @@ object PocketBaseApi {
             val client = PocketBaseClient.getClient()
             val response: HttpResponse = client.patch("/api/collections/$collection/records/$id") {
                 contentType(ContentType.Application.Json)
+                PocketBaseClient.adminToken?.let {
+                    header("Authorization", it)
+                }
                 setBody(data)
             }
 

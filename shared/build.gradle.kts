@@ -58,6 +58,8 @@ kotlin {
                 // Koin for Dependency Injection
                 implementation("io.insert-koin:koin-core:4.1.1")
 
+                implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
+
                 // Compose Multiplatform - use api() for iOS framework export
                 api(compose.runtime)
                 api(compose.foundation)

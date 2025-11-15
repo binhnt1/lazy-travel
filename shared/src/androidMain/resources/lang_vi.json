@@ -11,7 +11,9 @@
   "stats_destinations": "Điểm đến",
   "stats_rating": "Đánh giá",
 
-  "features_title": "Tại sao chọn TravelVote?",
+  "features_tag": "Tính năng",
+  "features_subtitle": "Khám phá, lên kế hoạch, quản lý chi tiêu...",
+  "features_title": "Tại sao chọn Lazy Travel?",
   "feature_voting": "Vote dân chủ",
   "feature_voting_desc": "Mọi người vote điểm đến, khách sạn & hoạt động",
   "feature_cost_splitting": "Chia chi phí thông minh",
