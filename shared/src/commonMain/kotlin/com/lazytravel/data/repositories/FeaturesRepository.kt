@@ -10,16 +10,22 @@ import io.ktor.client.request.*
 /**
  * Features Repository
  * Fetches features from PocketBase "features" collection
+ * NO FALLBACK - Real data only from database
  */
 class FeaturesRepository {
 
     /**
      * Get all active features from PocketBase
      * Sorted by order field
+     *
+     * @return Result with list of features or error
+     * NO FALLBACK DATA - If DB fails, app should handle error properly
      */
     suspend fun getFeatures(): Result<List<Feature>> {
         return try {
             val client = PocketBaseClient.getClient()
+
+            println("üì° Fetching features from PocketBase...")
 
             val response: PocketBaseListResponse<Feature> = client.get(
                 "/api/collections/${PocketBaseConfig.Collections.FEATURES}/records"
@@ -29,61 +35,14 @@ class FeaturesRepository {
                 parameter("sort", "+order")
             }.body()
 
+            println("‚úÖ Fetched ${response.items.size} features from database")
             Result.success(response.items)
         } catch (e: Exception) {
-            println("L Error fetching features: ${e.message}")
+            println("‚ùå Error fetching features from database: ${e.message}")
             e.printStackTrace()
 
-            // Return fallback mock data if API fails
-            Result.success(getFallbackFeatures())
+            // NO FALLBACK - Return error to let app handle it properly
+            Result.failure(e)
         }
-    }
-
-    /**
-     * Fallback features (mock data) if API fails
-     */
-    private fun getFallbackFeatures(): List<Feature> {
-        return listOf(
-            Feature(
-                id = "1",
-                icon = "=Û",
-                titleEn = "Democratic Voting",
-                titleVi = "Vote d‚n chÁ",
-                descriptionEn = "Everyone votes on destinations, hotels & activities",
-                descriptionVi = "MÕi ng∞›i vote i√m øn, kh·ch s°n & ho°t Ÿng",
-                order = 1,
-                active = true
-            ),
-            Feature(
-                id = "2",
-                icon = "=∞",
-                titleEn = "Smart Cost Splitting",
-                titleVi = "Chia chi phÌ thÙng minh",
-                descriptionEn = "Auto-calculate and split expenses fairly",
-                descriptionVi = "TÒ Ÿng tÌnh to·n v‡ chia chi phÌ cÙng b±ng",
-                order = 2,
-                active = true
-            ),
-            Feature(
-                id = "3",
-                icon = "=≈",
-                titleEn = "AI Itinerary",
-                titleVi = "LÀch trÏnh AI",
-                descriptionEn = "Generate optimized day-by-day plans",
-                descriptionVi = "T°o kø ho°ch t—i ∞u theo tÎng ng‡y",
-                order = 3,
-                active = true
-            ),
-            Feature(
-                id = "4",
-                icon = "=¯",
-                titleEn = "Shared Album",
-                titleVi = "Album chung",
-                descriptionEn = "Save and share photos with group",
-                descriptionVi = "L∞u v‡ chia sª £nh c˘ng nhÛm b°n",
-                order = 4,
-                active = true
-            )
-        )
     }
 }
