@@ -18,7 +18,6 @@ import com.lazytravel.ui.components.molecules.Logo
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.theme.AppSpacing
 import com.lazytravel.ui.theme.AppTypography
-import com.lazytravel.core.i18n.Strings
 import com.lazytravel.core.i18n.localizedString
 
 /**
@@ -113,7 +112,7 @@ private fun HeroNavigation(
 
         // Login Button
         SecondaryButton(
-            text = localizedString(Strings.login),
+            text = localizedString("login"),
             onClick = onLoginClick
         )
     }
@@ -134,7 +133,7 @@ private fun HeroContent(
     ) {
         // Hero Title
         Text(
-            text = localizedString(Strings.heroTitle),
+            text = localizedString("hero_title"),
             style = AppTypography.HeroTitle,
             color = Color.White,
             textAlign = TextAlign.Center,
@@ -143,7 +142,7 @@ private fun HeroContent(
 
         // Hero Subtitle
         Text(
-            text = localizedString(Strings.heroSubtitle),
+            text = localizedString("hero_subtitle"),
             style = AppTypography.HeroSubtitle,
             color = Color.White.copy(alpha = 0.95f),
             textAlign = TextAlign.Center,
@@ -152,7 +151,7 @@ private fun HeroContent(
 
         // CTA Button
         PrimaryButton(
-            text = localizedString(Strings.getStartedFree),
+            text = localizedString("get_started_free"),
             onClick = onSignupClick,
             modifier = Modifier.padding(top = AppSpacing.sm)
         )
