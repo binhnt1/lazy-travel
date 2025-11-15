@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.lazytravel.ui.components.organisms.HeroSection
+import com.lazytravel.ui.components.organisms.StatsBar
 import com.lazytravel.ui.theme.AppColors
 
 /**
@@ -20,8 +21,8 @@ import com.lazytravel.ui.theme.AppColors
  *
  * Sections:
  * 1. ✅ HeroSection - Main hero with CTA
- * 2. ⏳ StatsBar - Usage statistics (Next)
- * 3. ⏳ FeaturesSection - Key features
+ * 2. ✅ StatsBar - Usage statistics
+ * 3. ⏳ FeaturesSection - Key features (Next)
  * 4. ⏳ HowItWorksSection - 3-step process
  * 5. ⏳ PopularDestinationsSection - Trending destinations
  * 6. ⏳ TestimonialsSection - User testimonials
@@ -48,6 +49,9 @@ fun HomeNoAuthScreen() {
             }
         )
 
+        // 2. Stats Bar - 4 statistics (users, trips, destinations, rating)
+        StatsBar()
+
         // Placeholder for remaining sections
         Column(
             modifier = Modifier.padding(16.dp),
@@ -58,12 +62,12 @@ fun HomeNoAuthScreen() {
                 color = Color(0xFF4CAF50)
             )
             Text(
-                text = "⏳ StatsBar - Building next...",
-                color = Color(0xFFFF9800)
+                text = "✅ StatsBar - Completed",
+                color = Color(0xFF4CAF50)
             )
             Text(
-                text = "⏳ Features Section - Planned",
-                color = Color(0xFF666666)
+                text = "⏳ Features Section - Building next...",
+                color = Color(0xFFFF9800)
             )
             Text(
                 text = "⏳ How It Works - Planned",
