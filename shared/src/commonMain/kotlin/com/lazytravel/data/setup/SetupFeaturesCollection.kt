@@ -72,6 +72,7 @@ object SetupFeaturesCollection {
 
     /**
      * Create basic features collection, return generated collection id
+     * Uses adminToken for authorization
      */
     private suspend fun createFeaturesCollection(): String? {
         val client = PocketBaseClient.getClient()
@@ -83,7 +84,8 @@ object SetupFeaturesCollection {
 
         val response: HttpResponse = client.post("/api/collections") {
             contentType(ContentType.Application.Json)
-            PocketBaseClient.authToken?.let { header("Authorization", it) }
+            // Use adminToken for creating collection
+            PocketBaseClient.adminToken?.let { header("Authorization", it) }
             setBody(createBody)
         }
 
@@ -102,6 +104,7 @@ object SetupFeaturesCollection {
 
     /**
      * Update schema of features collection
+     * Uses adminToken for authorization
      */
     private suspend fun updateFeaturesSchema(collectionId: String) {
         val schema = buildJsonArray {
@@ -118,7 +121,8 @@ object SetupFeaturesCollection {
 
         val patchResponse: HttpResponse = PocketBaseClient.getClient().patch("/api/collections/$collectionId") {
             contentType(ContentType.Application.Json)
-            PocketBaseClient.authToken?.let { header("Authorization", it) }
+            // Use adminToken for updating schema
+            PocketBaseClient.adminToken?.let { header("Authorization", it) }
             setBody(updateBody)
         }
 
@@ -131,6 +135,8 @@ object SetupFeaturesCollection {
 
     /**
      * Seed production features data
+     * Note: If collection has auth rules, you may need collectionToken
+     * For now, using adminToken as it has full permissions
      */
     private suspend fun seedFeaturesData() {
         val client = PocketBaseClient.getClient()
@@ -178,7 +184,9 @@ object SetupFeaturesCollection {
             try {
                 val response: HttpResponse = client.post("/api/collections/features/records") {
                     contentType(ContentType.Application.Json)
-                    PocketBaseClient.authToken?.let { header("Authorization", it) }
+                    // Use adminToken for creating records (admin has full permissions)
+                    // If collection had specific auth rules, we'd use collectionToken instead
+                    PocketBaseClient.adminToken?.let { header("Authorization", it) }
                     setBody(feature)
                 }
 

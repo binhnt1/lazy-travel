@@ -23,7 +23,8 @@ object PocketBaseApi {
     }
 
     /**
-     * Admin auth
+     * Admin auth - for superuser operations
+     * Sets adminToken for collection management (create/update/delete collections)
      */
     suspend fun adminAuth(email: String, password: String): Result<AdminAuthResponse> {
         return try {
@@ -38,7 +39,7 @@ object PocketBaseApi {
 
             if (response.status.isSuccess()) {
                 val authResponse = json.decodeFromString<AdminAuthResponse>(response.bodyAsText())
-                PocketBaseClient.setAuthToken(authResponse.token)
+                PocketBaseClient.setAdminToken(authResponse.token)
                 Result.success(authResponse)
             } else {
                 Result.failure(Exception("Admin auth failed: ${response.status}"))
@@ -49,7 +50,35 @@ object PocketBaseApi {
     }
 
     /**
+     * Collection user auth - for record CRUD operations
+     * Sets collectionToken for creating/updating/deleting records
+     */
+    suspend fun collectionAuth(collectionName: String, identity: String, password: String): Result<CollectionAuthResponse> {
+        return try {
+            val client = PocketBaseClient.getClient()
+            val response: HttpResponse = client.post("/api/collections/$collectionName/auth-with-password") {
+                contentType(ContentType.Application.Json)
+                setBody(mapOf(
+                    "identity" to identity,
+                    "password" to password
+                ))
+            }
+
+            if (response.status.isSuccess()) {
+                val authResponse = json.decodeFromString<CollectionAuthResponse>(response.bodyAsText())
+                PocketBaseClient.setCollectionToken(authResponse.token)
+                Result.success(authResponse)
+            } else {
+                Result.failure(Exception("Collection auth failed: ${response.status}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Create collection (admin only)
+     * Requires adminToken
      */
     suspend fun createCollection(name: String): Result<Boolean> {
         return withContext(Dispatchers.Default) {
@@ -57,7 +86,7 @@ object PocketBaseApi {
                 val client = PocketBaseClient.getClient()
                 val response: HttpResponse = client.post("/api/collections") {
                     contentType(ContentType.Application.Json)
-                    PocketBaseClient.authToken?.let {
+                    PocketBaseClient.adminToken?.let {
                         header("Authorization", it)
                     }
                     setBody(mapOf(
@@ -88,7 +117,8 @@ object PocketBaseApi {
     }
 
     /**
-     * Get collection id by collection name
+     * Get collection id by collection name (admin only)
+     * Requires adminToken
      * Returns null if not found
      */
     suspend fun getCollectionId(collectionName: String): String? {
@@ -97,7 +127,7 @@ object PocketBaseApi {
         try {
             val response: HttpResponse = client.get("/api/collections") {
                 contentType(ContentType.Application.Json)
-                PocketBaseClient.authToken?.let { header("Authorization", it) }
+                PocketBaseClient.adminToken?.let { header("Authorization", it) }
             }
 
             if (!response.status.isSuccess()) {
@@ -239,6 +269,19 @@ data class AdminAuthResponse(
 data class AdminRecord(
     val id: String = "",
     val email: String = ""
+)
+
+@Serializable
+data class CollectionAuthResponse(
+    val token: String,
+    val record: CollectionRecord? = null
+)
+
+@Serializable
+data class CollectionRecord(
+    val id: String = "",
+    val collectionId: String = "",
+    val collectionName: String = ""
 )
 
 @Serializable

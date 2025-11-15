@@ -10,12 +10,36 @@ import kotlinx.serialization.json.Json
 /**
  * PocketBase Client using Ktor
  * Direct REST API implementation
+ *
+ * Supports dual authentication:
+ * - Admin token: For creating/updating collections (superuser operations)
+ * - Collection token: For CRUD operations on records
  */
 object PocketBaseClient {
 
     private var httpClient: HttpClient? = null
-    var authToken: String? = null
+
+    /**
+     * Admin auth token - for collection management operations
+     * Used for: create collection, update schema, delete collection
+     */
+    var adminToken: String? = null
         private set
+
+    /**
+     * Collection auth token - for record CRUD operations
+     * Used for: create/read/update/delete records in collections
+     */
+    var collectionToken: String? = null
+        private set
+
+    /**
+     * Backward compatibility - returns admin token by default
+     */
+    @Deprecated("Use adminToken or collectionToken directly", ReplaceWith("adminToken"))
+    var authToken: String?
+        get() = adminToken
+        private set(value) { adminToken = value }
 
     /**
      * Initialize Ktor HTTP client
@@ -37,17 +61,62 @@ object PocketBaseClient {
     }
 
     /**
-     * Update auth token (after admin login)
+     * Set admin auth token (after admin login)
+     * Use for collection management operations
      */
-    fun setAuthToken(token: String) {
-        authToken = token
+    fun setAdminToken(token: String) {
+        adminToken = token
+        println("🔐 Admin token set")
     }
 
     /**
-     * Clear auth token
+     * Set collection auth token (after collection user login)
+     * Use for record CRUD operations
      */
+    fun setCollectionToken(token: String) {
+        collectionToken = token
+        println("🔐 Collection token set")
+    }
+
+    /**
+     * Backward compatibility - sets admin token
+     */
+    @Deprecated("Use setAdminToken() or setCollectionToken()", ReplaceWith("setAdminToken(token)"))
+    fun setAuthToken(token: String) {
+        setAdminToken(token)
+    }
+
+    /**
+     * Clear admin token
+     */
+    fun clearAdminToken() {
+        adminToken = null
+        println("🔓 Admin token cleared")
+    }
+
+    /**
+     * Clear collection token
+     */
+    fun clearCollectionToken() {
+        collectionToken = null
+        println("🔓 Collection token cleared")
+    }
+
+    /**
+     * Clear all auth tokens
+     */
+    fun clearAllTokens() {
+        adminToken = null
+        collectionToken = null
+        println("🔓 All tokens cleared")
+    }
+
+    /**
+     * Backward compatibility
+     */
+    @Deprecated("Use clearAdminToken() or clearAllTokens()", ReplaceWith("clearAdminToken()"))
     fun clearAuthToken() {
-        authToken = null
+        clearAdminToken()
     }
 
     private fun createHttpClient(): HttpClient {
@@ -76,10 +145,8 @@ object PocketBaseClient {
 
             defaultRequest {
                 url(PocketBaseConfig.BASE_URL)
-                // Add auth header if available
-                authToken?.let { token ->
-                    headers.append("Authorization", token)
-                }
+                // DO NOT add auth header here
+                // Each API call will add the appropriate token (admin or collection)
             }
         }
     }
@@ -90,5 +157,6 @@ object PocketBaseClient {
     fun close() {
         httpClient?.close()
         httpClient = null
+        clearAllTokens()
     }
 }
