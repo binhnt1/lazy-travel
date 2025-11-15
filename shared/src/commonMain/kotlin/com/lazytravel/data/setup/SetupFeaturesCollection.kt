@@ -155,12 +155,32 @@ object SetupFeaturesCollection {
      * Update schema of features collection
      * Uses adminToken for authorization
      *
-     * PocketBase schema format: Let PocketBase generate field IDs
-     * Only include: name, type, required, options (minimal fields)
+     * Strategy: GET current collection, merge existing schema with new fields, then PATCH
      */
     private suspend fun updateFeaturesSchema(collectionId: String) {
-        // Build schema with simplified format (no id, presentable, unique)
-        val schema = buildJsonArray {
+        val client = PocketBaseClient.getClient()
+
+        // Step 1: GET current collection to see existing schema
+        println("🔍 Getting current collection schema...")
+        val getResponse: HttpResponse = client.get("/api/collections/$collectionId") {
+            PocketBaseClient.adminToken?.let { header("Authorization", it) }
+        }
+
+        val currentBody = getResponse.bodyAsText()
+        println("🔍 Current collection: $currentBody")
+
+        val currentJson = Json.parseToJsonElement(currentBody).jsonObject
+        val existingSchema = currentJson["schema"]?.jsonArray ?: buildJsonArray { }
+        println("🔍 Existing schema has ${existingSchema.size} fields")
+
+        // Step 2: Build NEW schema array (existing + new fields)
+        val newSchema = buildJsonArray {
+            // Keep existing system fields if any
+            existingSchema.forEach { field ->
+                add(field)
+            }
+
+            // Add our custom fields
             // icon field - text
             add(buildJsonObject {
                 put("name", "icon")
@@ -214,42 +234,50 @@ object SetupFeaturesCollection {
             })
         }
 
-        // Update both schema AND list/view rules for public read access
+        // Step 3: Build complete update body with ALL collection properties
         val updateBody = buildJsonObject {
-            put("schema", schema)
-            // Allow public read access (no auth required)
-            put("listRule", "")   // Empty string = public access
-            put("viewRule", "")   // Empty string = public access
+            put("name", currentJson["name"] ?: JsonPrimitive("features"))
+            put("type", currentJson["type"] ?: JsonPrimitive("base"))
+            put("schema", newSchema)
+            put("system", currentJson["system"] ?: JsonPrimitive(false))
+            put("listRule", "")   // Public read
+            put("viewRule", "")   // Public read
+            put("createRule", JsonNull)  // No public create
+            put("updateRule", JsonNull)  // No public update
+            put("deleteRule", JsonNull)  // No public delete
         }
 
-        println("🔧 Updating schema and rules for collection id: $collectionId")
-        println("🔧 Schema fields: icon, title, description, order, active")
+        println("🔧 Updating schema for collection: $collectionId")
+        println("🔧 New schema will have ${newSchema.size} total fields")
+        println("🔧 Update body: $updateBody")
 
-        val patchResponse: HttpResponse = PocketBaseClient.getClient().patch("/api/collections/$collectionId") {
+        // Step 4: PATCH with complete body
+        val patchResponse: HttpResponse = client.patch("/api/collections/$collectionId") {
             contentType(ContentType.Application.Json)
-            // Use adminToken for updating schema
             PocketBaseClient.adminToken?.let { header("Authorization", it) }
             setBody(updateBody)
         }
 
         val patchBody = patchResponse.bodyAsText()
-        println("🔧 Update response: ${patchResponse.status}")
+        println("🔧 PATCH response status: ${patchResponse.status}")
+        println("🔧 PATCH response body: $patchBody")
 
         if (patchResponse.status.isSuccess()) {
             // Verify schema was applied
             val responseJson = Json.parseToJsonElement(patchBody).jsonObject
-            val schema = responseJson["schema"]?.jsonArray
-            println("✅ Schema updated successfully!")
-            println("✅ Schema has ${schema?.size ?: 0} custom fields")
+            val resultSchema = responseJson["schema"]?.jsonArray
+            println("✅ Schema update complete!")
+            println("✅ Result schema has ${resultSchema?.size ?: 0} fields")
 
             // List all field names
-            schema?.forEach { field ->
+            resultSchema?.forEach { field ->
                 val fieldName = field.jsonObject["name"]?.jsonPrimitive?.content
-                println("   ✓ Field: $fieldName")
+                val fieldType = field.jsonObject["type"]?.jsonPrimitive?.content
+                println("   ✓ Field: $fieldName ($fieldType)")
             }
         } else {
             println("❌ Failed to update schema: ${patchResponse.status}")
-            println("❌ Response: $patchBody")
+            println("❌ Error response: $patchBody")
         }
     }
 
