@@ -1,5 +1,6 @@
 package com.lazytravel.core.i18n
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSBundle
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
@@ -9,7 +10,9 @@ import platform.Foundation.stringWithContentsOfFile
  * iOS implementation of ResourceLoader
  * Loads JSON files from app bundle resources
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual object ResourceLoader {
+    @OptIn(ExperimentalForeignApi::class)
     actual fun loadJsonFile(fileName: String): String {
         return try {
             // Get main bundle

@@ -1,44 +1,66 @@
 #!/bin/bash
 
-# Script to setup iOS project automatically - ONE TIME ONLY
-# Usage: ./setup-ios.sh
-
+#!/bin/bash
 set -e
+
+# Add gem executables to PATH
+export PATH="$PATH:/opt/homebrew/lib/ruby/gems/3.4.0/bin"
 
 echo "🚀 LazyTravel iOS Setup"
 echo "======================="
 echo ""
 
-# Check if CocoaPods is installed
-if ! command -v pod &> /dev/null; then
-    echo "❌ CocoaPods not found!"
-    echo ""
-    echo "Installing CocoaPods..."
-    sudo gem install cocoapods
-    echo "✅ CocoaPods installed"
-    echo ""
-fi
-
 # Step 1: Build shared framework
-echo "📦 Step 1: Building shared framework..."
+echo "📦 Step 1: Building shared XCFramework..."
 ./gradlew :shared:assembleSharedDebugXCFramework
 echo "✅ Framework built"
 echo ""
 
-# Step 2: Install pods
-echo "📦 Step 2: Installing CocoaPods dependencies..."
+# Step 2: Copy resources from KMP to iOS App
+echo "📁 Step 2: Copying resources to iOS app bundle..."
+
+SRC_RESOURCES="shared/src/androidMain/resources"
+DST_RESOURCES="iosApp/Resources"
+
+mkdir -p "$DST_RESOURCES"
+
+cp -R "$SRC_RESOURCES/." "$DST_RESOURCES/"
+
+echo "✅ Resources copied to iosApp/Resources"
+echo ""
+
+# Step 3: Install pods
+echo "📦 Step 3: Installing CocoaPods dependencies..."
 cd iosApp
 pod install
+cd ..
 echo "✅ Pods installed"
 echo ""
 
-# Step 3: Done
-echo "✅ Setup Complete!"
-echo ""
-echo "Next steps:"
-echo "1. Open Xcode: open iosApp.xcworkspace"
-echo "2. Select your Team in Signing & Capabilities"
-echo "3. Select iPhone simulator"
-echo "4. Press ⌘ + R to run"
-echo ""
-echo "Note: Always open .xcworkspace (not .xcodeproj) from now on!"
+# Step 4: Build & Run iOS app on simulator
+echo "📱 Step 4: Building & launching iOS app on simulator..."
+# Lấy path build products
+APP_PATH=$(xcodebuild \
+  -workspace iosApp/iosApp.xcworkspace \
+  -scheme iosApp \
+  -configuration Debug \
+  -sdk iphonesimulator \
+  -showBuildSettings | grep -i "BUILT_PRODUCTS_DIR" | awk '{print $3}')/iosApp.app
+
+# Kiểm tra tồn tại
+if [ ! -d "$APP_PATH" ]; then
+  echo "❌ App not found at $APP_PATH"
+  exit 1
+fi
+
+echo "✅ Found app at $APP_PATH"
+
+# Boot simulator (nếu chưa boot)
+xcrun simctl boot "iPhone 17 Pro" || true
+
+# Install app
+xcrun simctl install booted "$APP_PATH"
+
+# Launch app
+xcrun simctl launch booted com.lazytravel.ios
+
