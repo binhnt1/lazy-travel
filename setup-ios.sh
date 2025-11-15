@@ -1,6 +1,4 @@
 #!/bin/bash
-
-#!/bin/bash
 set -e
 
 # Add gem executables to PATH
@@ -23,7 +21,6 @@ SRC_RESOURCES="shared/src/androidMain/resources"
 DST_RESOURCES="iosApp/Resources"
 
 mkdir -p "$DST_RESOURCES"
-
 cp -R "$SRC_RESOURCES/." "$DST_RESOURCES/"
 
 echo "✅ Resources copied to iosApp/Resources"
@@ -39,28 +36,22 @@ echo ""
 
 # Step 4: Build & Run iOS app on simulator
 echo "📱 Step 4: Building & launching iOS app on simulator..."
-# Lấy path build products
-APP_PATH=$(xcodebuild \
+SIMULATOR_NAME="iPhone 17 Pro"
+
+xcodebuild \
   -workspace iosApp/iosApp.xcworkspace \
   -scheme iosApp \
-  -configuration Debug \
-  -sdk iphonesimulator \
-  -showBuildSettings | grep -i "BUILT_PRODUCTS_DIR" | awk '{print $3}')/iosApp.app
+  -destination "platform=iOS Simulator,name=$SIMULATOR_NAME" \
+  clean build | xcpretty
 
-# Kiểm tra tồn tại
-if [ ! -d "$APP_PATH" ]; then
-  echo "❌ App not found at $APP_PATH"
-  exit 1
-fi
+# Boot simulator (ignore error if already booted)
+xcrun simctl boot "$SIMULATOR_NAME" 2>/dev/null || echo "ℹ️  Simulator already running"
 
-echo "✅ Found app at $APP_PATH"
-
-# Boot simulator (nếu chưa boot)
-xcrun simctl boot "iPhone 17 Pro" || true
-
-# Install app
+# Install and launch app
+APP_PATH="iosApp/build/iosApp/Build/Products/Debug-iphonesimulator/iosApp.app"
 xcrun simctl install booted "$APP_PATH"
+xcrun simctl launch booted com.lazytravel.iosApp
 
-# Launch app
-xcrun simctl launch booted com.lazytravel.ios
-
+echo ""
+echo "✅ App launched successfully on $SIMULATOR_NAME"
+echo "🎉 Setup complete!"
