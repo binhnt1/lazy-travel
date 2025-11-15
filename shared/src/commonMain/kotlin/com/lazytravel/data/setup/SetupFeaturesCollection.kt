@@ -47,15 +47,20 @@ object SetupFeaturesCollection {
                 println("📦 Creating 'features' collection...")
                 createFeaturesCollection()
             } else {
+                println("📋 Collection 'features' already exists, getting id...")
                 // Get collection id if exists
                 PocketBaseApi.getCollectionId(PocketBaseConfig.Collections.FEATURES)
             }
 
             if (collectionId == null) {
+                println("❌ Failed to get collection id")
                 return Result.failure(Exception("Failed to get collection id"))
             }
 
-            // 5. Update schema (if newly created)
+            println("✅ Working with collection id: $collectionId")
+
+            // 5. Update schema and rules (always update to ensure correct structure)
+            println("🔧 Updating schema and public access rules...")
             updateFeaturesSchema(collectionId)
 
             // 6. Seed production data
@@ -82,12 +87,22 @@ object SetupFeaturesCollection {
             put("type", "base")
         }
 
+        println("📦 Creating collection with body: $createBody")
+        println("📦 Admin token: ${PocketBaseClient.adminToken?.take(20)}...")
+
         val response: HttpResponse = client.post("/api/collections") {
             contentType(ContentType.Application.Json)
             // Use adminToken for creating collection
-            PocketBaseClient.adminToken?.let { header("Authorization", it) }
+            PocketBaseClient.adminToken?.let {
+                header("Authorization", it)
+                println("📦 Authorization header added")
+            } ?: println("⚠️ No admin token available!")
             setBody(createBody)
         }
+
+        println("📦 Create collection response status: ${response.status}")
+        val responseBody = response.bodyAsText()
+        println("📦 Create collection response body: $responseBody")
 
         if (!response.status.isSuccess()) {
             println("❌ Failed to create collection: ${response.status}")
@@ -95,7 +110,7 @@ object SetupFeaturesCollection {
         }
 
         // Parse JSON response to get collection id
-        val json = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+        val json = Json.parseToJsonElement(responseBody).jsonObject
         val collectionId = json["id"]?.jsonPrimitive?.content
 
         println("✅ Collection 'features' created with id: $collectionId")
@@ -117,7 +132,15 @@ object SetupFeaturesCollection {
             add(buildJsonObject { put("name", "active"); put("type", "bool"); put("required", false) })
         }
 
-        val updateBody = buildJsonObject { put("schema", schema) }
+        // Update both schema AND list/view rules for public read access
+        val updateBody = buildJsonObject {
+            put("schema", schema)
+            // Allow public read access (no auth required)
+            put("listRule", "")   // Empty string = public access
+            put("viewRule", "")   // Empty string = public access
+        }
+
+        println("🔧 Updating schema and rules for collection id: $collectionId")
 
         val patchResponse: HttpResponse = PocketBaseClient.getClient().patch("/api/collections/$collectionId") {
             contentType(ContentType.Application.Json)
@@ -126,8 +149,11 @@ object SetupFeaturesCollection {
             setBody(updateBody)
         }
 
+        val patchBody = patchResponse.bodyAsText()
+        println("🔧 Update response: ${patchResponse.status} - $patchBody")
+
         if (patchResponse.status.isSuccess()) {
-            println("✅ Schema updated successfully for collection id: $collectionId")
+            println("✅ Schema and rules updated successfully for collection id: $collectionId")
         } else {
             println("❌ Failed to update schema: ${patchResponse.status}")
         }

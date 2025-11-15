@@ -29,6 +29,8 @@ object PocketBaseApi {
     suspend fun adminAuth(email: String, password: String): Result<AdminAuthResponse> {
         return try {
             val client = PocketBaseClient.getClient()
+            println("🔐 Attempting admin auth with email: $email")
+
             val response: HttpResponse = client.post("/api/collections/_superusers/auth-with-password") {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf(
@@ -37,14 +39,21 @@ object PocketBaseApi {
                 ))
             }
 
+            println("🔐 Admin auth response status: ${response.status}")
+            val responseBody = response.bodyAsText()
+            println("🔐 Admin auth response body: $responseBody")
+
             if (response.status.isSuccess()) {
-                val authResponse = json.decodeFromString<AdminAuthResponse>(response.bodyAsText())
+                val authResponse = json.decodeFromString<AdminAuthResponse>(responseBody)
+                println("🔐 Admin token received: ${authResponse.token.take(20)}...")
                 PocketBaseClient.setAdminToken(authResponse.token)
                 Result.success(authResponse)
             } else {
-                Result.failure(Exception("Admin auth failed: ${response.status}"))
+                Result.failure(Exception("Admin auth failed: ${response.status} - $responseBody"))
             }
         } catch (e: Exception) {
+            println("❌ Admin auth exception: ${e.message}")
+            e.printStackTrace()
             Result.failure(e)
         }
     }
