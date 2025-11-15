@@ -12,32 +12,26 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 @Serializable
 abstract class BaseModel {
     open val id: String = ""
     open var active: Boolean = true
     open var deleted: Boolean = false
-
-    @OptIn(ExperimentalTime::class)
-    open var createdAt: Instant? = null
-
-    @OptIn(ExperimentalTime::class)
-    open var updatedAt: Instant? = null
+    open var createdAt: String? = null
+    open var updatedAt: String? = null
 
     abstract fun getSchema(): CollectionSchema
     abstract suspend fun getSeedData(): List<BaseModel>
 
-    // Abstract method để mỗi model tự serialize
     abstract fun serializeToJson(item: BaseModel): String
 
     @OptIn(ExperimentalTime::class)
     suspend fun executeSeed() {
         val active = true
         val deleted = false
-        val now = Clock.System.now()
         val seedData = getSeedData()
+        val now = Clock.System.now().toString()
         val collection = (this::class.simpleName?.lowercase() + "s")
 
         seedData.forEach { item ->
@@ -59,10 +53,9 @@ abstract class BaseModel {
         }
     }
 
-    suspend fun setup(shouldRecreate: Boolean = true): Result<String> {
+    suspend fun setup(shouldRecreate: Boolean = false): Result<String> {
         return try {
             PocketBaseClient.initialize()
-
             val authResult = PocketBaseApi.adminAuth(
                 PocketBaseConfig.Admin.EMAIL,
                 PocketBaseConfig.Admin.PASSWORD
@@ -73,10 +66,10 @@ abstract class BaseModel {
                 )
             }
 
-            val collectionName = this.collectionName()
-
+            val collectionName = (this::class.simpleName?.lowercase() + "s")
             if (shouldRecreate) {
                 val exists = PocketBaseApi.collectionExists(collectionName)
+                println("exists: $exists $collectionName")
                 if (exists) {
                     PocketBaseApi.deleteCollection(collectionName)
                     delay(500)
@@ -100,12 +93,6 @@ abstract class BaseModel {
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)
-        }
-    }
-
-    companion object {
-        inline fun <reified T : BaseModel> collectionName(): String {
-            return (T::class.simpleName?.lowercase() + "s")
         }
     }
 }

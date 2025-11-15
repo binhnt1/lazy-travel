@@ -14,8 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lazytravel.core.i18n.localizedString
+import com.lazytravel.data.base.featuresRepository
 import com.lazytravel.data.models.Feature
-import com.lazytravel.data.repositories.FeaturesRepository
 import com.lazytravel.ui.components.molecules.FeatureCard
 import com.lazytravel.ui.theme.AppColors
 import kotlinx.coroutines.launch
@@ -24,14 +24,14 @@ import kotlinx.coroutines.launch
 fun FeaturesSection(
     modifier: Modifier = Modifier
 ) {
-    val repository = remember { FeaturesRepository() }
-    var features by remember { mutableStateOf<List<Feature>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
+    val repository = remember { featuresRepository() }
+    var isLoading by remember { mutableStateOf(true) }
+    var features by remember { mutableStateOf<List<Feature>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         scope.launch {
-            repository.getFeatures().fold(
+            repository.getRecords<Feature>().fold(
                 onSuccess = { fetchedFeatures ->
                     features = fetchedFeatures
                     isLoading = false

@@ -124,6 +124,9 @@ object PocketBaseApi {
                 parameter("perPage", perPage)
                 sort?.let { parameter("sort", it) }
                 filter?.let { parameter("filter", it) }
+                PocketBaseClient.adminToken?.let {
+                    header("Authorization", it)
+                }
             }
 
             if (response.status.isSuccess()) {
@@ -143,7 +146,11 @@ object PocketBaseApi {
     suspend fun getRecord(collection: String, id: String): Result<String> {
         return try {
             val client = PocketBaseClient.getClient()
-            val response: HttpResponse = client.get("/api/collections/$collection/records/$id")
+            val response: HttpResponse = client.get("/api/collections/$collection/records/$id") {
+                PocketBaseClient.adminToken?.let {
+                    header("Authorization", it)
+                }
+            }
 
             if (response.status.isSuccess()) {
                 Result.success(response.bodyAsText())
@@ -209,7 +216,11 @@ object PocketBaseApi {
     suspend fun deleteRecord(collection: String, id: String): Result<Boolean> {
         return try {
             val client = PocketBaseClient.getClient()
-            val response: HttpResponse = client.delete("/api/collections/$collection/records/$id")
+            val response: HttpResponse = client.delete("/api/collections/$collection/records/$id") {
+                PocketBaseClient.adminToken?.let {
+                    header("Authorization", it)
+                }
+            }
             Result.success(response.status.isSuccess())
         } catch (e: Exception) {
             Result.failure(e)

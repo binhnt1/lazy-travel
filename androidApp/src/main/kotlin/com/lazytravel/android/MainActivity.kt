@@ -20,8 +20,8 @@ class MainActivity : ComponentActivity() {
         // Initialize PocketBase client
         PocketBaseClient.initialize()
         GlobalScope.launch {
-            UseCase().setup()
-            Feature().setup()
+            UseCase().setup(true)
+            Feature().setup(true)
         }
 
         setContent {

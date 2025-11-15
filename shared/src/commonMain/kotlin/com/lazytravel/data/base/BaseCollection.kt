@@ -14,11 +14,11 @@ fun baseCollection(
         fieldsInit()
         bool("active")
         bool("deleted")
-        date("createdAt")
-        date("updatedAt")
+        text("createdAt")
+        text("updatedAt")
     }
-    listRule = null
-    viewRule = null
+    listRule = ""
+    viewRule = ""
     createRule = null
     updateRule = null
     deleteRule = null
