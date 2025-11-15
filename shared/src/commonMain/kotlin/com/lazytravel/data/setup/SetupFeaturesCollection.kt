@@ -7,15 +7,16 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.delay
+import kotlinx.serialization.json.*
 
 /**
  * Setup Features Collection on PocketBase Server
- * Creates collection and seeds production data
+ * Creates collection, updates schema, and seeds production data
  */
 object SetupFeaturesCollection {
 
     /**
-     * Full setup: Admin auth + Create collection + Seed data
+     * Full setup: Admin auth + Create collection + Update schema + Seed data
      */
     suspend fun setup(): Result<String> {
         return try {
@@ -42,13 +43,22 @@ object SetupFeaturesCollection {
             println("📋 Collection 'features' exists: $collectionExists")
 
             // 4. Create collection if not exists
-            if (!collectionExists) {
+            val collectionId = if (!collectionExists) {
                 println("📦 Creating 'features' collection...")
                 createFeaturesCollection()
-                delay(1000) // Wait for collection to be created
+            } else {
+                // Get collection id if exists
+                PocketBaseApi.getCollectionId(PocketBaseConfig.Collections.FEATURES)
             }
 
-            // 5. Seed production data
+            if (collectionId == null) {
+                return Result.failure(Exception("Failed to get collection id"))
+            }
+
+            // 5. Update schema (if newly created)
+            updateFeaturesSchema(collectionId)
+
+            // 6. Seed production data
             println("🌱 Seeding production features data...")
             seedFeaturesData()
 
@@ -61,65 +71,61 @@ object SetupFeaturesCollection {
     }
 
     /**
-     * Create features collection with schema
+     * Create basic features collection, return generated collection id
      */
-    private suspend fun createFeaturesCollection() {
+    private suspend fun createFeaturesCollection(): String? {
         val client = PocketBaseClient.getClient()
 
-        val schema = listOf(
-            mapOf(
-                "name" to "icon",
-                "type" to "text",
-                "required" to true
-            ),
-            mapOf(
-                "name" to "title_en",
-                "type" to "text",
-                "required" to true
-            ),
-            mapOf(
-                "name" to "title_vi",
-                "type" to "text",
-                "required" to true
-            ),
-            mapOf(
-                "name" to "description_en",
-                "type" to "text",
-                "required" to true
-            ),
-            mapOf(
-                "name" to "description_vi",
-                "type" to "text",
-                "required" to true
-            ),
-            mapOf(
-                "name" to "order",
-                "type" to "number",
-                "required" to true
-            ),
-            mapOf(
-                "name" to "active",
-                "type" to "bool",
-                "required" to false
-            )
-        )
+        val createBody = buildJsonObject {
+            put("name", "features")
+            put("type", "base")
+        }
 
         val response: HttpResponse = client.post("/api/collections") {
             contentType(ContentType.Application.Json)
-            PocketBaseClient.authToken?.let {
-                header("Authorization", it)
-            }
-            setBody(mapOf(
-                "name" to "features",
-                "type" to "base",
-                "schema" to schema
-            ))
+            PocketBaseClient.authToken?.let { header("Authorization", it) }
+            setBody(createBody)
         }
 
-        if (response.status.isSuccess()) {
-            println("✅ Collection 'features' created successfully")
-        } else {
+        if (!response.status.isSuccess()) {
             println("❌ Failed to create collection: ${response.status}")
+            return null
+        }
+
+        // Parse JSON response to get collection id
+        val json = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+        val collectionId = json["id"]?.jsonPrimitive?.content
+
+        println("✅ Collection 'features' created with id: $collectionId")
+        return collectionId
+    }
+
+    /**
+     * Update schema of features collection
+     */
+    private suspend fun updateFeaturesSchema(collectionId: String) {
+        val schema = buildJsonArray {
+            add(buildJsonObject { put("name", "icon"); put("type", "text"); put("required", true) })
+            add(buildJsonObject { put("name", "title_en"); put("type", "text"); put("required", true) })
+            add(buildJsonObject { put("name", "title_vi"); put("type", "text"); put("required", true) })
+            add(buildJsonObject { put("name", "description_en"); put("type", "text"); put("required", true) })
+            add(buildJsonObject { put("name", "description_vi"); put("type", "text"); put("required", true) })
+            add(buildJsonObject { put("name", "order"); put("type", "number"); put("required", true) })
+            add(buildJsonObject { put("name", "active"); put("type", "bool"); put("required", false) })
+        }
+
+        val updateBody = buildJsonObject { put("schema", schema) }
+
+        val patchResponse: HttpResponse = PocketBaseClient.getClient().patch("/api/collections/$collectionId") {
+            contentType(ContentType.Application.Json)
+            PocketBaseClient.authToken?.let { header("Authorization", it) }
+            setBody(updateBody)
+        }
+
+        if (patchResponse.status.isSuccess()) {
+            println("✅ Schema updated successfully for collection id: $collectionId")
+        } else {
+            println("❌ Failed to update schema: ${patchResponse.status}")
         }
     }
 
@@ -130,51 +136,49 @@ object SetupFeaturesCollection {
         val client = PocketBaseClient.getClient()
 
         val features = listOf(
-            mapOf(
-                "icon" to "🗳️",
-                "title_en" to "Democratic Voting",
-                "title_vi" to "Vote dân chủ",
-                "description_en" to "Everyone votes on destinations, hotels & activities",
-                "description_vi" to "Mọi người vote điểm đến, khách sạn & hoạt động",
-                "order" to 1,
-                "active" to true
-            ),
-            mapOf(
-                "icon" to "💰",
-                "title_en" to "Smart Cost Splitting",
-                "title_vi" to "Chia chi phí thông minh",
-                "description_en" to "Auto-calculate and split expenses fairly",
-                "description_vi" to "Tự động tính toán và chia chi phí công bằng",
-                "order" to 2,
-                "active" to true
-            ),
-            mapOf(
-                "icon" to "📅",
-                "title_en" to "AI Itinerary",
-                "title_vi" to "Lịch trình AI",
-                "description_en" to "Generate optimized day-by-day plans",
-                "description_vi" to "Tạo kế hoạch tối ưu theo từng ngày",
-                "order" to 3,
-                "active" to true
-            ),
-            mapOf(
-                "icon" to "📸",
-                "title_en" to "Shared Album",
-                "title_vi" to "Album chung",
-                "description_en" to "Save and share photos with group",
-                "description_vi" to "Lưu và chia sẻ ảnh cùng nhóm bạn",
-                "order" to 4,
-                "active" to true
-            )
+            buildJsonObject {
+                put("icon", "🗳️")
+                put("title_en", "Democratic Voting")
+                put("title_vi", "Vote dân chủ")
+                put("description_en", "Everyone votes on destinations, hotels & activities")
+                put("description_vi", "Mọi người vote điểm đến, khách sạn & hoạt động")
+                put("order", 1)
+                put("active", true)
+            },
+            buildJsonObject {
+                put("icon", "💰")
+                put("title_en", "Smart Cost Splitting")
+                put("title_vi", "Chia chi phí thông minh")
+                put("description_en", "Auto-calculate and split expenses fairly")
+                put("description_vi", "Tự động tính toán và chia chi phí công bằng")
+                put("order", 2)
+                put("active", true)
+            },
+            buildJsonObject {
+                put("icon", "📅")
+                put("title_en", "AI Itinerary")
+                put("title_vi", "Lịch trình AI")
+                put("description_en", "Generate optimized day-by-day plans")
+                put("description_vi", "Tạo kế hoạch tối ưu theo từng ngày")
+                put("order", 3)
+                put("active", true)
+            },
+            buildJsonObject {
+                put("icon", "📸")
+                put("title_en", "Shared Album")
+                put("title_vi", "Album chung")
+                put("description_en", "Save and share photos with group")
+                put("description_vi", "Lưu và chia sẻ ảnh cùng nhóm bạn")
+                put("order", 4)
+                put("active", true)
+            }
         )
 
         features.forEach { feature ->
             try {
                 val response: HttpResponse = client.post("/api/collections/features/records") {
                     contentType(ContentType.Application.Json)
-                    PocketBaseClient.authToken?.let {
-                        header("Authorization", it)
-                    }
+                    PocketBaseClient.authToken?.let { header("Authorization", it) }
                     setBody(feature)
                 }
 

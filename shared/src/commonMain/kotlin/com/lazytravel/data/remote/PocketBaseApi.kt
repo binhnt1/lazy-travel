@@ -7,6 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * PocketBase API Service
@@ -25,7 +28,7 @@ object PocketBaseApi {
     suspend fun adminAuth(email: String, password: String): Result<AdminAuthResponse> {
         return try {
             val client = PocketBaseClient.getClient()
-            val response: HttpResponse = client.post("/api/admins/auth-with-password") {
+            val response: HttpResponse = client.post("/api/collections/_superusers/auth-with-password") {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf(
                     "identity" to email,
@@ -81,6 +84,43 @@ object PocketBaseApi {
             response.status.isSuccess()
         } catch (e: Exception) {
             false
+        }
+    }
+
+    /**
+     * Get collection id by collection name
+     * Returns null if not found
+     */
+    suspend fun getCollectionId(collectionName: String): String? {
+        val client = PocketBaseClient.getClient()
+
+        try {
+            val response: HttpResponse = client.get("/api/collections") {
+                contentType(ContentType.Application.Json)
+                PocketBaseClient.authToken?.let { header("Authorization", it) }
+            }
+
+            if (!response.status.isSuccess()) {
+                println("❌ Failed to get collections list: ${response.status}")
+                return null
+            }
+
+            val body = response.bodyAsText()
+            val jsonArray = Json.parseToJsonElement(body).jsonArray
+
+            for (item in jsonArray) {
+                val obj = item.jsonObject
+                if (obj["name"]?.jsonPrimitive?.content == collectionName) {
+                    return obj["id"]?.jsonPrimitive?.content
+                }
+            }
+
+            // Not found
+            return null
+
+        } catch (e: Exception) {
+            println("❌ Error fetching collections: ${e.message}")
+            return null
         }
     }
 
