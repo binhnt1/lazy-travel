@@ -1,0 +1,33 @@
+{
+  "app_name": "LazyTravel",
+
+  "hero_title": "Plan your trip easily with friends",
+  "hero_subtitle": "Vote democratically, split costs fairly, and enjoy hassle-free group travel",
+  "get_started_free": "Get Started Free",
+  "login": "Login",
+
+  "stats_users": "Users",
+  "stats_trips": "Trips",
+  "stats_destinations": "Destinations",
+  "stats_rating": "Rating",
+
+  "features_title": "Why Choose TravelVote?",
+  "feature_voting": "Democratic Voting",
+  "feature_voting_desc": "Everyone votes on destinations, hotels & activities",
+  "feature_cost_splitting": "Smart Cost Splitting",
+  "feature_cost_splitting_desc": "Auto-calculate and split expenses fairly",
+  "feature_ai_itinerary": "AI Itinerary",
+  "feature_ai_itinerary_desc": "Generate optimized day-by-day plans",
+  "feature_shared_album": "Shared Album",
+  "feature_shared_album_desc": "Save and share photos with group",
+
+  "how_it_works": "How It Works",
+  "popular_destinations": "Popular Destinations",
+  "testimonials": "What Travelers Say",
+  "cta_title": "Ready to Start Your Next Adventure?",
+  "cta_button": "Create Free Account",
+  "footer_about": "About",
+  "footer_features": "Features",
+  "footer_pricing": "Pricing",
+  "footer_contact": "Contact"
+}

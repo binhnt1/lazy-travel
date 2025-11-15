@@ -68,7 +68,7 @@ kotlin {
             }
         }
         val androidMain by getting {
-            resources.srcDirs("src/commonMain/resources")
+            resources.srcDirs("src/commonMain/resources", "src/androidMain/resources")
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
                 implementation("io.ktor:ktor-client-android:3.3.2")
