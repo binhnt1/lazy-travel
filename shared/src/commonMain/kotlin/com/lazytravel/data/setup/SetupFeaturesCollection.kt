@@ -42,10 +42,25 @@ object SetupFeaturesCollection {
             val collectionExists = PocketBaseApi.collectionExists(PocketBaseConfig.Collections.FEATURES)
             println("📋 Collection 'features' exists: $collectionExists")
 
-            // 4. Create collection if not exists
-            if (!collectionExists) {
+            // 4. Create collection if not exists and get collection ID
+            val collectionId: String? = if (!collectionExists) {
+                println("📦 Creating 'features' collection...")
                 createFeaturesCollection()
+            } else {
+                println("📋 Collection 'features' already exists, getting id...")
+                getCollectionIdByName(PocketBaseConfig.Collections.FEATURES)
             }
+
+            if (collectionId == null) {
+                println("❌ Failed to get collection id")
+                return Result.failure(Exception("Failed to get collection id"))
+            }
+
+            println("✅ Working with collection id: $collectionId")
+
+            // 5. Update schema and rules (always update to ensure correct structure)
+            println("🔧 Updating schema and public access rules...")
+            updateFeaturesSchema(collectionId)
 
             // 6. Seed production data (only if collection is empty)
             println("🌱 Checking if data seeding is needed...")
@@ -62,6 +77,35 @@ object SetupFeaturesCollection {
             println("❌ Setup failed: ${e.message}")
             e.printStackTrace()
             Result.failure(e)
+        }
+    }
+
+    /**
+     * Get collection ID by name using GET /api/collections/{name}
+     * Returns null if not found
+     */
+    private suspend fun getCollectionIdByName(name: String): String? {
+        return try {
+            val client = PocketBaseClient.getClient()
+            println("🔍 Getting collection id for: $name")
+
+            val response: HttpResponse = client.get("/api/collections/$name") {
+                PocketBaseClient.adminToken?.let { header("Authorization", it) }
+            }
+
+            if (response.status.isSuccess()) {
+                val responseBody = response.bodyAsText()
+                val json = Json.parseToJsonElement(responseBody).jsonObject
+                val id = json["id"]?.jsonPrimitive?.content
+                println("🔍 Collection '$name' id: $id")
+                id
+            } else {
+                println("❌ Failed to get collection: ${response.status}")
+                null
+            }
+        } catch (e: Exception) {
+            println("❌ Error getting collection id: ${e.message}")
+            null
         }
     }
 
@@ -151,13 +195,14 @@ object SetupFeaturesCollection {
 
     /**
      * Check if seeding is needed by counting existing records
-     * Returns true if collection is empty
+     * Also deletes existing records if found (cleanup old data without schema)
+     * Returns true if collection is empty or was cleaned
      */
     private suspend fun checkIfSeedingNeeded(): Boolean {
         return try {
             val client = PocketBaseClient.getClient()
             val response: HttpResponse = client.get("/api/collections/features/records") {
-                parameter("perPage", 1)  // Only need to check if any records exist
+                parameter("perPage", 100)  // Get all records to delete
                 PocketBaseClient.adminToken?.let { header("Authorization", it) }
             }
 
@@ -165,10 +210,31 @@ object SetupFeaturesCollection {
                 val json = Json.parseToJsonElement(response.bodyAsText()).jsonObject
                 val totalItems = json["totalItems"]?.jsonPrimitive?.content?.toIntOrNull() ?: 0
                 println("🌱 Found $totalItems existing records")
-                totalItems == 0  // Need seeding only if empty
+
+                if (totalItems > 0) {
+                    // Delete existing records (they might be incomplete/corrupt)
+                    println("🗑️ Deleting existing records to reseed with proper schema...")
+                    val items = json["items"]?.jsonArray ?: JsonArray(emptyList())
+                    items.forEach { item ->
+                        val recordId = item.jsonObject["id"]?.jsonPrimitive?.content
+                        if (recordId != null) {
+                            try {
+                                client.delete("/api/collections/features/records/$recordId") {
+                                    PocketBaseClient.adminToken?.let { header("Authorization", it) }
+                                }
+                                println("  🗑️ Deleted record: $recordId")
+                            } catch (e: Exception) {
+                                println("  ⚠️ Failed to delete record $recordId: ${e.message}")
+                            }
+                        }
+                    }
+                    println("✅ Cleaned up $totalItems old records")
+                }
+
+                true  // Always seed after cleanup
             } else {
                 println("🌱 Could not check existing records, will attempt seeding")
-                true  // If we can't check, try to seed (will skip duplicates)
+                true
             }
         } catch (e: Exception) {
             println("🌱 Error checking records: ${e.message}, will attempt seeding")
