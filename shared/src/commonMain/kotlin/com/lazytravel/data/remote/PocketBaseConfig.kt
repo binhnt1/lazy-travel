@@ -10,6 +10,9 @@ object PocketBaseConfig {
 
     // Collections
     object Collections {
+        // App Content (Landing page)
+        const val FEATURES = "features"
+
         // Destinations & Tours
         const val DESTINATIONS = "destinations"
         const val TOURS = "tours"

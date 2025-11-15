@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.lazytravel.ui.components.molecules.StatItem
+import com.lazytravel.core.i18n.Strings
+import com.lazytravel.core.i18n.localizedString
 
 /**
  * Stats Bar - Organism
@@ -35,22 +37,22 @@ fun StatsBar(
     ) {
         StatItem(
             number = "50K+",
-            label = "Người dùng"
+            label = localizedString(Strings.statUsers)
         )
 
         StatItem(
             number = "120K",
-            label = "Chuyến đi"
+            label = localizedString(Strings.statTrips)
         )
 
         StatItem(
             number = "180",
-            label = "Điểm đến"
+            label = localizedString(Strings.statDestinations)
         )
 
         StatItem(
             number = "4.8★",
-            label = "Đánh giá"
+            label = localizedString(Strings.statRating)
         )
     }
 }

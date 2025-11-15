@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.lazytravel.ui.components.organisms.FeaturesSection
 import com.lazytravel.ui.components.organisms.HeroSection
 import com.lazytravel.ui.components.organisms.StatsBar
 import com.lazytravel.ui.theme.AppColors
@@ -22,8 +23,8 @@ import com.lazytravel.ui.theme.AppColors
  * Sections:
  * 1. ✅ HeroSection - Main hero with CTA
  * 2. ✅ StatsBar - Usage statistics
- * 3. ⏳ FeaturesSection - Key features (Next)
- * 4. ⏳ HowItWorksSection - 3-step process
+ * 3. ✅ FeaturesSection - Key features (from PocketBase)
+ * 4. ⏳ HowItWorksSection - 3-step process (Next)
  * 5. ⏳ PopularDestinationsSection - Trending destinations
  * 6. ⏳ TestimonialsSection - User testimonials
  * 7. ⏳ CTASection - Final call to action
@@ -52,6 +53,9 @@ fun HomeNoAuthScreen() {
         // 2. Stats Bar - 4 statistics (users, trips, destinations, rating)
         StatsBar()
 
+        // 3. Features Section - Fetches from PocketBase
+        FeaturesSection()
+
         // Placeholder for remaining sections
         Column(
             modifier = Modifier.padding(16.dp),
@@ -66,12 +70,12 @@ fun HomeNoAuthScreen() {
                 color = Color(0xFF4CAF50)
             )
             Text(
-                text = "⏳ Features Section - Building next...",
-                color = Color(0xFFFF9800)
+                text = "✅ FeaturesSection - Completed (PocketBase)",
+                color = Color(0xFF4CAF50)
             )
             Text(
-                text = "⏳ How It Works - Planned",
-                color = Color(0xFF666666)
+                text = "⏳ How It Works - Building next...",
+                color = Color(0xFFFF9800)
             )
             Text(
                 text = "⏳ Popular Destinations - Planned",
