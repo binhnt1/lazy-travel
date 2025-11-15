@@ -1,8 +1,12 @@
 package com.lazytravel
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.ComposeUIViewController
 import com.lazytravel.data.remote.PocketBaseClient
+import com.lazytravel.data.setup.SetupFeaturesCollection
 import com.lazytravel.ui.screens.HomeNoAuthScreen
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import platform.UIKit.UIViewController
 
 /**
@@ -18,6 +22,17 @@ fun MainViewController(): UIViewController {
     // Initialize PocketBase client (only once)
     PocketBaseClient.initialize()
     println("✅ PocketBase client initialized for iOS")
+
+    // Run production data setup (one-time execution)
+    // TODO: Remove after first successful run
+    GlobalScope.launch {
+        println("\n🔧 Running one-time setup for production data...")
+        val result = SetupFeaturesCollection.setup()
+        result.fold(
+            onSuccess = { message -> println("$message\n") },
+            onFailure = { error -> println("❌ Setup error: ${error.message}\n") }
+        )
+    }
 
     return ComposeUIViewController(
         configure = {
