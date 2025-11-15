@@ -32,16 +32,10 @@ object LocalizationManager {
         if (translationsCache.containsKey(language)) return
 
         try {
-            // Load JSON file using platform-specific ResourceLoader
             val jsonContent = ResourceLoader.loadJsonFile(language.jsonFile)
-
-            // Parse JSON to Map<String, String>
             val translations = json.decodeFromString<Map<String, String>>(jsonContent)
-
             translationsCache[language] = translations
-            println("✅ Loaded ${translations.size} translations for ${language.displayName} from ${language.jsonFile}")
         } catch (e: Exception) {
-            println("❌ Failed to load translations for ${language.displayName}: ${e.message}")
             e.printStackTrace()
             translationsCache[language] = emptyMap()
         }

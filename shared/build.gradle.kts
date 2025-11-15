@@ -45,6 +45,7 @@ kotlin {
 
     sourceSets {
         val commonMain by getting {
+            resources.srcDirs("src/commonMain/resources")
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
@@ -68,7 +69,6 @@ kotlin {
             }
         }
         val androidMain by getting {
-            resources.srcDirs("src/commonMain/resources", "src/androidMain/resources")
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
                 implementation("io.ktor:ktor-client-android:3.3.2")
@@ -81,7 +81,6 @@ kotlin {
         // iOS source sets - automatically created by Default Hierarchy Template
         // All dependencies (iosMain -> commonMain, iosX64Main -> iosMain, etc.) are automatic
         val iosMain by getting {
-            resources.srcDirs("src/commonMain/resources")
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:3.3.2")
             }

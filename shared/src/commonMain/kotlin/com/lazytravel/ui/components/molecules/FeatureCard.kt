@@ -58,7 +58,7 @@ fun FeatureCard(
 
         // Title (translated)
         Text(
-            text = localizedString(title),
+            text = title,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF212121),
@@ -68,7 +68,7 @@ fun FeatureCard(
 
         // Description (translated)
         Text(
-            text = localizedString(description),
+            text = description,
             fontSize = 10.sp,
             color = Color(0xFF666666),
             textAlign = TextAlign.Center,
