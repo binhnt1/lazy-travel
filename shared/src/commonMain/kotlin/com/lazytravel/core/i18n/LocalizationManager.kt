@@ -46,7 +46,19 @@ object LocalizationManager {
 
     /**
      * Temporary hardcoded translations
-     * TODO: Replace with actual JSON file loading
+     *
+     * TODO: Replace with actual JSON file loading using expect/actual pattern:
+     *
+     * expect fun loadJsonResource(fileName: String): String
+     *
+     * actual fun loadJsonResource(fileName: String): String {
+     *     // Android: context.assets.open(fileName).bufferedReader().use { it.readText() }
+     *     // iOS: NSBundle.mainBundle.pathForResource(...).readText()
+     * }
+     *
+     * Then parse with: Json.decodeFromString<Map<String, String>>(jsonContent)
+     *
+     * For now, content matches lang_vi.json and lang_en.json files in resources/
      */
     private fun getHardcodedTranslations(language: Language): Map<String, String> {
         return when (language) {
