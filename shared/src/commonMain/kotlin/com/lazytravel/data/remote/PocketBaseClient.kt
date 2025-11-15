@@ -35,11 +35,11 @@ object PocketBaseClient {
 
     /**
      * Backward compatibility - returns admin token by default
+     * Read-only property to avoid JVM signature clash with setAuthToken()
      */
     @Deprecated("Use adminToken or collectionToken directly", ReplaceWith("adminToken"))
-    var authToken: String?
+    val authToken: String?
         get() = adminToken
-        private set(value) { adminToken = value }
 
     /**
      * Initialize Ktor HTTP client
