@@ -113,14 +113,27 @@ object PocketBaseApi {
     }
 
     /**
-     * Check if collection exists
+     * Check if collection exists (admin only)
+     * Requires adminToken
      */
     suspend fun collectionExists(name: String): Boolean {
         return try {
             val client = PocketBaseClient.getClient()
-            val response: HttpResponse = client.get("/api/collections/$name")
-            response.status.isSuccess()
+            println("🔍 Checking if collection '$name' exists...")
+
+            val response: HttpResponse = client.get("/api/collections/$name") {
+                // Need admin token to access collection metadata
+                PocketBaseClient.adminToken?.let {
+                    header("Authorization", it)
+                    println("🔍 Using admin token for collection check")
+                }
+            }
+
+            val exists = response.status.isSuccess()
+            println("🔍 Collection '$name' exists: $exists (status: ${response.status})")
+            exists
         } catch (e: Exception) {
+            println("🔍 Collection existence check failed: ${e.message}")
             false
         }
     }

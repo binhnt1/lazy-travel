@@ -63,9 +63,15 @@ object SetupFeaturesCollection {
             println("🔧 Updating schema and public access rules...")
             updateFeaturesSchema(collectionId)
 
-            // 6. Seed production data
-            println("🌱 Seeding production features data...")
-            seedFeaturesData()
+            // 6. Seed production data (only if collection is empty)
+            println("🌱 Checking if data seeding is needed...")
+            val needsSeeding = checkIfSeedingNeeded()
+            if (needsSeeding) {
+                println("🌱 Seeding production features data...")
+                seedFeaturesData()
+            } else {
+                println("✅ Collection already has data, skipping seeding")
+            }
 
             Result.success("✅ Features collection setup complete!")
         } catch (e: Exception) {
@@ -156,6 +162,33 @@ object SetupFeaturesCollection {
             println("✅ Schema and rules updated successfully for collection id: $collectionId")
         } else {
             println("❌ Failed to update schema: ${patchResponse.status}")
+        }
+    }
+
+    /**
+     * Check if seeding is needed by counting existing records
+     * Returns true if collection is empty
+     */
+    private suspend fun checkIfSeedingNeeded(): Boolean {
+        return try {
+            val client = PocketBaseClient.getClient()
+            val response: HttpResponse = client.get("/api/collections/features/records") {
+                parameter("perPage", 1)  // Only need to check if any records exist
+                PocketBaseClient.adminToken?.let { header("Authorization", it) }
+            }
+
+            if (response.status.isSuccess()) {
+                val json = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+                val totalItems = json["totalItems"]?.jsonPrimitive?.content?.toIntOrNull() ?: 0
+                println("🌱 Found $totalItems existing records")
+                totalItems == 0  // Need seeding only if empty
+            } else {
+                println("🌱 Could not check existing records, will attempt seeding")
+                true  // If we can't check, try to seed (will skip duplicates)
+            }
+        } catch (e: Exception) {
+            println("🌱 Error checking records: ${e.message}, will attempt seeding")
+            true
         }
     }
 
