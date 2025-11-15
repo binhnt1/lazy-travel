@@ -155,61 +155,50 @@ object SetupFeaturesCollection {
      * Update schema of features collection
      * Uses adminToken for authorization
      *
-     * PocketBase schema format requires specific field structure
+     * PocketBase schema format: Let PocketBase generate field IDs
+     * Only include: name, type, required, options (minimal fields)
      */
     private suspend fun updateFeaturesSchema(collectionId: String) {
-        // Build schema using correct PocketBase format
+        // Build schema with simplified format (no id, presentable, unique)
         val schema = buildJsonArray {
             // icon field - text
             add(buildJsonObject {
-                put("id", "text_icon")
                 put("name", "icon")
                 put("type", "text")
                 put("required", true)
-                put("presentable", false)
-                put("unique", false)
                 put("options", buildJsonObject {
                     put("min", JsonNull)
-                    put("max", JsonNull)
+                    put("max", 50)
                     put("pattern", "")
                 })
             })
             // title field - translation key
             add(buildJsonObject {
-                put("id", "text_title")
                 put("name", "title")
                 put("type", "text")
                 put("required", true)
-                put("presentable", true)
-                put("unique", false)
                 put("options", buildJsonObject {
                     put("min", JsonNull)
-                    put("max", JsonNull)
+                    put("max", 100)
                     put("pattern", "")
                 })
             })
             // description field - translation key
             add(buildJsonObject {
-                put("id", "text_desc")
                 put("name", "description")
                 put("type", "text")
                 put("required", true)
-                put("presentable", false)
-                put("unique", false)
                 put("options", buildJsonObject {
                     put("min", JsonNull)
-                    put("max", JsonNull)
+                    put("max", 200)
                     put("pattern", "")
                 })
             })
             // order field - number
             add(buildJsonObject {
-                put("id", "number_order")
                 put("name", "order")
                 put("type", "number")
                 put("required", true)
-                put("presentable", false)
-                put("unique", false)
                 put("options", buildJsonObject {
                     put("min", JsonNull)
                     put("max", JsonNull)
@@ -218,12 +207,9 @@ object SetupFeaturesCollection {
             })
             // active field - bool
             add(buildJsonObject {
-                put("id", "bool_active")
                 put("name", "active")
                 put("type", "bool")
                 put("required", false)
-                put("presentable", false)
-                put("unique", false)
                 put("options", buildJsonObject {})
             })
         }
@@ -237,7 +223,7 @@ object SetupFeaturesCollection {
         }
 
         println("🔧 Updating schema and rules for collection id: $collectionId")
-        println("🔧 Schema JSON: $schema")
+        println("🔧 Schema fields: icon, title, description, order, active")
 
         val patchResponse: HttpResponse = PocketBaseClient.getClient().patch("/api/collections/$collectionId") {
             contentType(ContentType.Application.Json)
@@ -248,20 +234,22 @@ object SetupFeaturesCollection {
 
         val patchBody = patchResponse.bodyAsText()
         println("🔧 Update response: ${patchResponse.status}")
-        println("🔧 Response body: $patchBody")
 
         if (patchResponse.status.isSuccess()) {
             // Verify schema was applied
             val responseJson = Json.parseToJsonElement(patchBody).jsonObject
-            val fields = responseJson["fields"]?.jsonArray
-            println("✅ Schema updated - Fields count: ${fields?.size ?: 0}")
-            if (fields != null && fields.size > 1) {
-                println("✅ Schema and rules updated successfully!")
-            } else {
-                println("⚠️ Schema update may have failed - only ${fields?.size ?: 0} fields")
+            val schema = responseJson["schema"]?.jsonArray
+            println("✅ Schema updated successfully!")
+            println("✅ Schema has ${schema?.size ?: 0} custom fields")
+
+            // List all field names
+            schema?.forEach { field ->
+                val fieldName = field.jsonObject["name"]?.jsonPrimitive?.content
+                println("   ✓ Field: $fieldName")
             }
         } else {
             println("❌ Failed to update schema: ${patchResponse.status}")
+            println("❌ Response: $patchBody")
         }
     }
 
