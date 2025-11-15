@@ -2,261 +2,242 @@ package com.lazytravel.data.remote.schema
 
 import com.lazytravel.data.remote.PocketBaseApi
 import com.lazytravel.data.remote.PocketBaseClient
-import com.lazytravel.data.remote.PocketBaseConfig
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.*
 
 /**
- * Schema Migration Engine
- *
- * Syncs CollectionSchema definitions to PocketBase server.
- * Handles creating and updating collections with full schema definitions.
+ * Schema Migration System
+ * Automatically creates or updates collections with proper schemas
  */
 object SchemaMigration {
 
     /**
-     * Run migrations for multiple schemas
+     * Migrate multiple schemas
+     * Returns true if all migrations succeeded
      */
-    suspend fun migrate(vararg schemas: CollectionSchema): Boolean = withContext(Dispatchers.Default) {
-        try {
-            println("🚀 Starting schema migration...")
+    suspend fun migrate(vararg schemas: CollectionSchema): Boolean {
+        var successCount = 0
+        var failCount = 0
 
-            // Authenticate as admin
-            val authResult = PocketBaseApi.adminAuth(
-                PocketBaseConfig.Admin.EMAIL,
-                PocketBaseConfig.Admin.PASSWORD
-            )
-
-            if (authResult.isFailure) {
-                println("❌ Admin auth failed: ${authResult.exceptionOrNull()?.message}")
-                println("⚠️ Skipping schema migration. Please check admin credentials.")
-                return@withContext false
+        schemas.forEach { schema ->
+            try {
+                val result = migrateCollection(schema)
+                if (result) successCount++ else failCount++
+            } catch (e: Exception) {
+                println("❌ Migration failed for '${schema.name}': ${e.message}")
+                failCount++
             }
-
-            println("✅ Admin authenticated")
-
-            // Migrate each schema
-            var successCount = 0
-            var failCount = 0
-
-            schemas.forEach { schema ->
-                try {
-                    val result = migrateSchema(schema)
-                    if (result) {
-                        successCount++
-                    } else {
-                        failCount++
-                    }
-                } catch (e: Exception) {
-                    println("❌ Error migrating ${schema.name}: ${e.message}")
-                    failCount++
-                }
-            }
-
-            println("✅ Schema migration complete: $successCount succeeded, $failCount failed")
-            return@withContext failCount == 0
-
-        } catch (e: Exception) {
-            println("❌ Schema migration failed: ${e.message}")
-            return@withContext false
         }
+
+        println("✅ Schema migration complete: $successCount succeeded, $failCount failed")
+        return failCount == 0
     }
 
     /**
      * Migrate a single collection schema
      */
-    private suspend fun migrateSchema(schema: CollectionSchema): Boolean {
+    private suspend fun migrateCollection(schema: CollectionSchema): Boolean {
         return try {
-            // Validate schema
-            if (schema.name.isEmpty()) {
-                println("❌ Schema name cannot be empty")
-                return false
-            }
-
             val exists = PocketBaseApi.collectionExists(schema.name)
 
             if (exists) {
                 println("🔄 Updating collection '${schema.name}'...")
-                updateCollection(schema)
+                updateCollectionSchema(schema)
             } else {
-                println("➕ Creating collection '${schema.name}'...")
-                createCollection(schema)
+                println("📦 Creating collection '${schema.name}'...")
+                createCollectionWithSchema(schema)
             }
-
         } catch (e: Exception) {
-            println("❌ Failed to migrate '${schema.name}': ${e.message}")
+            println("❌ Error migrating '${schema.name}': ${e.message}")
+            e.printStackTrace()
             false
         }
     }
 
     /**
-     * Create new collection with schema
+     * Create collection with schema
      */
-    private suspend fun createCollection(schema: CollectionSchema): Boolean {
-        return try {
-            val client = PocketBaseClient.getClient()
-            val payload = buildCollectionPayload(schema)
+    private suspend fun createCollectionWithSchema(schema: CollectionSchema): Boolean {
+        val client = PocketBaseClient.getClient()
 
+        // Convert schema to JSON
+        val schemaJson = buildSchemaJson(schema)
+
+        // DEBUG: Print schema JSON being sent
+        println("📤 Sending schema JSON:")
+        println(schemaJson.toString())
+
+        try {
             val response: HttpResponse = client.post("/api/collections") {
                 contentType(ContentType.Application.Json)
-                PocketBaseClient.authToken?.let {
-                    header("Authorization", it)
-                }
-                setBody(payload)
+                PocketBaseClient.adminToken?.let { header("Authorization", it) }
+                setBody(schemaJson.toString())
             }
 
-            if (response.status.isSuccess()) {
+            val success = response.status.isSuccess()
+            if (success) {
+                val responseBody = response.bodyAsText()
                 println("✅ Created collection '${schema.name}'")
-                true
+                println("📥 Response: $responseBody")
             } else {
+                val body = response.bodyAsText()
                 println("❌ Failed to create '${schema.name}': ${response.status}")
-                println("   Response: ${response.bodyAsText()}")
-                false
+                println("   Response: $body")
             }
+            return success
         } catch (e: Exception) {
             println("❌ Error creating '${schema.name}': ${e.message}")
-            false
+            e.printStackTrace()
+            return false
         }
     }
 
     /**
-     * Update existing collection with schema
+     * Update existing collection schema
      */
-    private suspend fun updateCollection(schema: CollectionSchema): Boolean {
-        return try {
-            val client = PocketBaseClient.getClient()
-            val payload = buildCollectionPayload(schema)
+    private suspend fun updateCollectionSchema(schema: CollectionSchema): Boolean {
+        val client = PocketBaseClient.getClient()
 
-            // Get collection ID first
-            val collectionId = getCollectionId(schema.name)
-            if (collectionId == null) {
-                println("❌ Could not get ID for collection '${schema.name}'")
+        try {
+            // Get current collection data
+            val getResponse: HttpResponse = client.get("/api/collections/${schema.name}") {
+                PocketBaseClient.adminToken?.let { header("Authorization", it) }
+            }
+
+            if (!getResponse.status.isSuccess()) {
+                println("❌ Failed to fetch collection '${schema.name}'")
                 return false
             }
 
-            val response: HttpResponse = client.patch("/api/collections/$collectionId") {
-                contentType(ContentType.Application.Json)
-                PocketBaseClient.authToken?.let {
-                    header("Authorization", it)
-                }
-                setBody(payload)
+            val currentData = Json.parseToJsonElement(getResponse.bodyAsText()).jsonObject
+            val collectionId = currentData["id"]?.jsonPrimitive?.content
+
+            if (collectionId == null) {
+                println("❌ Could not get collection ID for '${schema.name}'")
+                return false
             }
 
-            if (response.status.isSuccess()) {
-                println("✅ Updated collection '${schema.name}'")
-                true
-            } else {
-                println("❌ Failed to update '${schema.name}': ${response.status}")
-                println("   Response: ${response.bodyAsText()}")
-                false
+            // Build update JSON (merge with current data)
+            val updateJson = buildSchemaJson(schema)
+
+            // Update collection
+            val updateResponse: HttpResponse = client.patch("/api/collections/$collectionId") {
+                contentType(ContentType.Application.Json)
+                PocketBaseClient.adminToken?.let { header("Authorization", it) }
+                setBody(updateJson.toString())
             }
+
+            val success = updateResponse.status.isSuccess()
+            if (success) {
+                println("✅ Updated collection '${schema.name}'")
+            } else {
+                val body = updateResponse.bodyAsText()
+                println("❌ Failed to update '${schema.name}': ${updateResponse.status}")
+                println("   Response: $body")
+            }
+            return success
         } catch (e: Exception) {
             println("❌ Error updating '${schema.name}': ${e.message}")
-            false
+            e.printStackTrace()
+            return false
         }
     }
 
     /**
-     * Get collection ID by name
+     * Build JSON object for PocketBase API
+     * Converts CollectionSchema to JSON manually to avoid serialization issues
      */
-    private suspend fun getCollectionId(name: String): String? {
-        return try {
-            val client = PocketBaseClient.getClient()
-            val response: HttpResponse = client.get("/api/collections/$name") {
-                PocketBaseClient.authToken?.let {
-                    header("Authorization", it)
-                }
-            }
+    private fun buildSchemaJson(schema: CollectionSchema): JsonObject {
+        return buildJsonObject {
+            put("name", schema.name)
+            put("type", schema.type.value)
 
-            if (response.status.isSuccess()) {
-                val json = kotlinx.serialization.json.Json {
-                    ignoreUnknownKeys = true
+            // Convert fields to JSON array
+            // PocketBase v0.23+ uses "fields" instead of "schema"
+            put("fields", buildJsonArray {
+                schema.schema.forEach { field ->
+                    add(buildFieldJson(field))
                 }
-                val jsonElement = json.parseToJsonElement(response.bodyAsText())
-                jsonElement.jsonObject["id"]?.jsonPrimitive?.content
+            })
+
+            // API Rules
+            if (schema.listRule != null) {
+                put("listRule", schema.listRule)
             } else {
-                null
+                put("listRule", JsonNull)
             }
-        } catch (e: Exception) {
-            null
+
+            if (schema.viewRule != null) {
+                put("viewRule", schema.viewRule)
+            } else {
+                put("viewRule", JsonNull)
+            }
+
+            if (schema.createRule != null) {
+                put("createRule", schema.createRule)
+            } else {
+                put("createRule", JsonNull)
+            }
+
+            if (schema.updateRule != null) {
+                put("updateRule", schema.updateRule)
+            } else {
+                put("updateRule", JsonNull)
+            }
+
+            if (schema.deleteRule != null) {
+                put("deleteRule", schema.deleteRule)
+            } else {
+                put("deleteRule", JsonNull)
+            }
+
+            // Indexes (if any)
+            if (schema.indexes.isNotEmpty()) {
+                put("indexes", buildJsonArray {
+                    schema.indexes.forEach { add(it) }
+                })
+            }
         }
     }
 
     /**
-     * Build PocketBase API payload from CollectionSchema
+     * Build JSON for a single field
+     * Manually converts field options to proper JSON types
      */
-    private fun buildCollectionPayload(schema: CollectionSchema): Map<String, Any> {
-        val payload = mutableMapOf<String, Any>(
-            "name" to schema.name,
-            "type" to schema.type.value,
-            "schema" to schema.schema.map { buildFieldPayload(it) }
-        )
+    private fun buildFieldJson(field: FieldSchema): JsonObject {
+        return buildJsonObject {
+            put("name", field.name)
+            put("type", field.type.value)
+            put("required", field.required)
 
-        // Add indexes if any
-        if (schema.indexes.isNotEmpty()) {
-            payload["indexes"] = schema.indexes
-        }
-
-        // Add API rules if defined
-        schema.listRule?.let { payload["listRule"] = it }
-        schema.viewRule?.let { payload["viewRule"] = it }
-        schema.createRule?.let { payload["createRule"] = it }
-        schema.updateRule?.let { payload["updateRule"] = it }
-        schema.deleteRule?.let { payload["deleteRule"] = it }
-
-        return payload
-    }
-
-    /**
-     * Build field payload from FieldSchema
-     */
-    private fun buildFieldPayload(field: FieldSchema): Map<String, Any> {
-        val payload = mutableMapOf<String, Any>(
-            "name" to field.name,
-            "type" to field.type.value,
-            "required" to field.required
-        )
-
-        // Add options if any
-        if (field.options.isNotEmpty()) {
-            payload["options"] = field.options
-        }
-
-        return payload
-    }
-
-    /**
-     * Utility: Print schema info for debugging
-     */
-    fun printSchema(schema: CollectionSchema) {
-        println("\n📋 Schema: ${schema.name}")
-        println("   Type: ${schema.type.value}")
-        println("   Fields:")
-        schema.schema.forEach { field ->
-            val required = if (field.required) "*" else ""
-            println("      - ${field.name}$required (${field.type.value})")
+            // Convert options to JSON object
             if (field.options.isNotEmpty()) {
-                println("        Options: ${field.options}")
+                put("options", buildJsonObject {
+                    field.options.forEach { (key, value) ->
+                        when (value) {
+                            is String -> put(key, value)
+                            is Int -> put(key, value)
+                            is Double -> put(key, value)
+                            is Boolean -> put(key, value)
+                            is List<*> -> {
+                                put(key, buildJsonArray {
+                                    value.forEach { item ->
+                                        when (item) {
+                                            is String -> add(item)
+                                            is Number -> add(item.toDouble())
+                                            is Boolean -> add(item)
+                                            else -> add(item.toString())
+                                        }
+                                    }
+                                })
+                            }
+                            else -> put(key, value.toString())
+                        }
+                    }
+                })
             }
         }
-        if (schema.indexes.isNotEmpty()) {
-            println("   Indexes: ${schema.indexes.size}")
-        }
-        println()
     }
 }
-
-/**
- * Extension function to convert kotlinx.serialization JsonElement to JsonObject
- */
-private val kotlinx.serialization.json.JsonElement.jsonObject: kotlinx.serialization.json.JsonObject
-    get() = this as kotlinx.serialization.json.JsonObject
-
-/**
- * Extension function to convert kotlinx.serialization JsonElement to JsonPrimitive
- */
-private val kotlinx.serialization.json.JsonElement.jsonPrimitive: kotlinx.serialization.json.JsonPrimitive
-    get() = this as kotlinx.serialization.json.JsonPrimitive

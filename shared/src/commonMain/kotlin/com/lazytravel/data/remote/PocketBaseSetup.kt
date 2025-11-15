@@ -37,6 +37,9 @@ object PocketBaseSetup {
 
             // Run schema migrations for collections with defined schemas
             val migrationResult = SchemaMigration.migrate(
+                // App Content
+                featuresSchema,
+
                 // Destinations
                 destinationsSchema,
 

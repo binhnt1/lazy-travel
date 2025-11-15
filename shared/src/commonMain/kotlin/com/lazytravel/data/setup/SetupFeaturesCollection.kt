@@ -3,6 +3,8 @@ package com.lazytravel.data.setup
 import com.lazytravel.data.remote.PocketBaseApi
 import com.lazytravel.data.remote.PocketBaseClient
 import com.lazytravel.data.remote.PocketBaseConfig
+import com.lazytravel.data.remote.schema.SchemaMigration
+import com.lazytravel.data.remote.schema.featuresSchema
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -11,14 +13,14 @@ import kotlinx.serialization.json.*
 
 /**
  * Setup Features Collection on PocketBase Server
- * Creates collection, updates schema, and seeds production data
+ * Uses schema migration system for consistency
  */
 object SetupFeaturesCollection {
 
     /**
-     * Full setup: Admin auth + Delete old collection + Create with schema + Seed data
+     * Full setup: Admin auth + Schema migration + Seed data
      */
-    suspend fun setup(): Result<String> {
+    suspend fun setup(recreate: Boolean = false): Result<String> {
         return try {
             println("🚀 Starting Features Collection setup...")
 
@@ -38,34 +40,43 @@ object SetupFeaturesCollection {
             }
             println("✅ Admin authenticated")
 
-            // 3. Check if collection exists - if yes, DELETE it to recreate with proper schema
-            val collectionExists = PocketBaseApi.collectionExists(PocketBaseConfig.Collections.FEATURES)
-            println("📋 Collection 'features' exists: $collectionExists")
-
-            if (collectionExists) {
-                println("🗑️ Deleting existing collection to recreate with proper schema...")
-                deleteCollection(PocketBaseConfig.Collections.FEATURES)
+            // 3. If recreate flag is true, delete existing collection
+            if (recreate) {
+                val exists = PocketBaseApi.collectionExists(PocketBaseConfig.Collections.FEATURES)
+                if (exists) {
+                    println("🗑️ Deleting existing collection to recreate...")
+                    deleteCollection(PocketBaseConfig.Collections.FEATURES)
+                    delay(500) // Wait for deletion to complete
+                }
             }
 
-            // 4. Create collection WITH schema from the start (like JS SDK example)
-            println("📦 Creating 'features' collection with schema...")
-            val collectionId = createFeaturesCollectionWithSchema()
+            // 4. Run schema migration (will create or update collection)
+            println("📦 Running schema migration for 'features' collection...")
+            val migrationSuccess = SchemaMigration.migrate(featuresSchema)
 
-            if (collectionId == null) {
-                println("❌ Failed to create collection")
-                return Result.failure(Exception("Failed to create collection"))
+            if (!migrationSuccess) {
+                return Result.failure(Exception("Schema migration failed"))
+            }
+            println("✅ Schema migration successful")
+
+            // 5. Get collection ID for verification
+            val collectionId = PocketBaseApi.getCollectionId(PocketBaseConfig.Collections.FEATURES)
+            if (collectionId != null) {
+                println("✅ Collection ID: $collectionId")
+                verifySchema(collectionId)
             }
 
-            println("✅ Collection created with id: $collectionId")
+            // 6. Clear old records (if not recreated)
+            if (!recreate) {
+                println("🧹 Clearing old records...")
+                clearAllRecords()
+            }
 
-            // 5. Verify schema was applied
-            verifySchema(collectionId)
-
-            // 6. Seed production data
+            // 7. Seed production data
             println("🌱 Seeding production features data...")
             seedFeaturesData()
 
-            // 7. Verify a seeded record has all fields
+            // 8. Verify a seeded record has all fields
             println("🔍 Verifying seeded records...")
             verifySeededRecord()
 
@@ -79,7 +90,6 @@ object SetupFeaturesCollection {
 
     /**
      * Delete collection by name
-     * Uses adminToken for authorization
      */
     private suspend fun deleteCollection(name: String) {
         val client = PocketBaseClient.getClient()
@@ -99,81 +109,42 @@ object SetupFeaturesCollection {
     }
 
     /**
-     * Create features collection WITH schema in one call
-     * Matches PocketBase JS SDK approach: pb.collections.create({ name, type, schema })
+     * Clear all records from features collection
      */
-    private suspend fun createFeaturesCollectionWithSchema(): String? {
+    private suspend fun clearAllRecords() {
         val client = PocketBaseClient.getClient()
+        try {
+            // Fetch all record IDs
+            val response: HttpResponse = client.get("/api/collections/features/records") {
+                parameter("perPage", 500)
+                PocketBaseClient.adminToken?.let { header("Authorization", it) }
+            }
 
-        // Build schema array - MINIMAL format (no options)
-        val schema = buildJsonArray {
-            // icon field - text
-            add(buildJsonObject {
-                put("name", "icon")
-                put("type", "text")
-                put("required", true)
-            })
-            // title field - translation key
-            add(buildJsonObject {
-                put("name", "title")
-                put("type", "text")
-                put("required", true)
-            })
-            // description field - translation key
-            add(buildJsonObject {
-                put("name", "description")
-                put("type", "text")
-                put("required", true)
-            })
-            // order field - number
-            add(buildJsonObject {
-                put("name", "order")
-                put("type", "number")
-                put("required", true)
-            })
-            // active field - bool
-            add(buildJsonObject {
-                put("name", "active")
-                put("type", "bool")
-                put("required", false)
-            })
+            if (response.status.isSuccess()) {
+                val json = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+                val items = json["items"]?.jsonArray ?: return
+
+                println("🧹 Deleting ${items.size} old records...")
+
+                items.forEach { item ->
+                    val recordId = item.jsonObject["id"]?.jsonPrimitive?.content
+                    if (recordId != null) {
+                        try {
+                            client.delete("/api/collections/features/records/$recordId") {
+                                PocketBaseClient.adminToken?.let { header("Authorization", it) }
+                            }
+                        } catch (e: Exception) {
+                            println("⚠️ Failed to delete record $recordId")
+                        }
+                    }
+                }
+
+                println("✅ Cleared all old records")
+                delay(500) // Wait for deletions to complete
+            }
+        } catch (e: Exception) {
+            println("⚠️ Error clearing records: ${e.message}")
         }
-
-        // Create collection with schema (like JS SDK)
-        val createBody = buildJsonObject {
-            put("name", "features")
-            put("type", "base")
-            put("schema", schema)
-            put("listRule", "")   // Public read
-            put("viewRule", "")   // Public read
-            put("createRule", JsonNull)  // No public create
-            put("updateRule", JsonNull)  // No public update
-            put("deleteRule", JsonNull)  // No public delete
-        }
-
-        println("📦 Creating collection with schema...")
-        println("📦 Schema has ${schema.size} fields: icon, title, description, order, active")
-
-        val response: HttpResponse = client.post("/api/collections") {
-            contentType(ContentType.Application.Json)
-            PocketBaseClient.adminToken?.let { header("Authorization", it) }
-            setBody(createBody)
-        }
-
-        val responseBody = response.bodyAsText()
-        println("📦 Response status: ${response.status}")
-        println("📦 Response body: $responseBody")
-
-        if (!response.status.isSuccess()) {
-            println("❌ Failed to create collection: ${response.status}")
-            return null
-        }
-
-        // Parse response to get collection id
-        val json = Json.parseToJsonElement(responseBody).jsonObject
-        val collectionId = json["id"]?.jsonPrimitive?.content
-
-        return collectionId
     }
 
     /**
@@ -205,7 +176,6 @@ object SetupFeaturesCollection {
         }
     }
 
-
     /**
      * Verify seeded records have all custom fields
      */
@@ -234,21 +204,14 @@ object SetupFeaturesCollection {
                     }
 
                     // Check for our custom fields
-                    val hasIcon = firstRecord.containsKey("icon")
-                    val hasTitle = firstRecord.containsKey("title")
-                    val hasDescription = firstRecord.containsKey("description")
-                    val hasOrder = firstRecord.containsKey("order")
-                    val hasActive = firstRecord.containsKey("active")
+                    val requiredFields = listOf("icon", "title", "description", "order", "active")
+                    val missingFields = requiredFields.filter { !firstRecord.containsKey(it) }
 
-                    if (hasIcon && hasTitle && hasDescription && hasOrder && hasActive) {
+                    if (missingFields.isEmpty()) {
                         println("✅ Record has ALL custom fields!")
                     } else {
                         println("❌ Record MISSING fields:")
-                        if (!hasIcon) println("   ❌ icon")
-                        if (!hasTitle) println("   ❌ title")
-                        if (!hasDescription) println("   ❌ description")
-                        if (!hasOrder) println("   ❌ order")
-                        if (!hasActive) println("   ❌ active")
+                        missingFields.forEach { println("   ❌ $it") }
                     }
                 } else {
                     println("⚠️ No records found")
