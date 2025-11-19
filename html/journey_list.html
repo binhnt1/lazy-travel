@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm Bạn Đồng Hành - Lazy Travel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #F5F5F5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: #FAFAFA;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            padding: 16px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .header-title {
+            flex: 1;
+        }
+
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .header-title p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 12px;
+            gap: 8px;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: none;
+            font-size: 14px;
+            outline: none;
+            color: #212121;
+        }
+
+        .search-box input::placeholder {
+            color: #999;
+        }
+
+        .search-icon {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            background: white;
+            border-bottom: 1px solid #E0E0E0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .filter-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            border-color: #FF6B35;
+            color: #FF6B35;
+        }
+
+        .filter-tab.active {
+            background: #FF6B35;
+            border-color: #FF6B35;
+            color: white;
+        }
+
+        /* Stats Banner */
+        .stats-banner {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            margin: 16px 16px 12px 16px;
+            padding: 16px;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+        }
+
+        .stats-banner-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        /* Content */
+        .content {
+            padding: 12px 16px;
+        }
+
+        /* Journey Card */
+        .journey-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E0E0E0;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .journey-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Journey Header with Image */
+        .journey-header {
+            position: relative;
+            height: 140px;
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .journey-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 12px;
+        }
+
+        .journey-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .journey-badge {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #212121;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-hot {
+            background: #FF6B35;
+            color: white;
+        }
+
+        .badge-new {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .badge-almost-full {
+            background: #FFC107;
+            color: #212121;
+        }
+
+        .journey-location {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Journey Content */
+        .journey-content {
+            padding: 14px;
+        }
+
+        .journey-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .journey-dates {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .journey-organizer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #F5F5F5;
+        }
+
+        .organizer-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .organizer-info {
+            flex: 1;
+        }
+
+        .organizer-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .organizer-meta {
+            font-size: 11px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .verified-badge {
+            color: #4CAF50;
+            font-size: 12px;
+        }
+
+        .journey-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .detail-item {
+            background: #F9F9F9;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .detail-label {
+            color: #999;
+            margin-bottom: 4px;
+            font-size: 10px;
+        }
+
+        .detail-value {
+            color: #212121;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .detail-value.highlight {
+            color: #FF6B35;
+        }
+
+        /* Participants */
+        .journey-participants {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .participants-avatars {
+            display: flex;
+            margin-left: -4px;
+        }
+
+        .participant-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            margin-left: -8px;
+        }
+
+        .participant-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .participants-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .participants-text strong {
+            color: #FF6B35;
+            font-weight: 700;
+        }
+
+        /* Progress Bar */
+        .journey-progress {
+            margin-bottom: 12px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            background: #F5F5F5;
+            height: 6px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%);
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.3s;
+        }
+
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #FF9800 0%, #FFB74D 100%);
+        }
+
+        .progress-fill.full {
+            background: linear-gradient(90deg, #FF5252 0%, #EF5350 100%);
+        }
+
+        /* Tags */
+        .journey-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .journey-tag {
+            padding: 4px 10px;
+            background: #F3F4FF;
+            border: 1px solid #667EEA;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #667EEA;
+        }
+
+        /* Journey Actions */
+        .journey-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-join {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            color: white;
+        }
+
+        .btn-join:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-view {
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #666;
+        }
+
+        .btn-view:hover {
+            border-color: #FF6B35;
+            color: #FF6B35;
+        }
+
+        .btn-interested {
+            background: #FFF3E0;
+            border: 1px solid #FFB74D;
+            color: #E65100;
+        }
+
+        .btn-chat {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            color: white;
+        }
+
+        /* Featured Card */
+        .journey-card.featured {
+            border: 2px solid #FF6B35;
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.15);
+        }
+
+        .featured-ribbon {
+            position: absolute;
+            top: 12px;
+            right: -32px;
+            background: #FF6B35;
+            color: white;
+            padding: 4px 40px;
+            font-size: 10px;
+            font-weight: 700;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+            z-index: 1;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 80px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Load More */
+        .load-more {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .load-more-btn {
+            padding: 12px 24px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .load-more-btn:hover {
+            border-color: #FF6B35;
+            color: #FF6B35;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 428px;
+            width: 100%;
+            background: #FFFFFF;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 12px 0;
+            border-top: 1px solid #E0E0E0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: #9E9E9E;
+            font-size: 10px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            color: #FF6B35;
+        }
+
+        .nav-item.active {
+            color: #FF6B35;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-add {
+            margin-top: -20px;
+        }
+
+        .add-button {
+            width: 48px;
+            height: 48px;
+            background: #FF6B35;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+            transition: all 0.2s;
+        }
+
+        .add-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+        }
+
+        .nav-label {
+            font-size: 10px;
+            color: #9E9E9E;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .journey-card {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+            z-index: 99;
+            transition: all 0.2s;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 360px) {
+            .journey-details {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <button class="back-btn" onclick="goBack()">←</button>
+                <div class="header-title">
+                    <h1>🤝 Tìm Bạn Đồng Hành</h1>
+                    <p>Khám phá và kết nối với những người yêu du lịch</p>
+                </div>
+            </div>
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Tìm theo địa điểm, thời gian...">
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <div class="filter-tab active">Tất cả</div>
+            <div class="filter-tab">Đang tìm</div>
+            <div class="filter-tab">Sắp khởi hành</div>
+            <div class="filter-tab">Trong nước</div>
+            <div class="filter-tab">Nước ngoài</div>
+            <div class="filter-tab">Cuối tuần</div>
+            <div class="filter-tab">Du lịch bụi</div>
+        </div>
+
+        <!-- Stats Banner -->
+        <div class="stats-banner">
+            <div class="stats-banner-title">
+                <span>📊</span>
+                <span>Thống kê cộng đồng</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">127</div>
+                    <div class="stat-label">Hành trình</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2.4K</div>
+                    <div class="stat-label">Thành viên</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">89%</div>
+                    <div class="stat-label">Thành công</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Journey Card 1 - Featured & Hot -->
+            <div class="journey-card featured">
+                <div class="journey-header" style="background: linear-gradient(135deg, #4ECDC4, #44A08D);">
+                    🏖️
+                    <div class="journey-overlay">
+                        <div class="journey-badges">
+                            <div class="journey-badge badge-hot">🔥 HOT</div>
+                            <div class="journey-badge badge-new">✨ MỚI</div>
+                        </div>
+                        <div class="journey-location">
+                            <span>📍</span>
+                            <span>Phú Quốc</span>
+                        </div>
+                    </div>
+                    <div class="featured-ribbon">FEATURED</div>
+                </div>
+                <div class="journey-content">
+                    <div class="journey-title">Khám phá đảo ngọc Phú Quốc cùng hội bạn thân thiện 🌴</div>
+                    <div class="journey-dates">
+                        <span>📅</span>
+                        <span>15-18/12/2025</span>
+                        <span>•</span>
+                        <span>4 ngày 3 đêm</span>
+                    </div>
+
+                    <div class="journey-organizer">
+                        <div class="organizer-avatar" style="background: #E91E63;">MP</div>
+                        <div class="organizer-info">
+                            <div class="organizer-name">Mai Phương</div>
+                            <div class="organizer-meta">
+                                <span>⭐ 4.9</span>
+                                <span>•</span>
+                                <span>25 chuyến đi</span>
+                                <span class="verified-badge">✓</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="journey-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Chi phí dự kiến</div>
+                            <div class="detail-value highlight">5-7 triệu</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Độ tuổi</div>
+                            <div class="detail-value">22-35 tuổi</div>
+                        </div>
+                    </div>
+
+                    <div class="journey-participants">
+                        <div class="participants-avatars">
+                            <div class="participant-avatar" style="background: #4ECDC4;">TH</div>
+                            <div class="participant-avatar" style="background: #2196F3;">HN</div>
+                            <div class="participant-avatar" style="background: #9C27B0;">TL</div>
+                            <div class="participant-avatar" style="background: #FF9800;">QA</div>
+                        </div>
+                        <div class="participants-text">
+                            <strong>4/8 người</strong> đã tham gia
+                        </div>
+                    </div>
+
+                    <div class="journey-progress">
+                        <div class="progress-header">
+                            <span>Số lượng</span>
+                            <span>50% (còn 4 chỗ)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 50%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="journey-tags">
+                        <div class="journey-tag">🏖️ Biển</div>
+                        <div class="journey-tag">📸 Sống ảo</div>
+                        <div class="journey-tag">🍽️ Ẩm thực</div>
+                        <div class="journey-tag">🎉 Vui vẻ</div>
+                    </div>
+
+                    <div class="journey-actions">
+                        <button class="action-btn btn-join">
+                            <span>✈️</span>
+                            <span>Tham gia ngay</span>
+                        </button>
+                        <button class="action-btn btn-view">
+                            <span>👁️</span>
+                            <span>Chi tiết</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journey Card 2 - Almost Full -->
+            <div class="journey-card">
+                <div class="journey-header" style="background: linear-gradient(135deg, #667EEA, #764BA2);">
+                    🌸
+                    <div class="journey-overlay">
+                        <div class="journey-badges">
+                            <div class="journey-badge badge-almost-full">⚠️ Gần đủ</div>
+                        </div>
+                        <div class="journey-location">
+                            <span>📍</span>
+                            <span>Sapa - Fansipan</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="journey-content">
+                    <div class="journey-title">Chinh phục nóc nhà Đông Dương - Hành trình săn mây Sapa</div>
+                    <div class="journey-dates">
+                        <span>📅</span>
+                        <span>20-24/12/2025</span>
+                        <span>•</span>
+                        <span>5 ngày 4 đêm</span>
+                    </div>
+
+                    <div class="journey-organizer">
+                        <div class="organizer-avatar" style="background: #4ECDC4;">TH</div>
+                        <div class="organizer-info">
+                            <div class="organizer-name">Tuấn Hùng</div>
+                            <div class="organizer-meta">
+                                <span>⭐ 4.8</span>
+                                <span>•</span>
+                                <span>18 chuyến đi</span>
+                                <span class="verified-badge">✓</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="journey-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Chi phí dự kiến</div>
+                            <div class="detail-value highlight">6-8 triệu</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Độ tuổi</div>
+                            <div class="detail-value">25-40 tuổi</div>
+                        </div>
+                    </div>
+
+                    <div class="journey-participants">
+                        <div class="participants-avatars">
+                            <div class="participant-avatar" style="background: #E91E63;">MP</div>
+                            <div class="participant-avatar" style="background: #2196F3;">HN</div>
+                            <div class="participant-avatar" style="background: #9C27B0;">TL</div>
+                            <div class="participant-avatar" style="background: #FF9800;">QA</div>
+                            <div class="participant-avatar" style="background: #4CAF50;">DT</div>
+                        </div>
+                        <div class="participants-text">
+                            <strong>5/6 người</strong> đã tham gia
+                        </div>
+                    </div>
+
+                    <div class="journey-progress">
+                        <div class="progress-header">
+                            <span>Số lượng</span>
+                            <span>83% (còn 1 chỗ)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill warning" style="width: 83%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="journey-tags">
+                        <div class="journey-tag">⛰️ Leo núi</div>
+                        <div class="journey-tag">🌄 Săn mây</div>
+                        <div class="journey-tag">💪 Thử thách</div>
+                    </div>
+
+                    <div class="journey-actions">
+                        <button class="action-btn btn-join">
+                            <span>🚀</span>
+                            <span>Nhanh tay</span>
+                        </button>
+                        <button class="action-btn btn-chat">
+                            <span>💬</span>
+                            <span>Chat</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journey Card 3 - New -->
+            <div class="journey-card">
+                <div class="journey-header" style="background: linear-gradient(135deg, #FF6B35, #F57C00);">
+                    🏛️
+                    <div class="journey-overlay">
+                        <div class="journey-badges">
+                            <div class="journey-badge badge-new">✨ MỚI</div>
+                        </div>
+                        <div class="journey-location">
+                            <span>📍</span>
+                            <span>Hội An - Đà Nẵng</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="journey-content">
+                    <div class="journey-title">Khám phá phố cổ Hội An & thành phố biển Đà Nẵng</div>
+                    <div class="journey-dates">
+                        <span>📅</span>
+                        <span>22-25/12/2025</span>
+                        <span>•</span>
+                        <span>4 ngày 3 đêm</span>
+                    </div>
+
+                    <div class="journey-organizer">
+                        <div class="organizer-avatar" style="background: #2196F3;">HN</div>
+                        <div class="organizer-info">
+                            <div class="organizer-name">Hoàng Nam</div>
+                            <div class="organizer-meta">
+                                <span>⭐ 4.7</span>
+                                <span>•</span>
+                                <span>12 chuyến đi</span>
+                                <span class="verified-badge">✓</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="journey-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Chi phí dự kiến</div>
+                            <div class="detail-value highlight">4-6 triệu</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Độ tuổi</div>
+                            <div class="detail-value">20-35 tuổi</div>
+                        </div>
+                    </div>
+
+                    <div class="journey-participants">
+                        <div class="participants-avatars">
+                            <div class="participant-avatar" style="background: #9C27B0;">TL</div>
+                            <div class="participant-avatar" style="background: #FF9800;">QA</div>
+                        </div>
+                        <div class="participants-text">
+                            <strong>2/10 người</strong> đã tham gia
+                        </div>
+                    </div>
+
+                    <div class="journey-progress">
+                        <div class="progress-header">
+                            <span>Số lượng</span>
+                            <span>20% (còn 8 chỗ)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 20%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="journey-tags">
+                        <div class="journey-tag">🏮 Văn hóa</div>
+                        <div class="journey-tag">📸 Sống ảo</div>
+                        <div class="journey-tag">🌉 Cầu Vàng</div>
+                        <div class="journey-tag">🏖️ Biển</div>
+                    </div>
+
+                    <div class="journey-actions">
+                        <button class="action-btn btn-interested">
+                            <span>⭐</span>
+                            <span>Quan tâm</span>
+                        </button>
+                        <button class="action-btn btn-view">
+                            <span>👁️</span>
+                            <span>Chi tiết</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journey Card 4 - International -->
+            <div class="journey-card">
+                <div class="journey-header" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                    🗼
+                    <div class="journey-overlay">
+                        <div class="journey-badges">
+                            <div class="journey-badge">🌏 Quốc tế</div>
+                        </div>
+                        <div class="journey-location">
+                            <span>📍</span>
+                            <span>Bangkok - Thái Lan</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="journey-content">
+                    <div class="journey-title">Mùa lễ hội ở Bangkok - Chợ nổi, chùa vàng & street food</div>
+                    <div class="journey-dates">
+                        <span>📅</span>
+                        <span>28/12/2025 - 02/01/2026</span>
+                        <span>•</span>
+                        <span>6 ngày 5 đêm</span>
+                    </div>
+
+                    <div class="journey-organizer">
+                        <div class="organizer-avatar" style="background: #9C27B0;">TL</div>
+                        <div class="organizer-info">
+                            <div class="organizer-name">Thu Linh</div>
+                            <div class="organizer-meta">
+                                <span>⭐ 5.0</span>
+                                <span>•</span>
+                                <span>32 chuyến đi</span>
+                                <span class="verified-badge">✓</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="journey-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Chi phí dự kiến</div>
+                            <div class="detail-value highlight">12-15 triệu</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Độ tuổi</div>
+                            <div class="detail-value">23-38 tuổi</div>
+                        </div>
+                    </div>
+
+                    <div class="journey-participants">
+                        <div class="participants-avatars">
+                            <div class="participant-avatar" style="background: #E91E63;">MP</div>
+                            <div class="participant-avatar" style="background: #4ECDC4;">TH</div>
+                            <div class="participant-avatar" style="background: #FF9800;">QA</div>
+                        </div>
+                        <div class="participants-text">
+                            <strong>3/8 người</strong> đã tham gia
+                        </div>
+                    </div>
+
+                    <div class="journey-progress">
+                        <div class="progress-header">
+                            <span>Số lượng</span>
+                            <span>37% (còn 5 chỗ)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 37%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="journey-tags">
+                        <div class="journey-tag">🍜 Ẩm thực</div>
+                        <div class="journey-tag">🛍️ Shopping</div>
+                        <div class="journey-tag">🎉 Countdown</div>
+                        <div class="journey-tag">🏯 Chùa</div>
+                    </div>
+
+                    <div class="journey-actions">
+                        <button class="action-btn btn-join">
+                            <span>✈️</span>
+                            <span>Tham gia</span>
+                        </button>
+                        <button class="action-btn btn-view">
+                            <span>👁️</span>
+                            <span>Chi tiết</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journey Card 5 - Weekend Trip -->
+            <div class="journey-card">
+                <div class="journey-header" style="background: linear-gradient(135deg, #F093FB, #F5576C);">
+                    🏔️
+                    <div class="journey-overlay">
+                        <div class="journey-badges">
+                            <div class="journey-badge">🎯 Cuối tuần</div>
+                        </div>
+                        <div class="journey-location">
+                            <span>📍</span>
+                            <span>Mộc Châu - Sơn La</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="journey-content">
+                    <div class="journey-title">Cuối tuần Mộc Châu - Săn mây, thảo nguyên & sữa bò tươi</div>
+                    <div class="journey-dates">
+                        <span>📅</span>
+                        <span>14-15/12/2025</span>
+                        <span>•</span>
+                        <span>2 ngày 1 đêm</span>
+                    </div>
+
+                    <div class="journey-organizer">
+                        <div class="organizer-avatar" style="background: #FF9800;">QA</div>
+                        <div class="organizer-info">
+                            <div class="organizer-name">Quỳnh Anh</div>
+                            <div class="organizer-meta">
+                                <span>⭐ 4.9</span>
+                                <span>•</span>
+                                <span>22 chuyến đi</span>
+                                <span class="verified-badge">✓</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="journey-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Chi phí dự kiến</div>
+                            <div class="detail-value highlight">1.5-2 triệu</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Độ tuổi</div>
+                            <div class="detail-value">20-32 tuổi</div>
+                        </div>
+                    </div>
+
+                    <div class="journey-participants">
+                        <div class="participants-avatars">
+                            <div class="participant-avatar" style="background: #2196F3;">HN</div>
+                            <div class="participant-avatar" style="background: #4CAF50;">DT</div>
+                            <div class="participant-avatar" style="background: #E91E63;">MP</div>
+                            <div class="participant-avatar" style="background: #9C27B0;">TL</div>
+                            <div class="participant-avatar" style="background: #4ECDC4;">TH</div>
+                            <div class="participant-avatar" style="background: #FF5722;">KA</div>
+                        </div>
+                        <div class="participants-text">
+                            <strong>6/12 người</strong> đã tham gia
+                        </div>
+                    </div>
+
+                    <div class="journey-progress">
+                        <div class="progress-header">
+                            <span>Số lượng</span>
+                            <span>50% (còn 6 chỗ)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 50%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="journey-tags">
+                        <div class="journey-tag">🌾 Thảo nguyên</div>
+                        <div class="journey-tag">🌄 Săn mây</div>
+                        <div class="journey-tag">🥛 Sữa bò</div>
+                        <div class="journey-tag">📸 Check-in</div>
+                    </div>
+
+                    <div class="journey-actions">
+                        <button class="action-btn btn-join">
+                            <span>🚗</span>
+                            <span>Tham gia</span>
+                        </button>
+                        <button class="action-btn btn-view">
+                            <span>👁️</span>
+                            <span>Chi tiết</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journey Card 6 - Budget Friendly -->
+            <div class="journey-card">
+                <div class="journey-header" style="background: linear-gradient(135deg, #FA709A, #FEE140);">
+                    🎒
+                    <div class="journey-overlay">
+                        <div class="journey-badges">
+                            <div class="journey-badge">💰 Tiết kiệm</div>
+                        </div>
+                        <div class="journey-location">
+                            <span>📍</span>
+                            <span>Đà Lạt</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="journey-content">
+                    <div class="journey-title">Du lịch bụi Đà Lạt - Phượt rẻ mà chất với 2 triệu</div>
+                    <div class="journey-dates">
+                        <span>📅</span>
+                        <span>16-18/12/2025</span>
+                        <span>•</span>
+                        <span>3 ngày 2 đêm</span>
+                    </div>
+
+                    <div class="journey-organizer">
+                        <div class="organizer-avatar" style="background: #4CAF50;">DT</div>
+                        <div class="organizer-info">
+                            <div class="organizer-name">Đức Trí</div>
+                            <div class="organizer-meta">
+                                <span>⭐ 4.6</span>
+                                <span>•</span>
+                                <span>15 chuyến đi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="journey-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Chi phí dự kiến</div>
+                            <div class="detail-value highlight">1.5-2 triệu</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Độ tuổi</div>
+                            <div class="detail-value">18-28 tuổi</div>
+                        </div>
+                    </div>
+
+                    <div class="journey-participants">
+                        <div class="participants-avatars">
+                            <div class="participant-avatar" style="background: #FF9800;">QA</div>
+                            <div class="participant-avatar" style="background: #2196F3;">HN</div>
+                        </div>
+                        <div class="participants-text">
+                            <strong>2/15 người</strong> đã tham gia
+                        </div>
+                    </div>
+
+                    <div class="journey-progress">
+                        <div class="progress-header">
+                            <span>Số lượng</span>
+                            <span>13% (còn 13 chỗ)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 13%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="journey-tags">
+                        <div class="journey-tag">🎒 Bụi</div>
+                        <div class="journey-tag">💰 Rẻ</div>
+                        <div class="journey-tag">🏕️ Cắm trại</div>
+                        <div class="journey-tag">🌲 Rừng thông</div>
+                    </div>
+
+                    <div class="journey-actions">
+                        <button class="action-btn btn-interested">
+                            <span>⭐</span>
+                            <span>Quan tâm</span>
+                        </button>
+                        <button class="action-btn btn-view">
+                            <span>👁️</span>
+                            <span>Chi tiết</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="load-more">
+                <button class="load-more-btn" onclick="loadMore()">
+                    Xem thêm hành trình →
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <div class="nav-icon">🏠</div>
+                <div>Trang chủ</div>
+            </div>
+            <div class="nav-item active">
+                <div class="nav-icon">🗺️</div>
+                <div>Hành trình</div>
+            </div>
+            <div class="nav-add">
+                <div class="add-button" onclick="createJourney()">+</div>
+                <div class="nav-label">Tạo mới</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👥</div>
+                <div>Bạn bè</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👤</div>
+                <div>Cá nhân</div>
+            </div>
+        </div>
+
+        <!-- Floating Action Button (Filter) -->
+        <div class="fab" onclick="openFilter()" title="Lọc nâng cao">
+            🎯
+        </div>
+    </div>
+
+    <script>
+        // Go back function
+        function goBack() {
+            window.history.back();
+        }
+
+        // Filter tabs
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                // Here you would filter the journey cards based on selected filter
+                console.log('Filter:', this.textContent);
+            });
+        });
+
+        // Load more function
+        function loadMore() {
+            console.log('Loading more journeys...');
+            // Here you would load more journey cards from server
+            alert('Đang tải thêm hành trình...');
+        }
+
+        // Create journey function
+        function createJourney() {
+            console.log('Create new journey');
+            // Redirect to create journey page
+            window.location.href = 'create_trip.html';
+        }
+
+        // Open filter function
+        function openFilter() {
+            console.log('Open advanced filter');
+            alert('Mở bộ lọc nâng cao');
+        }
+
+        // Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                navItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Journey card interactions
+        document.querySelectorAll('.journey-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Don't trigger if clicking on buttons
+                if (!e.target.closest('.action-btn')) {
+                    console.log('View journey details');
+                    // Here you would navigate to journey detail page
+                }
+            });
+        });
+
+        // Action buttons
+        document.querySelectorAll('.btn-join').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Join journey');
+                alert('Xác nhận tham gia hành trình?');
+            });
+        });
+
+        document.querySelectorAll('.btn-view').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('View details');
+                // Navigate to detail page
+            });
+        });
+
+        document.querySelectorAll('.btn-interested').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Mark as interested');
+                this.innerHTML = '<span>✓</span><span>Đã quan tâm</span>';
+                this.style.background = '#E8F5E9';
+                this.style.borderColor = '#4CAF50';
+                this.style.color = '#4CAF50';
+            });
+        });
+
+        document.querySelectorAll('.btn-chat').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Open chat');
+                alert('Mở chat nhóm...');
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-box input');
+        searchInput.addEventListener('input', function() {
+            console.log('Search:', this.value);
+            // Here you would filter journeys based on search query
+        });
+    </script>
+</body>
+</html>
