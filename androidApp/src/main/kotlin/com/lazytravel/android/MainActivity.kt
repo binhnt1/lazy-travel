@@ -24,7 +24,10 @@ import com.lazytravel.data.models.ReviewComment
 import com.lazytravel.data.models.ReviewLike
 import com.lazytravel.data.models.ReviewMedia
 import com.lazytravel.data.models.Stat
-import com.lazytravel.data.models.TourPackage
+import com.lazytravel.data.models.Tour
+import com.lazytravel.data.models.TourProvider
+import com.lazytravel.data.models.InsuranceProvider
+import com.lazytravel.data.models.VisaProvider
 import com.lazytravel.data.models.UseCase
 import com.lazytravel.data.models.User
 import com.lazytravel.data.models.BuddyParticipant
@@ -71,8 +74,11 @@ class MainActivity : ComponentActivity() {
             BlogCategory().setup()
             BlogPost().setup()
 
-            // Tour Package models
-            TourPackage().setup()
+            // Tour and Provider models
+            TourProvider().setup()
+            InsuranceProvider().setup()
+            VisaProvider().setup()
+            Tour().setup()
 
             // Destination models
             Destination().setup()

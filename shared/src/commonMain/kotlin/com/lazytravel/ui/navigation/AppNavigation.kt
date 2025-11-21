@@ -3,7 +3,7 @@ package com.lazytravel.ui.navigation
 import androidx.compose.runtime.*
 import com.lazytravel.core.i18n.LocalizationManager
 import com.lazytravel.data.models.Destination
-import com.lazytravel.data.models.TourPackage
+import com.lazytravel.data.models.Tour
 import com.lazytravel.data.models.BlogPost
 import com.lazytravel.ui.screens.HomeNoAuthScreen
 import com.lazytravel.ui.screens.HomeScreen
@@ -34,7 +34,7 @@ sealed class Screen {
     object Destinations : Screen()
     data class DestinationDetail(val destination: Destination) : Screen()
     object Tours : Screen()
-    data class TourDetail(val tour: TourPackage) : Screen()
+    data class TourDetail(val tour: Tour) : Screen()
     object Blogs : Screen()
     data class BlogDetail(val blog: BlogPost) : Screen()
 }

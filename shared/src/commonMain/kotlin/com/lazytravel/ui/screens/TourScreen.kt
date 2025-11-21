@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.lazytravel.data.base.BaseRepository
-import com.lazytravel.data.models.TourPackage
+import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.utils.parseHexColor
 import kotlinx.coroutines.launch
@@ -32,11 +32,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun TourScreen(
     onNavigateBack: () -> Unit = {},
-    onSelectTour: (TourPackage) -> Unit = {}
+    onSelectTour: (Tour) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    val tourRepo = remember { BaseRepository<TourPackage>() }
-    var allTours by remember { mutableStateOf<List<TourPackage>>(emptyList()) }
+    val tourRepo = remember { BaseRepository<Tour>() }
+    var allTours by remember { mutableStateOf<List<Tour>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
     // Filter state
@@ -46,7 +46,7 @@ fun TourScreen(
 
     LaunchedEffect(Unit) {
         scope.launch {
-            tourRepo.getRecords<TourPackage>().fold(
+            tourRepo.getRecords<Tour>().fold(
                 onSuccess = { fetchedTours ->
                     allTours = fetchedTours
                     isLoading = false
@@ -67,8 +67,8 @@ fun TourScreen(
 
     // Group tours if needed
     val groupedTours = when (groupBy) {
-        "PROVIDER" -> filteredTours.groupBy { it.provider }
-        "LOCATION" -> filteredTours.groupBy { it.location }
+        "PROVIDER" -> filteredTours.groupBy { it.expandedTourProvider?.name ?: "Unknown" }
+        "LOCATION" -> filteredTours.groupBy { it.expandedCity?.name ?: "Unknown" }
         "TYPE" -> filteredTours.groupBy { it.tourType }
         else -> mapOf("Tất cả tour" to filteredTours)
     }
@@ -247,7 +247,7 @@ fun TourScreen(
 
 @Composable
 private fun HotTourCard(
-    tour: TourPackage,
+    tour: Tour,
     onTourClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -355,7 +355,7 @@ private fun HotTourCard(
 
 @Composable
 private fun TourListCard(
-    tour: TourPackage,
+    tour: Tour,
     onTourClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

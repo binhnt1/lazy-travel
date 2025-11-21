@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.lazytravel.data.models.TourPackage
+import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.core.i18n.localizedString
 import com.lazytravel.data.base.BaseRepository
@@ -21,17 +21,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun TourSection(
     modifier: Modifier = Modifier,
-    onTourClick: (TourPackage) -> Unit = {},
+    onTourClick: (Tour) -> Unit = {},
     onViewAllClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    val tourRepo = remember { BaseRepository<TourPackage>() }
-    var tours by remember { mutableStateOf<List<TourPackage>>(emptyList()) }
+    val tourRepo = remember { BaseRepository<Tour>() }
+    var tours by remember { mutableStateOf<List<Tour>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         scope.launch {
-            tourRepo.getRecords<TourPackage>().fold(
+            tourRepo.getRecords<Tour>().fold(
                 onSuccess = { fetchedTours ->
                     tours = fetchedTours.take(5) // Limit to 5 for section display
                     isLoading = false

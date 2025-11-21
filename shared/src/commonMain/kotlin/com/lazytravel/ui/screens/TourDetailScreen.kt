@@ -20,14 +20,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.lazytravel.data.models.TourPackage
+import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.utils.parseHexColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TourDetailScreen(
-    tour: TourPackage,
+    tour: Tour,
     onNavigateBack: () -> Unit = {},
     onBookClick: () -> Unit = {}
 ) {
@@ -244,12 +244,12 @@ fun TourDetailScreen(
                     ) {
                         TourInfoChip(
                             icon = "🏢",
-                            label = tour.provider,
+                            label = tour.expandedTourProvider?.name ?: "Tour Provider",
                             modifier = Modifier.weight(1f)
                         )
                         TourInfoChip(
                             icon = "📍",
-                            label = tour.location,
+                            label = tour.expandedCity?.name ?: "Destination",
                             modifier = Modifier.weight(1f)
                         )
                     }

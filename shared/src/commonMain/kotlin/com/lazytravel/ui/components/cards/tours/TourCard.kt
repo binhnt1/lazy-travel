@@ -30,13 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.lazytravel.core.i18n.localizedString
-import com.lazytravel.data.models.TourPackage
+import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.utils.parseHexColor
 
 @Composable
 fun TourCard(
-    tour: TourPackage,
+    tour: Tour,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
