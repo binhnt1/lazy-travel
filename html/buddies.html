@@ -1,0 +1,2569 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm Bạn Đồng Hành - TravelVote</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #F5F5F5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: #FAFAFA;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .back-btn {
+            background: white;
+            border: 1px solid #E0E0E0;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .create-btn {
+            background: #FF6B35;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #F5F5F5;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            gap: 8px;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: none;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FF6B35;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            background: white;
+            border-bottom: 1px solid #E0E0E0;
+            scrollbar-width: none;
+        }
+
+        .filter-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            white-space: nowrap;
+            cursor: pointer;
+            background: white;
+        }
+
+        .filter-tab.active {
+            background: #FF6B35;
+            border-color: #FF6B35;
+            color: white;
+        }
+
+        /* Quick Filters - Grid Style */
+        .quick-filters-section {
+            background: white;
+            padding: 16px;
+            margin: 12px 12px 0 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+        }
+
+        .quick-filters-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 10px;
+        }
+
+        .quick-filters-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .quick-filter-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 4px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .quick-filter-item.selected {
+            background: #FFF3EE;
+            border-color: #FF6B35;
+        }
+
+        .quick-filter-item.selected .quick-filter-label {
+            color: #FF6B35;
+        }
+
+        .quick-filter-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .quick-filter-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Sort/Filter Bar */
+        .sort-filter-bar {
+            background: white;
+            padding: 12px;
+            margin: 0 12px 12px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sort-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sort-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .sort-select {
+            padding: 6px 10px;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #212121;
+            background: white;
+            cursor: pointer;
+        }
+
+        .result-count {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .result-count strong {
+            color: #FF6B35;
+        }
+
+        /* Activity Ticker */
+        .activity-ticker {
+            background: #FFF3EE;
+            padding: 10px 16px;
+            margin: 0 12px 12px 12px;
+            border: 1px solid #FFE0D0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .ticker-content {
+            display: flex;
+            animation: ticker 20s linear infinite;
+        }
+
+        .ticker-item {
+            white-space: nowrap;
+            padding-right: 40px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .ticker-item strong {
+            color: #FF6B35;
+            font-weight: 600;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* --- NEW FEATURED SECTION SCROLL STYLES --- */
+        .featured-scroll-wrapper {
+            padding: 0 12px;
+            margin-bottom: 16px;
+        }
+
+        .featured-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .featured-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #212121;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .featured-title span { color: #FF6B35; } /* Icon color */
+
+        .featured-scroll-container {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px; /* Space for shadow */
+            scrollbar-width: none;
+        }
+
+        .featured-scroll-container::-webkit-scrollbar { display: none; }
+
+        /* HOT CARD (Adapted from Luxury Card Structure but Hot Theme) */
+        .hot-card {
+            flex: 0 0 300px; /* Fixed width for horizontal scroll */
+            background: #FFFFFF;
+            border: 1px solid #FF6B35;
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.15);
+        }
+
+        .hot-card-image-wrap {
+            height: 150px;
+            position: relative;
+        }
+
+        .hot-card-img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .hot-card-badges {
+            position: absolute; top: 10px; left: 10px;
+            display: flex; gap: 5px;
+        }
+
+        .badge-hot {
+            background: #FF6B35; color: white;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; padding: 4px 8px;
+            border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hot-card-body {
+            padding: 12px;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .hot-host-row {
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .hot-host-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            border: 2px solid #FFF3EE;
+            overflow: hidden;
+        }
+        .hot-host-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .hot-host-name {
+            font-size: 12px; font-weight: 600; color: #212121;
+        }
+        .hot-host-meta { font-size: 10px; color: #FF6B35; font-weight: 500; }
+
+        .hot-trip-title-block {
+            border-bottom: 1px solid #F5F5F5; padding-bottom: 8px;
+        }
+        .hot-trip-destination {
+            font-size: 16px; font-weight: 700; color: #212121;
+            margin-bottom: 2px; line-height: 1.3;
+        }
+        .hot-trip-region {
+            font-size: 11px; color: #757575; display: flex; align-items: center; gap: 4px;
+        }
+
+        /* Grid Info for Hot Card */
+        .hot-info-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+            background: #FFCCBC; /* Border color */
+            border-radius: 6px; overflow: hidden; border: 1px solid #FFCCBC;
+        }
+        .hot-info-item {
+            background: #FFF3E0; /* Light orange bg */
+            padding: 8px; display: flex; flex-direction: column;
+        }
+        .hot-info-label { font-size: 9px; color: #E64A19; text-transform: uppercase; margin-bottom: 2px; }
+        .hot-info-value { font-size: 11px; font-weight: 600; color: #BF360C; }
+
+        .hot-trip-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+        .hot-tag {
+            font-size: 10px; color: #FF6B35; background: #FFF3EE;
+            border: 1px solid #FFCCBC; padding: 3px 6px; border-radius: 4px;
+        }
+
+        .hot-card-footer {
+            margin-top: 4px; padding-top: 8px; border-top: 1px solid #F5F5F5;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .hot-slots-text { font-size: 11px; color: #757575; }
+        .hot-slots-text strong { color: #FF6B35; }
+
+        .hot-btn-detail {
+            background: #FF6B35; color: white;
+            border: none; border-radius: 4px;
+            padding: 6px 12px; font-size: 11px; font-weight: 600;
+            cursor: pointer;
+        }
+        .hot-btn-icon {
+            width: 28px; height: 28px;
+            border: 1px solid #E0E0E0; background: white; color: #757575;
+            border-radius: 4px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 14px;
+        }
+
+        /* --- END NEW FEATURED CSS --- */
+
+        /* Luxury Trips Scroll (Existing) */
+        .luxury-scroll-section {
+            background-color: #050a30; /* Navy Blue Deep */
+            padding: 24px 0 32px 0;
+            margin-bottom: 12px;
+            font-family: 'Montserrat', sans-serif;
+            color: #e0e0e0;
+            overflow: hidden; /* Tránh vỡ layout */
+        }
+
+        /* Header của section */
+        .luxury-scroll-header {
+            padding: 0 20px 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid #1a2255;
+            margin-bottom: 20px;
+        }
+
+        .luxury-header-title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .luxury-sub-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #D4AF37; /* Vàng kim */
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .luxury-main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: #fff;
+            font-weight: 400;
+            line-height: 1.1;
+            margin: 0;
+        }
+
+        .luxury-main-title span {
+            font-style: italic;
+            color: #4facfe;
+        }
+
+        .luxury-view-all-btn {
+            color: #D4AF37;
+            font-size: 12px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border 0.3s;
+        }
+
+        .luxury-view-all-btn:hover {
+            border-bottom-color: #D4AF37;
+        }
+
+        /* Scroll Container ngang */
+        .luxury-scroll-container {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 0 20px;
+            scrollbar-width: none; /* Ẩn thanh cuộn Firefox */
+        }
+
+        .luxury-scroll-container::-webkit-scrollbar {
+            display: none; /* Ẩn thanh cuộn Chrome/Safari */
+        }
+
+        /* --- STYLE CỦA THẺ LUXURY (CARD) --- */
+        .navy-card {
+            flex: 0 0 300px; /* Chiều rộng cố định của card */
+            background: linear-gradient(180deg, #08104d 0%, #050a30 100%);
+
+            /* VIỀN VÀNG KIM NHƯ YÊU CẦU */
+            border: 1px solid #D4AF37;
+            border-radius: 8px;
+
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Phần ảnh */
+        .navy-card-image-wrap {
+            height: 160px;
+            position: relative;
+            border-bottom: 1px solid #1f2d6b;
+        }
+
+        .navy-card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.9); /* Làm tối ảnh chút cho sang */
+        }
+
+        .navy-card-badges {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .badge-navy {
+            background: rgba(5, 10, 48, 0.9);
+            color: #D4AF37;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 10px;
+            border: 1px solid #D4AF37;
+            border-radius: 2px;
+        }
+
+        /* Phần thân card */
+        .navy-card-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* Thông tin Host */
+        .navy-host-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navy-host-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid #D4AF37;
+            padding: 2px;
+            background: #050a30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .navy-host-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .navy-host-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .navy-host-meta {
+            font-size: 10px;
+            color: #a0b0d0;
+            font-weight: 300;
+        }
+
+        .verified-icon { color: #4facfe; font-size: 10px; }
+
+        /* Tiêu đề chuyến đi */
+        .navy-trip-title-block {
+            border-bottom: 1px solid #1f2d6b;
+            padding-bottom: 12px;
+        }
+
+        .navy-trip-destination {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .navy-trip-region {
+            font-size: 10px;
+            color: #4facfe;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Lưới thông tin (Grid) */
+        .navy-trip-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: #1f2d6b; /* Màu đường kẻ lưới */
+            border: 1px solid #1f2d6b;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .navy-info-item {
+            background: #08104d;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navy-info-label {
+            font-size: 9px;
+            color: #a0b0d0;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .navy-info-value {
+            font-size: 12px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .navy-price-val {
+            color: #F2D06B;
+            font-weight: 700;
+        }
+
+        /* Tags */
+        .navy-trip-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .navy-tag {
+            font-size: 10px;
+            color: #D4AF37;
+            background: transparent;
+            border: 1px solid #1f2d6b;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* Footer của Card */
+        .navy-card-footer {
+            margin-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #1f2d6b;
+        }
+
+        .navy-slots-text {
+            font-size: 11px;
+            color: #a0b0d0;
+        }
+
+        .navy-slots-text strong { color: #fff; }
+
+        .navy-action-group { display: flex; gap: 8px; }
+
+        /* Nút bấm (Buttons) */
+        .navy-btn-icon {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid #1f2d6b;
+            background: transparent;
+            color: #a0b0d0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 0;
+        }
+
+        .navy-btn-icon:hover {
+            border-color: #D4AF37;
+            color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .navy-btn-detail {
+            padding: 0 16px; height: 32px;
+            background: #D4AF37;
+            color: #050a30; /* Chữ xanh đậm trên nền vàng */
+            border: none;
+            border-radius: 4px;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .navy-btn-detail:hover {
+            background: #f5e0a1;
+        }
+
+        /* Tours Scroll */
+        .tours-scroll-section {
+            background: white;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+        }
+
+        .tours-scroll-container {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+
+        .tours-scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tour-card {
+            flex-shrink: 0;
+            width: 200px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .tour-card-image {
+            height: 100px;
+            background: linear-gradient(135deg, #4FACFE, #00F2FE);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            position: relative;
+        }
+
+        .tour-card-hot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: #FF6B35;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .tour-card-body {
+            padding: 10px;
+        }
+
+        .tour-card-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tour-card-info {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .tour-card-provider {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-top: 8px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .provider-logo {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .provider-name {
+            font-size: 10px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .tour-card-price {
+            font-size: 12px;
+            font-weight: 700;
+            color: #FF6B35;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            background: white;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn.active {
+            background: #FF6B35;
+            border-color: #FF6B35;
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Creative Trip Details - Grid 2x2 */
+        .trip-info-creative {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .info-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .chip-date {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+
+        .chip-duration {
+            background: #F3E5F5;
+            color: #7B1FA2;
+        }
+
+        .chip-budget {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .chip-age {
+            background: #E8F5E9;
+            color: #388E3C;
+        }
+
+        .chip-transport {
+            background: #ECEFF1;
+            color: #546E7A;
+        }
+
+        /* Content */
+        .content {
+            padding: 12px;
+        }
+
+        /* Section Box */
+        .section-box {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .see-all {
+            font-size: 13px;
+            color: #FF6B35;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Trip Card */
+        .trip-card {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .trip-header {
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .trip-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .trip-host-info {
+            flex: 1;
+        }
+
+        .trip-host-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212121;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .verified-badge {
+            font-size: 12px;
+        }
+
+        .trip-host-meta {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trip-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .status-urgent {
+            background: #FFEBEE;
+            color: #F44336;
+        }
+
+        .status-hot {
+            background: #FFF3E0;
+            color: #FF9800;
+        }
+
+        .status-new {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+
+        .status-verified {
+            background: #E3F2FD;
+            color: #2196F3;
+        }
+
+        .trip-body {
+            padding: 12px;
+        }
+
+        .trip-destination {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .trip-destination-icon {
+            font-size: 20px;
+        }
+
+        .trip-destination-info {
+            flex: 1;
+        }
+
+        .trip-destination-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .trip-destination-region {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .trip-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .trip-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .trip-detail-icon {
+            font-size: 14px;
+        }
+
+        .trip-description {
+            font-size: 13px;
+            color: #444;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .trip-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .trip-tag {
+            padding: 4px 8px;
+            background: #F5F5F5;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .trip-requirements {
+            background: #F5F5F5;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+
+        .requirements-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .requirements-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .requirement-item {
+            font-size: 11px;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trip-footer {
+            padding: 12px;
+            border-top: 1px solid #E0E0E0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .trip-footer-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .trip-slots {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slots-visual {
+            display: flex;
+            gap: 2px;
+        }
+
+        .slot-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #E0E0E0;
+        }
+
+        .slot-dot.filled {
+            background: #FF6B35;
+        }
+
+        .slots-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .slots-text strong {
+            color: #FF6B35;
+        }
+
+        .trip-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .trip-action-btn {
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .std-btn-icon {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #666;
+            border-radius: 4px; /* Uniform 4px */
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 0;
+        }
+        .std-btn-icon:hover { background: #FFF3EE; border-color: #FF6B35; color: #FF6B35; }
+
+        .std-btn-detail {
+            padding: 0 12px;
+            height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: #FF6B35;
+            border: none;
+            color: white;
+            border-radius: 4px; /* Uniform 4px */
+            font-size: 11px; font-weight: 600;
+            cursor: pointer;
+        }
+        .std-btn-detail:hover { background: #F55F2C; }
+
+        .btn-save {
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #666;
+            padding: 8px;
+        }
+
+        .btn-save:hover {
+            background: #FFF3EE;
+            border-color: #FF6B35;
+        }
+
+        .btn-detail {
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #212121;
+        }
+
+        .btn-detail:hover {
+            background: #F5F5F5;
+        }
+
+        .btn-primary {
+            background: #FF6B35;
+            border: none;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #666;
+        }
+
+        /* Members Preview */
+        .members-preview {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .member-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+            margin-right: -8px;
+            border: 2px solid white;
+        }
+
+        .members-count {
+            margin-left: 16px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Budget Display */
+        .budget-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: #FFF3EE;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .budget-icon {
+            font-size: 16px;
+        }
+
+        .budget-range {
+            font-size: 13px;
+            font-weight: 600;
+            color: #FF6B35;
+        }
+
+        .budget-per {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Activity Indicator */
+        .activity-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #4CAF50;
+            margin-bottom: 8px;
+        }
+
+        .activity-dot {
+            width: 6px;
+            height: 6px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Trip Image */
+        .trip-image {
+            height: 120px;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            position: relative;
+        }
+
+        .trip-image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px 12px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            color: white;
+        }
+
+        .trip-image-location {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Interaction Stats */
+        .interaction-stats {
+            display: flex;
+            gap: 12px;
+            padding: 8px 0;
+            border-top: 1px solid #E0E0E0;
+            margin-top: 8px;
+        }
+
+        .interaction-stat {
+            font-size: 11px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Match Score */
+        .match-score {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: #E8F5E9;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .match-icon {
+            font-size: 14px;
+        }
+
+        .match-text {
+            font-size: 12px;
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 428px;
+            background: white;
+            border-top: 1px solid #E0E0E0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #999;
+            cursor: pointer;
+            padding: 4px 12px;
+        }
+
+        .nav-item.active {
+            color: #FF6B35;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .nav-add {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .add-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: #FF6B35;
+            color: white;
+            font-size: 24px;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            margin-top: -20px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .empty-btn {
+            background: #FF6B35;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-top">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div class="header-title">Tìm Bạn Đồng Hành</div>
+            <button class="create-btn" onclick="createTrip()">
+                <span>+</span> Tạo trip
+            </button>
+        </div>
+        <div class="search-box">
+            <span>🔍</span>
+            <input type="text" placeholder="Tìm theo địa điểm, ngày đi...">
+            <span>⚙️</span>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-number">156</div>
+            <div class="stat-label">Trip đang mở</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">48</div>
+            <div class="stat-label">Tuần này</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">1.2K</div>
+            <div class="stat-label">Đã ghép đôi</div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+        <div class="filter-tab active">Tất cả</div>
+        <div class="filter-tab">Gần tôi</div>
+        <div class="filter-tab">Trong nước</div>
+        <div class="filter-tab">Quốc tế</div>
+        <div class="filter-tab">Cuối tuần</div>
+        <div class="filter-tab">Dài ngày</div>
+    </div>
+
+    <!-- Quick Filters - Grid Style -->
+    <div class="quick-filters-section">
+        <div class="quick-filters-title">Lọc nhanh theo sở thích</div>
+        <div class="quick-filters-grid">
+            <div class="quick-filter-item selected">
+                <div class="quick-filter-icon">🏖️</div>
+                <div class="quick-filter-label">Biển</div>
+            </div>
+            <div class="quick-filter-item">
+                <div class="quick-filter-icon">⛰️</div>
+                <div class="quick-filter-label">Núi</div>
+            </div>
+            <div class="quick-filter-item">
+                <div class="quick-filter-icon">🏙️</div>
+                <div class="quick-filter-label">Thành phố</div>
+            </div>
+            <div class="quick-filter-item">
+                <div class="quick-filter-icon">🎒</div>
+                <div class="quick-filter-label">Du lịch bụi</div>
+            </div>
+            <div class="quick-filter-item">
+                <div class="quick-filter-icon">📸</div>
+                <div class="quick-filter-label">Sống ảo</div>
+            </div>
+            <div class="quick-filter-item">
+                <div class="quick-filter-icon">🍜</div>
+                <div class="quick-filter-label">Ẩm thực</div>
+            </div>
+            <div class="quick-filter-item">
+                <div class="quick-filter-icon">⛺</div>
+                <div class="quick-filter-label">Cắm trại</div>
+            </div>
+            <div class="quick-filter-item">
+                <div class="quick-filter-icon">🎨</div>
+                <div class="quick-filter-label">Văn hóa</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Ticker -->
+    <div class="activity-ticker">
+        <div class="ticker-content">
+            <div class="ticker-item"><strong>Minh Anh</strong> vừa tham gia trip Phú Quốc</div>
+            <div class="ticker-item"><strong>Thu Hà</strong> vừa đăng trip Đà Lạt mới</div>
+            <div class="ticker-item"><strong>Hoàng Nam</strong> vừa tạo trip Seoul</div>
+            <div class="ticker-item"><strong>Lan Phương</strong> đã ghép đôi thành công</div>
+            <div class="ticker-item"><strong>Việt Anh</strong> vừa tham gia trip Sapa</div>
+            <div class="ticker-item"><strong>Minh Anh</strong> vừa tham gia trip Phú Quốc</div>
+            <div class="ticker-item"><strong>Thu Hà</strong> vừa đăng trip Đà Lạt mới</div>
+            <div class="ticker-item"><strong>Hoàng Nam</strong> vừa tạo trip Seoul</div>
+            <div class="ticker-item"><strong>Lan Phương</strong> đã ghép đôi thành công</div>
+            <div class="ticker-item"><strong>Việt Anh</strong> vừa tham gia trip Sapa</div>
+        </div>
+    </div>
+
+    <!-- Sort/Filter Bar -->
+    <div class="sort-filter-bar">
+        <div class="sort-dropdown">
+            <span class="sort-label">Sắp xếp:</span>
+            <select class="sort-select">
+                <option>Mới nhất</option>
+                <option>Phổ biến nhất</option>
+                <option>Sắp khởi hành</option>
+                <option>Giá thấp → cao</option>
+                <option>Giá cao → thấp</option>
+            </select>
+        </div>
+        <div class="result-count">Tìm thấy <strong>156</strong> trips</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- === NEW FEATURED TRIP SCROLL SECTION (REPLACES OLD CARD) === -->
+        <div class="featured-scroll-wrapper">
+            <div class="featured-header">
+                <div class="featured-title"><span>⭐</span> TRIP NỔI BẬT</div>
+                <div class="see-all">Xem tất cả</div>
+            </div>
+
+            <div class="featured-scroll-container">
+
+                <!-- Featured Card 1: Tokyo (Dữ liệu từ card cũ) -->
+                <div class="hot-card">
+                    <div class="hot-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="hot-card-img" alt="Tokyo">
+                        <div class="hot-card-badges">
+                            <span class="badge-hot">Trending</span>
+                        </div>
+                    </div>
+
+                    <div class="hot-card-body">
+                        <div class="hot-host-row">
+                            <div class="hot-host-avatar">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Host">
+                            </div>
+                            <div class="host-details">
+                                <div class="hot-host-name">Minh Tú <span class="verified-icon">✓</span></div>
+                                <div class="hot-host-meta">🏆 Host Gold</div>
+                            </div>
+                        </div>
+
+                        <div class="hot-trip-title-block">
+                            <div class="hot-trip-destination">Tokyo - Osaka - Kyoto</div>
+                            <div class="hot-trip-region">📍 Nhật Bản</div>
+                        </div>
+
+                        <div class="hot-info-grid">
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Khởi hành</span>
+                                <span class="hot-info-value">15/12/2024</span>
+                            </div>
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Thời gian</span>
+                                <span class="hot-info-value">8 Ngày 7 Đêm</span>
+                            </div>
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Ngân sách</span>
+                                <span class="hot-info-value">~30.000.000đ</span>
+                            </div>
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Trạng thái</span>
+                                <span class="hot-info-value" style="color:#E65100">Sắp chốt</span>
+                            </div>
+                        </div>
+
+                        <div class="hot-trip-tags">
+                            <span class="hot-tag">Hoa anh đào</span>
+                            <span class="hot-tag">Mua sắm</span>
+                        </div>
+
+                        <div class="hot-card-footer">
+                            <div class="hot-slots-text">Còn <strong>2/6</strong> chỗ</div>
+                            <div class="navy-action-group">
+                                <button class="hot-btn-icon">🔖</button>
+                                <button class="hot-btn-icon">💬</button>
+                                <button class="hot-btn-detail">Tham gia</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Card 2: Europe -->
+                <div class="hot-card">
+                    <div class="hot-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1499856871940-a09627c6dcf6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="hot-card-img" alt="Paris">
+                        <div class="hot-card-badges">
+                            <span class="badge-hot">Hot</span>
+                        </div>
+                    </div>
+
+                    <div class="hot-card-body">
+                        <div class="hot-host-row">
+                            <div class="hot-host-avatar">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Host">
+                            </div>
+                            <div class="host-details">
+                                <div class="hot-host-name">Lan Chi <span class="verified-icon">✓</span></div>
+                                <div class="hot-host-meta">⭐ Super Host</div>
+                            </div>
+                        </div>
+
+                        <div class="hot-trip-title-block">
+                            <div class="hot-trip-destination">Pháp - Thụy Sĩ - Ý</div>
+                            <div class="hot-trip-region">📍 Châu Âu</div>
+                        </div>
+
+                        <div class="hot-info-grid">
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Khởi hành</span>
+                                <span class="hot-info-value">20/01/2025</span>
+                            </div>
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Thời gian</span>
+                                <span class="hot-info-value">12 Ngày 11 Đêm</span>
+                            </div>
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Ngân sách</span>
+                                <span class="hot-info-value">~75.000.000đ</span>
+                            </div>
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Trạng thái</span>
+                                <span class="hot-info-value" style="color:#E65100">Nhận hồ sơ</span>
+                            </div>
+                        </div>
+
+                        <div class="hot-trip-tags">
+                            <span class="hot-tag">EuroTrip</span>
+                            <span class="hot-tag">Check-in</span>
+                        </div>
+
+                        <div class="hot-card-footer">
+                            <div class="hot-slots-text">Còn <strong>4/10</strong> chỗ</div>
+                            <div class="navy-action-group">
+                                <button class="hot-btn-icon">🔖</button>
+                                <button class="hot-btn-icon">💬</button>
+                                <button class="hot-btn-detail">Tham gia</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Card 3: Bali -->
+                <div class="hot-card">
+                    <div class="hot-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="hot-card-img" alt="Bali">
+                        <div class="hot-card-badges">
+                            <span class="badge-hot">Yêu thích</span>
+                        </div>
+                    </div>
+
+                    <div class="hot-card-body">
+                        <div class="hot-host-row">
+                            <div class="hot-host-avatar">
+                                <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="Host">
+                            </div>
+                            <div class="host-details">
+                                <div class="hot-host-name">Tuấn Hưng</div>
+                                <div class="hot-host-meta">✨ New Host</div>
+                            </div>
+                        </div>
+
+                        <div class="hot-trip-title-block">
+                            <div class="hot-trip-destination">Bali Paradise</div>
+                            <div class="hot-trip-region">📍 Indonesia</div>
+                        </div>
+
+                        <div class="hot-info-grid">
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Khởi hành</span>
+                                <span class="hot-info-value">10/02/2025</span>
+                            </div>
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Thời gian</span>
+                                <span class="hot-info-value">5 Ngày 4 Đêm</span>
+                            </div>
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Ngân sách</span>
+                                <span class="hot-info-value">~15.000.000đ</span>
+                            </div>
+                            <div class="hot-info-item">
+                                <span class="hot-info-label">Trạng thái</span>
+                                <span class="hot-info-value" style="color:#E65100">Mở đăng ký</span>
+                            </div>
+                        </div>
+
+                        <div class="hot-trip-tags">
+                            <span class="hot-tag">Sống ảo</span>
+                            <span class="hot-tag">Biển đảo</span>
+                        </div>
+
+                        <div class="hot-card-footer">
+                            <div class="hot-slots-text">Còn <strong>3/6</strong> chỗ</div>
+                            <div class="navy-action-group">
+                                <button class="hot-btn-icon">🔖</button>
+                                <button class="hot-btn-icon">💬</button>
+                                <button class="hot-btn-detail">Tham gia</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- === END NEW FEATURED SECTION === -->
+
+        <!-- Luxury Trips Scroll -->
+        <div class="luxury-scroll-section">
+            <div class="luxury-scroll-header">
+                <div class="luxury-header-title-group">
+                    <span class="luxury-sub-label">Royal Navy Edition</span>
+                    <h2 class="luxury-main-title">Luxury <span>Yachts & Trips</span></h2>
+                </div>
+                <a href="#" class="luxury-view-all-btn">Xem tất cả</a>
+            </div>
+
+            <div class="luxury-scroll-container">
+
+                <!-- CARD 1: Maldives -->
+                <div class="navy-card">
+                    <div class="navy-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1540206351-d6465b3ac5c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="navy-card-img" alt="Maldives">
+                        <div class="navy-card-badges">
+                            <span class="badge-navy">Private</span>
+                        </div>
+                    </div>
+
+                    <div class="navy-card-body">
+                        <div class="navy-host-row">
+                            <div class="navy-host-avatar">
+                                <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Host">
+                            </div>
+                            <div class="host-details">
+                                <div class="navy-host-name">Hoàng Nam <span class="verified-icon">✓</span></div>
+                                <div class="navy-host-meta">Elite Host</div>
+                            </div>
+                        </div>
+
+                        <div class="navy-trip-title-block">
+                            <div class="navy-trip-destination">Maldives Retreat</div>
+                            <div class="navy-trip-region">📍 Male Atoll, Maldives</div>
+                        </div>
+
+                        <div class="navy-trip-info-grid">
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Khởi hành</span>
+                                <span class="navy-info-value">15/12/2024</span>
+                            </div>
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Thời gian</span>
+                                <span class="navy-info-value">5 Ngày 4 Đêm</span>
+                            </div>
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Loại hình</span>
+                                <span class="navy-info-value">Resort 5⭐</span>
+                            </div>
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Chi phí</span>
+                                <span class="navy-info-value navy-price-val">~45.000.000đ</span>
+                            </div>
+                        </div>
+
+                        <div class="navy-trip-tags">
+                            <span class="navy-tag">Private Villa</span>
+                            <span class="navy-tag">Seaplane</span>
+                        </div>
+
+                        <div class="navy-card-footer">
+                            <div class="navy-slots-text">Còn <strong>2/4</strong> chỗ</div>
+                            <div class="navy-action-group">
+                                <button class="navy-btn-icon" title="Lưu">🔖</button>
+                                <button class="navy-btn-icon" title="Thảo luận">💬</button>
+                                <button class="navy-btn-detail">Chi tiết</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: Swiss Alps -->
+                <div class="navy-card">
+                    <div class="navy-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1554466620-80a3489d6154?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="navy-card-img" alt="Swiss Alps">
+                        <div class="navy-card-badges">
+                            <span class="badge-navy">Signature</span>
+                        </div>
+                    </div>
+
+                    <div class="navy-card-body">
+                        <div class="navy-host-row">
+                            <div class="navy-host-avatar">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Host">
+                            </div>
+                            <div class="host-details">
+                                <div class="navy-host-name">Thu Thảo <span class="verified-icon">✓</span></div>
+                                <div class="navy-host-meta">Diamond Host</div>
+                            </div>
+                        </div>
+
+                        <div class="navy-trip-title-block">
+                            <div class="navy-trip-destination">Swiss Winter</div>
+                            <div class="navy-trip-region">📍 Zermatt, Thụy Sĩ</div>
+                        </div>
+
+                        <div class="navy-trip-info-grid">
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Khởi hành</span>
+                                <span class="navy-info-value">24/12/2024</span>
+                            </div>
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Thời gian</span>
+                                <span class="navy-info-value">10 Ngày 9 Đêm</span>
+                            </div>
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Lưu trú</span>
+                                <span class="navy-info-value">Chalet Luxe</span>
+                            </div>
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Chi phí</span>
+                                <span class="navy-info-value navy-price-val">~95.000.000đ</span>
+                            </div>
+                        </div>
+
+                        <div class="navy-trip-tags">
+                            <span class="navy-tag">Skiing</span>
+                            <span class="navy-tag">Helicopter</span>
+                        </div>
+
+                        <div class="navy-card-footer">
+                            <div class="navy-slots-text">Còn <strong>4/6</strong> chỗ</div>
+                            <div class="navy-action-group">
+                                <button class="navy-btn-icon" title="Lưu">🔖</button>
+                                <button class="navy-btn-icon" title="Thảo luận">💬</button>
+                                <button class="navy-btn-detail">Chi tiết</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: Kyoto -->
+                <div class="navy-card">
+                    <div class="navy-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1528360983277-13d9012356ee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="navy-card-img" alt="Kyoto">
+                        <div class="navy-card-badges">
+                            <span class="badge-navy">Culture</span>
+                        </div>
+                    </div>
+
+                    <div class="navy-card-body">
+                        <div class="navy-host-row">
+                            <div class="navy-host-avatar">
+                                <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="Host">
+                            </div>
+                            <div class="host-details">
+                                <div class="navy-host-name">Tuấn Anh <span class="verified-icon">✓</span></div>
+                                <div class="navy-host-meta">Gold Host</div>
+                            </div>
+                        </div>
+
+                        <div class="navy-trip-title-block">
+                            <div class="navy-trip-destination">Kyoto Spirits</div>
+                            <div class="navy-trip-region">📍 Kyoto, Nhật Bản</div>
+                        </div>
+
+                        <div class="navy-trip-info-grid">
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Khởi hành</span>
+                                <span class="navy-info-value">05/01/2025</span>
+                            </div>
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Thời gian</span>
+                                <span class="navy-info-value">6 Ngày 5 Đêm</span>
+                            </div>
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Lưu trú</span>
+                                <span class="navy-info-value">Ryokan</span>
+                            </div>
+                            <div class="navy-info-item">
+                                <span class="navy-info-label">Chi phí</span>
+                                <span class="navy-info-value navy-price-val">~55.000.000đ</span>
+                            </div>
+                        </div>
+
+                        <div class="navy-trip-tags">
+                            <span class="navy-tag">Onsen</span>
+                            <span class="navy-tag">Kaiseki</span>
+                        </div>
+
+                        <div class="navy-card-footer">
+                            <div class="navy-slots-text">Còn <strong>1/4</strong> chỗ</div>
+                            <div class="navy-action-group">
+                                <button class="navy-btn-icon" title="Lưu">🔖</button>
+                                <button class="navy-btn-icon" title="Thảo luận">💬</button>
+                                <button class="navy-btn-detail">Chi tiết</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Urgent Trips -->
+        <div class="section-box">
+            <div class="section-header">
+                <div class="section-title">🔥 Sắp khởi hành</div>
+                <div class="see-all">Xem tất cả →</div>
+            </div>
+
+            <!-- Trip Card 1 - Urgent -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <div class="trip-avatar" style="background: linear-gradient(135deg, #F44336, #E91E63);">HL</div>
+                    <div class="trip-host-info">
+                        <div class="trip-host-name">
+                            Hoàng Long <span class="verified-badge">✓</span>
+                        </div>
+                        <div class="trip-host-meta">
+                            <span>⭐ 4.8</span> • <span>8 trips</span> • <span>Online 5p trước</span>
+                        </div>
+                    </div>
+                    <div class="trip-status status-urgent">Gấp!</div>
+                </div>
+                <div class="trip-body">
+                    <div class="activity-indicator">
+                        <div class="activity-dot"></div>
+                        3 người đang xem
+                    </div>
+                    <div class="trip-destination">
+                        <div class="trip-destination-icon">🏖️</div>
+                        <div class="trip-destination-info">
+                            <div class="trip-destination-name">Phú Quốc</div>
+                            <div class="trip-destination-region">Kiên Giang, Việt Nam</div>
+                        </div>
+                    </div>
+                    <div class="trip-info-creative">
+                        <span class="info-chip chip-date">📅 22-25/11/2024</span>
+                        <span class="info-chip chip-duration">⏱️ 4N3Đ</span>
+                        <span class="info-chip chip-budget">💰 5-7 triệu</span>
+                        <span class="info-chip chip-age">🎂 25-35 tuổi</span>
+                    </div>
+                    <div class="trip-description">
+                        Cần tìm thêm 2 bạn nữ đi Phú Quốc cuối tuần này. Đã book resort 4 sao, có hồ bơi riêng. Chương trình: check-in Sunset Town, cáp treo Hòn Thơm, lặn ngắm san hô...
+                    </div>
+                    <div class="trip-tags">
+                        <span class="trip-tag">🏊 Bơi lội</span>
+                        <span class="trip-tag">📸 Chụp ảnh</span>
+                        <span class="trip-tag">🍽️ Hải sản</span>
+                    </div>
+                    <div class="trip-requirements">
+                        <div class="requirements-title">Yêu cầu bạn đồng hành:</div>
+                        <div class="requirements-list">
+                            <div class="requirement-item">✓ Nữ, 25-35 tuổi</div>
+                            <div class="requirement-item">✓ Hòa đồng, vui vẻ</div>
+                            <div class="requirement-item">✓ Biết bơi cơ bản</div>
+                        </div>
+                    </div>
+                    <div class="members-preview">
+                        <div class="member-avatar" style="background: #F44336;">HL</div>
+                        <div class="member-avatar" style="background: #9C27B0;">TN</div>
+                        <span class="members-count">2 thành viên đã tham gia</span>
+                    </div>
+                </div>
+                <div class="trip-footer">
+                    <div class="trip-slots">
+                        <div class="slots-visual">
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot"></div>
+                            <div class="slot-dot"></div>
+                        </div>
+                        <div class="slots-text">Còn <strong>2/4</strong> chỗ</div>
+                    </div>
+                    <div class="trip-actions">
+                        <button class="std-btn-icon" onclick="saveTrip(3)">🔖</button>
+                        <button class="std-btn-icon" onclick="discussTrip(3)">💬</button>
+                        <button class="trip-action-btn btn-primary" onclick="viewTrip(2)">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trip Card 2 - With Image -->
+            <div class="trip-card">
+                <div class="trip-image" style="background: linear-gradient(135deg, #4CAF50, #8BC34A);">
+                    ⛰️
+                    <div class="trip-image-overlay">
+                        <div class="trip-image-location">📍 Sapa, Lào Cai</div>
+                    </div>
+                </div>
+                <div class="trip-header">
+                    <div class="trip-avatar" style="background: linear-gradient(135deg, #2196F3, #03A9F4);">TL</div>
+                    <div class="trip-host-info">
+                        <div class="trip-host-name">Thuỳ Linh</div>
+                        <div class="trip-host-meta">
+                            <span>⭐ 4.9</span> • <span>15 trips</span>
+                        </div>
+                    </div>
+                    <div class="trip-status status-hot">Hot 🔥</div>
+                </div>
+                <div class="trip-body">
+                    <div class="match-score">
+                        <span class="match-icon">🎯</span>
+                        <span class="match-text">92% phù hợp với bạn</span>
+                    </div>
+                    <div class="trip-destination">
+                        <div class="trip-destination-icon">🏔️</div>
+                        <div class="trip-destination-info">
+                            <div class="trip-destination-name">Chinh phục Fansipan</div>
+                            <div class="trip-destination-region">Sapa, Lào Cai</div>
+                        </div>
+                    </div>
+                    <div class="trip-info-creative">
+                        <span class="info-chip chip-date">📅 29/11-01/12</span>
+                        <span class="info-chip chip-duration">⏱️ 3N2Đ</span>
+                    </div>
+                    <div class="budget-display">
+                        <span class="budget-icon">💰</span>
+                        <span class="budget-range">3.5 - 4.5 triệu</span>
+                        <span class="budget-per">/người (bao gồm xe + homestay)</span>
+                    </div>
+                    <div class="trip-description">
+                        Tuyến đường trek Trạm Tôn - Fansipan 2 ngày 1 đêm. Có porter và guide. Yêu cầu sức khỏe tốt, chưa leo núi cũng OK!
+                    </div>
+                    <div class="trip-tags">
+                        <span class="trip-tag">🥾 Trekking</span>
+                        <span class="trip-tag">⛺ Camping</span>
+                        <span class="trip-tag">📸 Săn mây</span>
+                    </div>
+                    <div class="interaction-stats">
+                        <div class="interaction-stat">❤️ 45 thích</div>
+                        <div class="interaction-stat">💬 12 bình luận</div>
+                        <div class="interaction-stat">👁️ 234 lượt xem</div>
+                    </div>
+                </div>
+                <div class="trip-footer">
+                    <div class="trip-slots">
+                        <div class="slots-visual">
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot"></div>
+                            <div class="slot-dot"></div>
+                            <div class="slot-dot"></div>
+                        </div>
+                        <div class="slots-text">Còn <strong>3/6</strong> chỗ</div>
+                    </div>
+                    <div class="trip-actions">
+                        <button class="std-btn-icon" onclick="saveTrip(3)">🔖</button>
+                        <button class="std-btn-icon" onclick="discussTrip(3)">💬</button>
+                        <button class="trip-action-btn btn-primary" onclick="viewTrip(2)">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hot Tours Scroll -->
+        <div class="tours-scroll-section">
+            <div class="section-header">
+                <div class="section-title">🔥 Tour HOT trong tuần</div>
+                <div class="see-all">Xem tất cả →</div>
+            </div>
+            <div class="tours-scroll-container">
+                <div class="tour-card">
+                    <div class="tour-card-image" style="background: linear-gradient(135deg, #667EEA, #764BA2);">
+                        🏝️
+                        <div class="tour-card-hot">HOT</div>
+                    </div>
+                    <div class="tour-card-body">
+                        <div class="tour-card-name">Tour Phú Quốc 4N3Đ - Trọn gói</div>
+                        <div class="tour-card-info">22-25/11 • Còn 8 chỗ</div>
+                        <div class="tour-card-provider">
+                            <div class="provider-logo">V</div>
+                            <div class="provider-name">Vietravel</div>
+                        </div>
+                        <div class="tour-card-price">4.990.000đ</div>
+                    </div>
+                </div>
+
+                <div class="tour-card">
+                    <div class="tour-card-image" style="background: linear-gradient(135deg, #4CAF50, #8BC34A);">
+                        ⛰️
+                        <div class="tour-card-hot">-20%</div>
+                    </div>
+                    <div class="tour-card-body">
+                        <div class="tour-card-name">Sapa - Fansipan 3N2Đ</div>
+                        <div class="tour-card-info">29/11-01/12 • Còn 5 chỗ</div>
+                        <div class="tour-card-provider">
+                            <div class="provider-logo">S</div>
+                            <div class="provider-name">Saigontourist</div>
+                        </div>
+                        <div class="tour-card-price">3.290.000đ</div>
+                    </div>
+                </div>
+
+                <div class="tour-card">
+                    <div class="tour-card-image" style="background: linear-gradient(135deg, #FF9800, #F57C00);">
+                        🏛️
+                        <div class="tour-card-hot">NEW</div>
+                    </div>
+                    <div class="tour-card-body">
+                        <div class="tour-card-name">Huế - Đà Nẵng - Hội An 5N4Đ</div>
+                        <div class="tour-card-info">05-09/12 • Còn 12 chỗ</div>
+                        <div class="tour-card-provider">
+                            <div class="provider-logo">F</div>
+                            <div class="provider-name">Fiditour</div>
+                        </div>
+                        <div class="tour-card-price">5.790.000đ</div>
+                    </div>
+                </div>
+
+                <div class="tour-card">
+                    <div class="tour-card-image" style="background: linear-gradient(135deg, #E91E63, #9C27B0);">
+                        🌸
+                        <div class="tour-card-hot">HOT</div>
+                    </div>
+                    <div class="tour-card-body">
+                        <div class="tour-card-name">Đà Lạt Mùa Hoa 3N2Đ</div>
+                        <div class="tour-card-info">28-30/11 • Còn 6 chỗ</div>
+                        <div class="tour-card-provider">
+                            <div class="provider-logo">B</div>
+                            <div class="provider-name">BenThanh Tourist</div>
+                        </div>
+                        <div class="tour-card-price">2.990.000đ</div>
+                    </div>
+                </div>
+
+                <div class="tour-card">
+                    <div class="tour-card-image" style="background: linear-gradient(135deg, #00BCD4, #009688);">
+                        🌊
+                        <div class="tour-card-hot">-15%</div>
+                    </div>
+                    <div class="tour-card-body">
+                        <div class="tour-card-name">Nha Trang 4N3Đ - Beach Resort</div>
+                        <div class="tour-card-info">01-04/12 • Còn 10 chỗ</div>
+                        <div class="tour-card-provider">
+                            <div class="provider-logo">T</div>
+                            <div class="provider-name">Tugo</div>
+                        </div>
+                        <div class="tour-card-price">4.490.000đ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Trips -->
+        <div class="section-box">
+            <div class="section-header">
+                <div class="section-title">🆕 Mới đăng</div>
+                <div class="see-all">Xem tất cả →</div>
+            </div>
+
+            <!-- Trip Card 3 - International -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <div class="trip-avatar" style="background: linear-gradient(135deg, #9C27B0, #673AB7);">KN</div>
+                    <div class="trip-host-info">
+                        <div class="trip-host-name">
+                            Khoa Nguyễn <span class="verified-badge">✓</span>
+                        </div>
+                        <div class="trip-host-meta">
+                            <span>⭐ 5.0</span> • <span>23 trips</span> • <span>🏆 Super Host</span>
+                        </div>
+                    </div>
+                    <div class="trip-status status-verified">Verified</div>
+                </div>
+                <div class="trip-body">
+                    <div class="trip-destination">
+                        <div class="trip-destination-icon">🇰🇷</div>
+                        <div class="trip-destination-info">
+                            <div class="trip-destination-name">Seoul - Nami - Everland</div>
+                            <div class="trip-destination-region">Hàn Quốc</div>
+                        </div>
+                    </div>
+                    <div class="trip-info-creative">
+                        <span class="info-chip chip-date">📅 20-25/12/2024</span>
+                        <span class="info-chip chip-duration">⏱️ 6N5Đ</span>
+                        <span class="info-chip chip-budget">💰 18-22 triệu</span>
+                        <span class="info-chip chip-transport">✈️ Vietnam Airlines</span>
+                    </div>
+                    <div class="trip-description">
+                        Đi Hàn Quốc đón Giáng sinh! Ngắm tuyết đầu mùa, shopping Myeongdong, ăn BBQ, cafe đẹp. Đã có lịch trình chi tiết, chỉ cần book vé và lên đường!
+                    </div>
+                    <div class="trip-tags">
+                        <span class="trip-tag">❄️ Mùa đông</span>
+                        <span class="trip-tag">🛍️ Shopping</span>
+                        <span class="trip-tag">🍖 Ẩm thực</span>
+                        <span class="trip-tag">🎄 Giáng sinh</span>
+                    </div>
+                    <div class="trip-requirements">
+                        <div class="requirements-title">Yêu cầu:</div>
+                        <div class="requirements-list">
+                            <div class="requirement-item">✓ Đã có visa Hàn Quốc</div>
+                            <div class="requirement-item">✓ Budget linh hoạt</div>
+                            <div class="requirement-item">✓ Thích chụp ảnh</div>
+                        </div>
+                    </div>
+                    <div class="members-preview">
+                        <div class="member-avatar" style="background: #9C27B0;">KN</div>
+                        <div class="member-avatar" style="background: #E91E63;">YN</div>
+                        <div class="member-avatar" style="background: #FF9800;">HM</div>
+                        <span class="members-count">+1 đang chờ duyệt</span>
+                    </div>
+                </div>
+                <div class="trip-footer">
+                    <div class="trip-slots">
+                        <div class="slots-visual">
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot"></div>
+                            <div class="slot-dot"></div>
+                        </div>
+                        <div class="slots-text">Còn <strong>2/5</strong> chỗ</div>
+                    </div>
+                    <div class="trip-actions">
+                        <button class="std-btn-icon" onclick="saveTrip(3)">🔖</button>
+                        <button class="std-btn-icon" onclick="discussTrip(3)">💬</button>
+                        <button class="trip-action-btn btn-primary" onclick="viewTrip(2)">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trip Card 4 - Weekend Trip -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <div class="trip-avatar" style="background: linear-gradient(135deg, #FF9800, #F57C00);">AT</div>
+                    <div class="trip-host-info">
+                        <div class="trip-host-name">An Trần</div>
+                        <div class="trip-host-meta">
+                            <span>⭐ 4.7</span> • <span>5 trips</span> • <span>Online</span>
+                        </div>
+                    </div>
+                    <div class="trip-status status-new">Mới</div>
+                </div>
+                <div class="trip-body">
+                    <div class="trip-destination">
+                        <div class="trip-destination-icon">🌊</div>
+                        <div class="trip-destination-info">
+                            <div class="trip-destination-name">Vũng Tàu - Long Hải</div>
+                            <div class="trip-destination-region">Bà Rịa - Vũng Tàu</div>
+                        </div>
+                    </div>
+                    <div class="trip-info-creative">
+                        <span class="info-chip chip-date">📅 23-24/11</span>
+                        <span class="info-chip chip-duration">⏱️ 2N1Đ</span>
+                        <span class="info-chip chip-budget">💰 1.5-2 triệu</span>
+                        <span class="info-chip chip-transport">🚗 Tự lái</span>
+                    </div>
+                    <div class="trip-description">
+                        Weekend getaway! Đi xe từ Sài Gòn sáng sớm, tắm biển + BBQ hải sản. Cần thêm 2 bạn share xe và phòng khách sạn.
+                    </div>
+                    <div class="trip-tags">
+                        <span class="trip-tag">🏖️ Biển</span>
+                        <span class="trip-tag">🍖 BBQ</span>
+                        <span class="trip-tag">🚗 Road trip</span>
+                    </div>
+                </div>
+                <div class="trip-footer">
+                    <div class="trip-slots">
+                        <div class="slots-visual">
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot"></div>
+                            <div class="slot-dot"></div>
+                        </div>
+                        <div class="slots-text">Còn <strong>2/4</strong> chỗ</div>
+                    </div>
+                    <div class="trip-actions">
+                        <button class="std-btn-icon" onclick="saveTrip(3)">🔖</button>
+                        <button class="std-btn-icon" onclick="discussTrip(3)">💬</button>
+                        <button class="trip-action-btn btn-primary" onclick="viewTrip(2)">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trip Card 5 - Cultural -->
+            <div class="trip-card">
+                <div class="trip-header">
+                    <div class="trip-avatar" style="background: linear-gradient(135deg, #00BCD4, #009688);">MH</div>
+                    <div class="trip-host-info">
+                        <div class="trip-host-name">
+                            Mai Hương <span class="verified-badge">✓</span>
+                        </div>
+                        <div class="trip-host-meta">
+                            <span>⭐ 4.9</span> • <span>18 trips</span> • <span>📸 Photographer</span>
+                        </div>
+                    </div>
+                    <div class="trip-status status-hot">Hot 🔥</div>
+                </div>
+                <div class="trip-body">
+                    <div class="activity-indicator">
+                        <div class="activity-dot"></div>
+                        5 người quan tâm
+                    </div>
+                    <div class="trip-destination">
+                        <div class="trip-destination-icon">🏛️</div>
+                        <div class="trip-destination-info">
+                            <div class="trip-destination-name">Huế - Đà Nẵng - Hội An</div>
+                            <div class="trip-destination-region">Miền Trung</div>
+                        </div>
+                    </div>
+                    <div class="trip-info-creative">
+                        <span class="info-chip chip-date">📅 05-10/12</span>
+                        <span class="info-chip chip-duration">⏱️ 6N5Đ</span>
+                        <span class="info-chip chip-budget">💰 6-8 triệu</span>
+                        <span class="info-chip chip-age">🎂 Mọi lứa tuổi</span>
+                    </div>
+                    <div class="trip-description">
+                        Hành trình khám phá di sản miền Trung. Tham quan Hoàng thành Huế, Bà Nà Hills, phố cổ Hội An. Mình là photographer, sẽ chụp ảnh đẹp cho cả nhóm!
+                    </div>
+                    <div class="trip-tags">
+                        <span class="trip-tag">🏛️ Di sản</span>
+                        <span class="trip-tag">📸 Photography</span>
+                        <span class="trip-tag">🍜 Ẩm thực</span>
+                        <span class="trip-tag">🌅 Chill</span>
+                    </div>
+                    <div class="trip-requirements">
+                        <div class="requirements-title">Yêu cầu:</div>
+                        <div class="requirements-list">
+                            <div class="requirement-item">✓ Thích chụp ảnh</div>
+                            <div class="requirement-item">✓ Yêu văn hóa lịch sử</div>
+                            <div class="requirement-item">✓ Không hút thuốc</div>
+                        </div>
+                    </div>
+                    <div class="members-preview">
+                        <div class="member-avatar" style="background: #00BCD4;">MH</div>
+                        <div class="member-avatar" style="background: #4CAF50;">TH</div>
+                        <div class="member-avatar" style="background: #FF5722;">NL</div>
+                        <div class="member-avatar" style="background: #3F51B5;">VP</div>
+                        <span class="members-count">4 thành viên</span>
+                    </div>
+                    <div class="interaction-stats">
+                        <div class="interaction-stat">❤️ 89 thích</div>
+                        <div class="interaction-stat">💬 28 bình luận</div>
+                        <div class="interaction-stat">👁️ 456 lượt xem</div>
+                    </div>
+                </div>
+                <div class="trip-footer">
+                    <div class="trip-slots">
+                        <div class="slots-visual">
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot filled"></div>
+                            <div class="slot-dot"></div>
+                            <div class="slot-dot"></div>
+                        </div>
+                        <div class="slots-text">Còn <strong>2/6</strong> chỗ</div>
+                    </div>
+                    <div class="trip-actions">
+                        <button class="std-btn-icon" onclick="saveTrip(3)">🔖</button>
+                        <button class="std-btn-icon" onclick="discussTrip(3)">💬</button>
+                        <button class="trip-action-btn btn-primary" onclick="viewTrip(2)">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="page-btn" disabled>←</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">5</button>
+            <button class="page-btn">→</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goToHome()">
+            <div class="nav-icon">🏠</div>
+            <div>Trang chủ</div>
+        </div>
+        <div class="nav-item" onclick="goToTrips()">
+            <div class="nav-icon">🗺️</div>
+            <div>Chuyến đi</div>
+        </div>
+        <div class="nav-add">
+            <button class="add-button" onclick="createTrip()">+</button>
+            <div class="nav-label">Tạo trip</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon">👥</div>
+            <div>Tìm bạn</div>
+        </div>
+        <div class="nav-item" onclick="goToProfile()">
+            <div class="nav-icon">👤</div>
+            <div>Cá nhân</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Navigation
+    function goBack() {
+        alert('← Quay lại');
+    }
+
+    function goToHome() {
+        alert('→ Trang chủ');
+    }
+
+    function goToTrips() {
+        alert('→ Chuyến đi của tôi');
+    }
+
+    function goToProfile() {
+        alert('→ Trang cá nhân');
+    }
+
+    // Trip Actions
+    function createTrip() {
+        alert('+ Tạo hành trình tìm bạn đồng hành mới');
+    }
+
+    function viewTrip(id) {
+        alert('👁️ Xem chi tiết trip #' + id);
+    }
+
+    function joinTrip(id) {
+        alert('✅ Gửi yêu cầu tham gia trip #' + id);
+    }
+
+    function saveTrip(id) {
+        alert('🔖 Đã lưu trip #' + id);
+    }
+
+    function saveTrip(id) {
+        alert('🔖 Đã lưu trip #' + id);
+    }
+
+    // Filter Tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Quick Filter Items
+    document.querySelectorAll('.quick-filter-item').forEach(filter => {
+        filter.addEventListener('click', function() {
+            this.classList.toggle('selected');
+        });
+    });
+
+    // Pagination
+    document.querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.disabled) return;
+            if (this.textContent === '←' || this.textContent === '→') {
+                // Handle prev/next
+                return;
+            }
+            document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+</body>
+
+</html>

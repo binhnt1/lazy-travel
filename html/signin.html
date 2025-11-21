@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - TravelVote</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #FAFAFA;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: #FAFAFA;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid #E8E8E8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1A1A1A;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 32px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-large {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .welcome-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Form */
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1A1A1A;
+            background: white;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #FF6B35;
+        }
+
+        .input-field::placeholder {
+            color: #999;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 8px;
+        }
+
+        .forgot-password a {
+            font-size: 13px;
+            color: #FF6B35;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+
+        .primary-btn:active {
+            opacity: 0.9;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            gap: 12px;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: #E8E8E8;
+        }
+
+        .divider-text {
+            font-size: 12px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        /* Social Login */
+        .social-login {
+            margin-bottom: 24px;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1A1A1A;
+        }
+
+        .social-btn:active {
+            background: #F5F5F5;
+        }
+
+        .social-icon {
+            font-size: 20px;
+        }
+
+        /* Footer */
+        .signup-footer {
+            text-align: center;
+            padding: 16px;
+            margin-top: auto;
+        }
+
+        .signup-text {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .signup-text a {
+            color: #FF6B35;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Terms */
+        .terms-text {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.5;
+            padding: 0 24px;
+            margin-top: 16px;
+        }
+
+        .terms-text a {
+            color: #FF6B35;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="back-btn" onclick="history.back()">←</div>
+            <div class="header-title">Đăng nhập</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="logo-large">✈️</div>
+                <h1 class="welcome-title">Chào mừng trở lại!</h1>
+                <p class="welcome-subtitle">Đăng nhập để tiếp tục hành trình của bạn</p>
+            </div>
+
+            <!-- Social Login -->
+            <div class="social-login">
+                <button class="social-btn" onclick="loginWithGoogle()">
+                    <span class="social-icon">🔵</span>
+                    <span>Tiếp tục với Google</span>
+                </button>
+
+                <button class="social-btn" onclick="loginWithApple()">
+                    <span class="social-icon">🍎</span>
+                    <span>Tiếp tục với Apple</span>
+                </button>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider">
+                <div class="divider-line"></div>
+                <span class="divider-text">HOẶC</span>
+                <div class="divider-line"></div>
+            </div>
+
+            <!-- Login Form -->
+            <form class="form-section" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label class="input-label">Email hoặc số điện thoại</label>
+                    <input 
+                        type="text" 
+                        class="input-field" 
+                        placeholder="Nhập email hoặc số điện thoại"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Mật khẩu</label>
+                    <input 
+                        type="password" 
+                        class="input-field" 
+                        placeholder="Nhập mật khẩu"
+                        required
+                    >
+                    <div class="forgot-password">
+                        <a href="forgot_password.html">Quên mật khẩu?</a>
+                    </div>
+                </div>
+
+                <button type="submit" class="primary-btn">Đăng nhập</button>
+            </form>
+
+            <!-- Terms -->
+            <div class="terms-text">
+                Bằng việc tiếp tục, bạn đồng ý với 
+                <a href="#terms">Điều khoản dịch vụ</a> và 
+                <a href="#privacy">Chính sách bảo mật</a> của TravelVote
+            </div>
+        </div>
+
+        <!-- Signup Footer -->
+        <div class="signup-footer">
+            <p class="signup-text">
+                Chưa có tài khoản? 
+                <a href="signup.html">Đăng ký ngay</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            // Handle email/phone login
+            console.log('Login with email/phone');
+            // Redirect to home page
+            window.location.href = 'home.html';
+        }
+
+        function loginWithGoogle() {
+            // Handle Google login
+            console.log('Login with Google');
+            // Implement Google OAuth
+            window.location.href = 'home.html';
+        }
+
+        function loginWithApple() {
+            // Handle Apple login
+            console.log('Login with Apple');
+            // Implement Apple Sign In
+            window.location.href = 'home.html';
+        }
+    </script>
+</body>
+</html>

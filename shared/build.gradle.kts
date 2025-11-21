@@ -1,17 +1,28 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.library")
-    kotlin("plugin.serialization") version "1.9.20"
+    kotlin("plugin.serialization") version "2.2.21"
+    id("org.jetbrains.compose") version "1.9.3"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.21"
 }
 
 kotlin {
+    // Apply Default Hierarchy Template explicitly for Kotlin 2.0+
+    // This automatically creates iosMain and sets up all dependencies
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+    applyDefaultHierarchyTemplate()
+
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+        @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
         }
     }
+
+    // Create XCFramework for iOS
+    val xcf = XCFramework("shared")
 
     listOf(
         iosX64(),
@@ -21,38 +32,85 @@ kotlin {
         it.binaries.framework {
             baseName = "shared"
             isStatic = true
+
+            // Export Compose dependencies to iOS framework
+            export(compose.runtime)
+            export(compose.foundation)
+            export(compose.material3)
+            export(compose.ui)
+
+            xcf.add(this)
         }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
 
                 // Ktor for HTTP requests
-                implementation("io.ktor:ktor-client-core:2.3.7")
-                implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
-                implementation("io.ktor:ktor-client-logging:2.3.7")
+                implementation("io.ktor:ktor-client-core:3.3.2")
+                implementation("io.ktor:ktor-client-content-negotiation:3.3.2")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.2")
+                implementation("io.ktor:ktor-client-logging:3.3.2")
+
+                // Koin for Dependency Injection
+                implementation("io.insert-koin:koin-core:4.1.1")
+
+                implementation("org.jetbrains.kotlin:kotlin-reflect:2.2.0")
+
+                // Compose Multiplatform - use api() for iOS framework export
+                api(compose.runtime)
+                api(compose.foundation)
+                api(compose.material3)
+                api(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
+
+                // Material Icons
+                implementation(compose.materialIconsExtended)
+
+                // Coil3 for image loading (stable, well-supported)
+                implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+                implementation("io.coil-kt.coil3:coil-network-ktor3:3.3.0")
             }
         }
         val androidMain by getting {
+            resources.srcDir("src/androidMain/resources")
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-                implementation("io.ktor:ktor-client-android:2.3.7")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+                implementation("io.ktor:ktor-client-android:3.3.2")
+
+                // Koin for Android
+                implementation("io.insert-koin:koin-android:4.1.1")
+
+                // Media3 ExoPlayer for video playback
+                implementation("androidx.media3:media3-exoplayer:1.8.0")
+                implementation("androidx.media3:media3-ui:1.8.0")
+                implementation("androidx.media3:media3-common:1.8.0")
+                implementation("androidx.media3:media3-datasource:1.8.0")
+
+                // Kamel decoder for Android
+                implementation("io.github.skeptick.libres:libres-compose:1.2.4")
+
+                // Credential Manager for modern OAuth (replaces deprecated Google Sign-In)
+                implementation("androidx.credentials:credentials:1.5.0")
+                implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
+                implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
+                // CustomTabs for OAuth browser launch
+                implementation("androidx.browser:browser:1.9.0")
             }
         }
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+
+        // iOS source sets - automatically created by Default Hierarchy Template
+        // All dependencies (iosMain -> commonMain, iosX64Main -> iosMain, etc.) are automatic
+        val iosMain by getting {
+            resources.srcDir("src/iosMain/resources")
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:2.3.7")
+                implementation("io.ktor:ktor-client-darwin:3.3.2")
             }
         }
     }

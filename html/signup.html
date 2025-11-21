@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - TravelVote</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #FAFAFA;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: #FAFAFA;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid #E8E8E8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1A1A1A;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 32px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-large {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .welcome-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Form */
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1A1A1A;
+            background: white;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .input-field:focus {
+            border-color: #FF6B35;
+        }
+
+        .input-field::placeholder {
+            color: #999;
+        }
+
+        /* Select styling */
+        select.input-field {
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+
+        select.input-field:focus {
+            border-color: #FF6B35;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+
+        .primary-btn:active {
+            opacity: 0.9;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            gap: 12px;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: #E8E8E8;
+        }
+
+        .divider-text {
+            font-size: 12px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        /* Social Login */
+        .social-login {
+            margin-bottom: 24px;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1A1A1A;
+        }
+
+        .social-btn:active {
+            background: #F5F5F5;
+        }
+
+        .social-icon {
+            font-size: 20px;
+        }
+
+        /* Footer */
+        .signin-footer {
+            text-align: center;
+            padding: 16px;
+            margin-top: auto;
+        }
+
+        .signin-text {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .signin-text a {
+            color: #FF6B35;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Terms */
+        .terms-text {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.5;
+            padding: 0 24px;
+            margin-top: 16px;
+        }
+
+        .terms-text a {
+            color: #FF6B35;
+            text-decoration: none;
+        }
+
+        /* Benefits Section */
+        .benefits-section {
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .benefits-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 12px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .benefit-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .benefit-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .benefit-text {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Radio Group */
+        .radio-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .radio-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option:has(input:checked) {
+            border-color: #FF6B35;
+            background: #FFF5F0;
+        }
+
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+
+        .radio-label {
+            font-size: 14px;
+            color: #1A1A1A;
+            font-weight: 500;
+        }
+
+        .radio-option:has(input:checked) .radio-label {
+            color: #FF6B35;
+        }
+
+        /* Date Group */
+        .date-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .date-select {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .date-select:nth-child(1) {
+            flex: 0.8;
+        }
+
+        .date-select:nth-child(2) {
+            flex: 1.2;
+        }
+
+        .date-select:nth-child(3) {
+            flex: 1;
+        }
+
+        /* Collapsible Section */
+        .collapsible-section {
+            margin-bottom: 24px;
+        }
+
+        .collapsible-header {
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .collapsible-header:hover {
+            background: #F9F9F9;
+        }
+
+        .collapsible-header.active {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-color: transparent;
+        }
+
+        .collapsible-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1A1A1A;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .collapsible-icon {
+            font-size: 16px;
+        }
+
+        .collapsible-arrow {
+            font-size: 14px;
+            color: #666;
+            transition: transform 0.3s;
+        }
+
+        .collapsible-header.active .collapsible-arrow {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-top: none;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .collapsible-content.active {
+            max-height: 1500px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .collapsible-inner {
+            padding: 0 16px 16px 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="back-btn" onclick="history.back()">←</div>
+            <div class="header-title">Đăng ký</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="logo-large">✈️</div>
+                <h1 class="welcome-title">Tạo tài khoản mới</h1>
+                <p class="welcome-subtitle">Bắt đầu hành trình du lịch thú vị của bạn</p>
+            </div>
+
+            <!-- Social Login -->
+            <div class="social-login">
+                <button class="social-btn" onclick="signupWithGoogle()">
+                    <span class="social-icon">🔵</span>
+                    <span>Tiếp tục với Google</span>
+                </button>
+
+                <button class="social-btn" onclick="signupWithApple()">
+                    <span class="social-icon">🍎</span>
+                    <span>Tiếp tục với Apple</span>
+                </button>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider">
+                <div class="divider-line"></div>
+                <span class="divider-text">HOẶC</span>
+                <div class="divider-line"></div>
+            </div>
+
+            <!-- Collapsible Signup Form -->
+            <div class="collapsible-section">
+                <div class="collapsible-header" onclick="toggleCollapse()">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">✉️</span>
+                        <span>Đăng ký với email/số điện thoại</span>
+                    </div>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content" id="signupFormContent">
+                    <div class="collapsible-inner">
+                        <form class="form-section" onsubmit="handleSignup(event)">
+                            <div class="input-group">
+                                <label class="input-label">Họ và tên</label>
+                                <input 
+                                    type="text" 
+                                    class="input-field" 
+                                    placeholder="Nhập họ và tên của bạn"
+                                    required
+                                >
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">Email</label>
+                                <input 
+                                    type="email" 
+                                    class="input-field" 
+                                    placeholder="example@email.com"
+                                    required
+                                >
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">Số điện thoại</label>
+                                <input 
+                                    type="tel" 
+                                    class="input-field" 
+                                    placeholder="0912345678"
+                                    required
+                                >
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">Ngày sinh</label>
+                                <div class="date-group">
+                                    <select class="input-field date-select" required>
+                                        <option value="" disabled selected>Ngày</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                        <option value="13">13</option>
+                                        <option value="14">14</option>
+                                        <option value="15">15</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
+                                        <option value="18">18</option>
+                                        <option value="19">19</option>
+                                        <option value="20">20</option>
+                                        <option value="21">21</option>
+                                        <option value="22">22</option>
+                                        <option value="23">23</option>
+                                        <option value="24">24</option>
+                                        <option value="25">25</option>
+                                        <option value="26">26</option>
+                                        <option value="27">27</option>
+                                        <option value="28">28</option>
+                                        <option value="29">29</option>
+                                        <option value="30">30</option>
+                                        <option value="31">31</option>
+                                    </select>
+                                    <select class="input-field date-select" required>
+                                        <option value="" disabled selected>Tháng</option>
+                                        <option value="1">Tháng 1</option>
+                                        <option value="2">Tháng 2</option>
+                                        <option value="3">Tháng 3</option>
+                                        <option value="4">Tháng 4</option>
+                                        <option value="5">Tháng 5</option>
+                                        <option value="6">Tháng 6</option>
+                                        <option value="7">Tháng 7</option>
+                                        <option value="8">Tháng 8</option>
+                                        <option value="9">Tháng 9</option>
+                                        <option value="10">Tháng 10</option>
+                                        <option value="11">Tháng 11</option>
+                                        <option value="12">Tháng 12</option>
+                                    </select>
+                                    <select class="input-field date-select" required>
+                                        <option value="" disabled selected>Năm</option>
+                                        <option value="2012">2012</option>
+                                        <option value="2011">2011</option>
+                                        <option value="2010">2010</option>
+                                        <option value="2009">2009</option>
+                                        <option value="2008">2008</option>
+                                        <option value="2007">2007</option>
+                                        <option value="2006">2006</option>
+                                        <option value="2005">2005</option>
+                                        <option value="2004">2004</option>
+                                        <option value="2003">2003</option>
+                                        <option value="2002">2002</option>
+                                        <option value="2001">2001</option>
+                                        <option value="2000">2000</option>
+                                        <option value="1999">1999</option>
+                                        <option value="1998">1998</option>
+                                        <option value="1997">1997</option>
+                                        <option value="1996">1996</option>
+                                        <option value="1995">1995</option>
+                                        <option value="1994">1994</option>
+                                        <option value="1993">1993</option>
+                                        <option value="1992">1992</option>
+                                        <option value="1991">1991</option>
+                                        <option value="1990">1990</option>
+                                        <option value="1989">1989</option>
+                                        <option value="1988">1988</option>
+                                        <option value="1987">1987</option>
+                                        <option value="1986">1986</option>
+                                        <option value="1985">1985</option>
+                                        <option value="1984">1984</option>
+                                        <option value="1983">1983</option>
+                                        <option value="1982">1982</option>
+                                        <option value="1981">1981</option>
+                                        <option value="1980">1980</option>
+                                        <option value="1979">1979</option>
+                                        <option value="1978">1978</option>
+                                        <option value="1977">1977</option>
+                                        <option value="1976">1976</option>
+                                        <option value="1975">1975</option>
+                                        <option value="1974">1974</option>
+                                        <option value="1973">1973</option>
+                                        <option value="1972">1972</option>
+                                        <option value="1971">1971</option>
+                                        <option value="1970">1970</option>
+                                        <option value="1969">1969</option>
+                                        <option value="1968">1968</option>
+                                        <option value="1967">1967</option>
+                                        <option value="1966">1966</option>
+                                        <option value="1965">1965</option>
+                                        <option value="1964">1964</option>
+                                        <option value="1963">1963</option>
+                                        <option value="1962">1962</option>
+                                        <option value="1961">1961</option>
+                                        <option value="1960">1960</option>
+                                        <option value="1959">1959</option>
+                                        <option value="1958">1958</option>
+                                        <option value="1957">1957</option>
+                                        <option value="1956">1956</option>
+                                        <option value="1955">1955</option>
+                                        <option value="1954">1954</option>
+                                        <option value="1953">1953</option>
+                                        <option value="1952">1952</option>
+                                        <option value="1951">1951</option>
+                                        <option value="1950">1950</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">Giới tính</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="gender" value="male" required>
+                                        <span class="radio-label">Nam</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="gender" value="female" required>
+                                        <span class="radio-label">Nữ</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="gender" value="other" required>
+                                        <span class="radio-label">Khác</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">Mật khẩu</label>
+                                <input 
+                                    type="password" 
+                                    class="input-field" 
+                                    id="password"
+                                    placeholder="Tạo mật khẩu (tối thiểu 8 ký tự)"
+                                    required
+                                    minlength="8"
+                                >
+                                <div class="input-hint">Sử dụng tối thiểu 8 ký tự, bao gồm chữ và số</div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">Nhập lại mật khẩu</label>
+                                <input 
+                                    type="password" 
+                                    class="input-field" 
+                                    id="confirm-password"
+                                    placeholder="Nhập lại mật khẩu"
+                                    required
+                                    minlength="8"
+                                >
+                            </div>
+
+                            <button type="submit" class="primary-btn">Tạo tài khoản</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="benefits-section">
+                <div class="benefits-title">Lợi ích khi đăng ký:</div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span class="benefit-text">Lên kế hoạch và tổ chức chuyến đi một cách dễ dàng</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span class="benefit-text">Bỏ phiếu và quyết định địa điểm cùng nhóm bạn</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span class="benefit-text">Chia sẻ và khám phá trải nghiệm du lịch</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span class="benefit-text">Quản lý chi phí và ngân sách chuyến đi</span>
+                </div>
+            </div>
+
+            <!-- Terms -->
+            <div class="terms-text">
+                Bằng việc tạo tài khoản, bạn đồng ý với 
+                <a href="#terms">Điều khoản dịch vụ</a> và 
+                <a href="#privacy">Chính sách bảo mật</a> của TravelVote
+            </div>
+        </div>
+
+        <!-- Signin Footer -->
+        <div class="signin-footer">
+            <p class="signin-text">
+                Đã có tài khoản? 
+                <a href="signin.html">Đăng nhập ngay</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function toggleCollapse() {
+            const header = document.querySelector('.collapsible-header');
+            const content = document.getElementById('signupFormContent');
+            
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            
+            // Validate password match
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                alert('Mật khẩu không khớp! Vui lòng kiểm tra lại.');
+                return;
+            }
+            
+            // Handle email/phone signup
+            console.log('Signup with email/phone');
+            // Show verification screen or redirect
+            alert('Đăng ký thành công! Vui lòng kiểm tra email/SMS để xác thực tài khoản.');
+            window.location.href = 'signin.html';
+        }
+
+        function signupWithGoogle() {
+            // Handle Google signup
+            console.log('Signup with Google');
+            // Implement Google OAuth
+            window.location.href = 'home.html';
+        }
+
+        function signupWithApple() {
+            // Handle Apple signup
+            console.log('Signup with Apple');
+            // Implement Apple Sign In
+            window.location.href = 'home.html';
+        }
+    </script>
+</body>
+</html>

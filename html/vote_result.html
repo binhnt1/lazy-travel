@@ -1,0 +1,2588 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Chuyến Đi - Lazy Travel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #F5F5F5;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: #FAFAFA;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            padding: 16px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-info {
+            flex: 1;
+        }
+
+        .trip-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .trip-meta {
+            font-size: 12px;
+            opacity: 0.9;
+            display: flex;
+            gap: 12px;
+        }
+
+        .trip-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .header-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #E0E0E0;
+            position: sticky;
+            top: 120px;
+            z-index: 99;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px;
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #FF6B35;
+            border-bottom-color: #FF6B35;
+        }
+
+        .content {
+            padding: 12px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Urgent Banner */
+        .urgent-banner {
+            background: linear-gradient(135deg, #FF5252 0%, #F44336 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .urgent-icon {
+            font-size: 24px;
+        }
+
+        .urgent-text {
+            flex: 1;
+        }
+
+        .urgent-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .urgent-desc {
+            font-size: 11px;
+            opacity: 0.95;
+        }
+
+        /* Vote Section */
+        .vote-section {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border: 1px solid #FFB74D;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .vote-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .vote-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E65100;
+        }
+
+        .vote-deadline {
+            background: #FF6B35;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .vote-option {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .vote-option:hover {
+            border-color: #FFB74D;
+            background: #FFFBF5;
+        }
+
+        .vote-option.selected {
+            border-color: #FF6B35;
+            background: #FFF3E0;
+        }
+
+        .vote-option.selected::before {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            background: #FF6B35;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .option-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .vote-count {
+            font-size: 12px;
+            font-weight: 600;
+            color: #FF6B35;
+        }
+
+        .option-desc {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .vote-progress {
+            background: #E0E0E0;
+            height: 4px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .vote-progress-fill {
+            background: #FF6B35;
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .destination-details-card {
+            background: #F9F9F9;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #FF6B35;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+            padding: 0;
+        }
+
+        .voters-list {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .voter-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .vote-tip {
+            background: #E3F2FD;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .vote-tip-title {
+            font-size: 12px;
+            color: #1565C0;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .vote-tip-desc {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .vote-btn {
+            width: 100%;
+            background: #FF6B35;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .vote-btn:disabled {
+            background: #BDBDBD;
+            cursor: not-allowed;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Info Row */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #212121;
+        }
+
+        /* Member Card */
+        .member-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #F9F9F9;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .member-role {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .member-status {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .member-status.voted {
+            color: #4CAF50;
+        }
+
+        .member-status.pending {
+            color: #FF9800;
+        }
+
+        /* Comments */
+        .comment-input-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            resize: none;
+        }
+
+        .comment-btn {
+            background: #FF6B35;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .comment-item {
+            background: #F9F9F9;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .comment-item.reply {
+            margin-left: 40px;
+            background: #FFF;
+            border-left: 3px solid #E0E0E0;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .comment-author {
+            flex: 1;
+        }
+
+        .comment-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212121;
+        }
+
+        .comment-time {
+            font-size: 10px;
+            color: #999;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: #212121;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .comment-action {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .comment-action:hover {
+            color: #FF6B35;
+        }
+
+        /* Invite Section */
+        .invite-card {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .invite-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .invite-icon-large {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .invite-header-text h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .invite-header-text p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #F9F9F9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .friend-item:hover {
+            background: #F0F0F0;
+        }
+
+        .friend-item.selected {
+            background: #E8F5E9;
+            border: 1px solid #4CAF50;
+        }
+
+        .friend-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 14px;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212121;
+        }
+
+        .friend-trips {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .friend-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E0E0E0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: transparent;
+            transition: all 0.2s;
+        }
+
+        .friend-item.selected .friend-checkbox {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+
+        .invite-btn {
+            width: 100%;
+            background: #FF6B35;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .invite-btn:disabled {
+            background: #BDBDBD;
+            cursor: not-allowed;
+        }
+
+        /* Budget Summary */
+        .budget-summary {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            border-radius: 8px;
+            padding: 16px;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .budget-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .budget-items {
+            margin-bottom: 12px;
+        }
+
+        .budget-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+            opacity: 0.95;
+        }
+
+        .budget-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+        }
+
+        .filter-tab {
+            padding: 6px 12px;
+            background: #F5F5F5;
+            border: 1px solid #E0E0E0;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-tab.active {
+            background: #FF6B35;
+            color: white;
+            border-color: #FF6B35;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 360px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .modal-close {
+            background: #F5F5F5;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .friend-counter {
+            background: #E8F5E9;
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .friend-counter-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2E7D32;
+        }
+
+        .friend-counter-label {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        /* Live Viewers */
+        .live-viewers {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Countdown Timer */
+        .countdown-timer {
+            background: white;
+            border: 1px solid #FF6B35;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .countdown-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .countdown-display {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .countdown-box {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            border-radius: 8px;
+            padding: 8px 12px;
+            width: 60px;
+        }
+
+        .countdown-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .countdown-unit {
+            font-size: 10px;
+            color: white;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        /* Leave Trip Button */
+        .leave-trip-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #FF5252;
+            padding: 12px;
+            border-radius: 8px;
+            color: #FF5252;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s;
+        }
+
+        .leave-trip-btn:hover {
+            background: #FF5252;
+            color: white;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #E0E0E0;
+            background: white;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            background: #F5F5F5;
+        }
+
+        .page-btn.active {
+            background: #FF6B35;
+            color: white;
+            border-color: #FF6B35;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* GitHub-style Invite */
+        .github-invite-card {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .github-invite-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .github-icon {
+            width: 40px;
+            height: 40px;
+            background: #24292E;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .github-invite-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .github-invite-desc {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .invite-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .invite-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .invite-email-btn {
+            padding: 10px 16px;
+            background: #24292E;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .invite-email-btn:hover {
+            background: #1a1e22;
+        }
+
+        .pending-invites {
+            background: #F9F9F9;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .pending-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .pending-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+
+        .pending-email {
+            font-size: 12px;
+            color: #212121;
+            font-weight: 600;
+        }
+
+        .pending-badge {
+            font-size: 10px;
+            padding: 4px 8px;
+            background: #FFF3E0;
+            color: #E65100;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* Result Banner */
+        .result-banner {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .result-banner-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .result-banner-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .result-banner-desc {
+            font-size: 11px;
+            opacity: 0.95;
+        }
+
+        /* Winner Section */
+        .winner-section {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border: 1px solid #FFB74D;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .winner-badge {
+            background: #FF6B35;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .winner-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .winner-stats {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        /* Decision Options */
+        .decision-option {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .decision-option:hover {
+            border-color: #FFB74D;
+            background: #FFFBF5;
+        }
+
+        .decision-option.selected {
+            border-color: #FF6B35;
+            background: #FFF3E0;
+        }
+
+        .radio-btn {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #E0E0E0;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .decision-option.selected .radio-btn {
+            border-color: #FF6B35;
+        }
+
+        .decision-option.selected .radio-btn::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FF6B35;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .decision-text {
+            flex: 1;
+        }
+
+        .decision-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .decision-sublabel {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .decision-note {
+            background: white;
+            border-left: 4px solid #FF6B35;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        /* Timeline */
+        .timeline {
+            padding: 10px 0;
+        }
+
+        .timeline-item {
+            gap: 12px;
+            display: flex;
+            position: relative;
+            align-items: center;
+        }
+
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #E0E0E0;
+            border: 3px solid #F5F5F5;
+            flex-shrink: 0;
+            margin-top: 2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-item.completed .timeline-dot {
+            background: #4CAF50;
+            border-color: #E8F5E9;
+        }
+
+        .timeline-item.active .timeline-dot {
+            background: #FF6B35;
+            border-color: #FFF3E0;
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
+        }
+
+        .timeline-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #FF6B35;
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .timeline-item.active .timeline-title {
+            color: #FF6B35;
+        }
+
+        .timeline-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .timeline-line {
+            width: 3px;
+            height: 30px;
+            background: #E0E0E0;
+            margin-left: 9px;
+        }
+
+        .timeline-line.completed {
+            background: #4CAF50;
+        }
+
+        .timeline-line.active {
+            background: linear-gradient(to bottom, #4CAF50 0%, #FF6B35 100%);
+        }
+
+        /* Global Section - Bottom of page */
+        .global-section {
+            background: white;
+            padding: 12px;
+        }
+
+        .admin-actions-card {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .admin-actions-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #212121;
+        }
+
+        .admin-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .admin-action-btn {
+            padding: 10px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .admin-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-action-btn.primary {
+            background: #667EEA;
+            color: white;
+            border-color: #667EEA;
+        }
+
+        .admin-action-btn.primary:hover {
+            background: #5568D3;
+        }
+
+        .admin-action-btn.success {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .admin-action-btn.success:hover {
+            background: #43A047;
+        }
+
+        .admin-action-btn.warning {
+            background: white;
+            color: #FF9800;
+            border-color: #FF9800;
+        }
+
+        .admin-action-btn.warning:hover {
+            background: #FFF3E0;
+        }
+
+        .admin-action-btn.danger {
+            background: white;
+            color: #F44336;
+            border-color: #F44336;
+        }
+
+        .admin-action-btn.danger:hover {
+            background: #FFEBEE;
+        }
+
+        /* Voter Avatar with Check Mark */
+        .voter-avatar {
+            position: relative;
+        }
+
+        .voter-avatar.confirmed::after {
+            content: '✓';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            font-weight: 700;
+            border: 1px solid white;
+        }
+
+        .voter-avatar.waiting::after {
+            content: '⏳';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            background: #FF9800;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            border: 1px solid white;
+        }
+
+        .voter-avatar.declined {
+            opacity: 0.2;
+            filter: grayscale(50%);
+        }
+
+        /* Status Lists */
+        .status-section {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .status-column {
+            flex: 1;
+        }
+
+        .status-column-title {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-count {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        /* Confirmation Status Badge */
+        .confirmation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .confirmation-badge.confirmed {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .confirmation-badge.declined {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .confirmation-badge.waiting {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            transition: bottom 0.3s ease;
+            max-width: 360px;
+            min-width: 280px;
+        }
+
+        .toast.show {
+            bottom: 80px;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .toast.success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .toast.error {
+            border-left: 4px solid #F44336;
+        }
+
+        .toast.info {
+            border-left: 4px solid #2196F3;
+        }
+
+        .toast.warning {
+            border-left: 4px solid #FF9800;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <button class="back-btn" onclick="window.history.back()">←</button>
+                <div class="header-info">
+                    <div class="trip-title">Chuyến đi Nha Trang</div>
+                    <div class="trip-meta">
+                        <span>📅 15-18/12/2024</span>
+                        <span>👥 5 người</span>
+                    </div>
+                    <div class="trip-status" id="tripStatus">
+                        <span>🔥</span>
+                        <span>Vote đang mở</span>
+                    </div>
+                    <div class="live-viewers">
+                        <div class="live-dot"></div>
+                        <span id="viewerCount">3 người đang xem</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('vote')">🗳️ Vote</button>
+            <button class="tab" onclick="switchTab('info')">📋 Thông tin</button>
+            <button class="tab" onclick="switchTab('discuss')">💬 Thảo luận</button>
+        </div>
+
+        <div class="content">
+            <!-- Tab Vote -->
+            <div class="tab-content active" id="vote-tab">
+                <!-- Result Banner -->
+                <div class="result-banner">
+                    <div class="result-banner-icon">🎉</div>
+                    <div class="result-banner-title">VOTE ĐÃ HOÀN THÀNH</div>
+                    <div class="result-banner-desc">Kết quả đã được xác nhận bởi admin</div>
+                </div>
+
+                <!-- Winner Section -->
+                <div class="winner-section">
+                    <div class="winner-badge">👑 CHIẾN THẮNG</div>
+                    <div class="winner-name">🏖️ Nha Trang</div>
+                    <div class="option-desc">Biển xanh, cát trắng - Chi phí: 4.1M/người</div>
+                    <div class="vote-progress">
+                        <div class="vote-progress-fill" style="width: 60%"></div>
+                    </div>
+                    <div class="winner-stats">60% đã chọn - 3/5 người</div>
+
+                    <!-- Status Section -->
+                    <div class="status-section">
+                        <div class="status-column">
+                            <div class="status-column-title">
+                                <span>Đã vote & xác nhận</span>
+                                <span class="status-count">(3)</span>
+                            </div>
+                            <div class="status-icons">
+                                <div class="voter-avatar" style="background: #FF6B35;" title="Lan Anh - Đã vote & xác nhận">LA</div>
+                                <div class="voter-avatar" style="background: #4ECDC4;" title="Tuấn Hùng - Đã vote & xác nhận">TH</div>
+                                <div class="voter-avatar confirmed" style="background: #E91E63;" title="Mai Phương - Đã vote & xác nhận">MP</div>
+                            </div>
+                        </div>
+                        <div class="status-column">
+                            <div class="status-column-title">
+                                <span>Đang xem xét</span>
+                                <span class="status-count">(2)</span>
+                            </div>
+                            <div class="status-icons">
+                                <div class="voter-avatar waiting" style="background: #9C27B0;" title="Thu Linh - Chưa phản hồi">TL</div>
+                                <div class="voter-avatar declined" style="background: #2196F3;" title="Hoàng Nam - Từ chối">HN</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decision Section -->
+                <div class="vote-section">
+                    <div class="vote-header">
+                        <div class="vote-title">🤔 Quyết Định Của Bạn</div>
+                    </div>
+                    <div class="decision-note">
+                        ⚠️ <strong>Lưu ý:</strong> Vote của bạn không được chọn. Bạn có muốn tham gia chuyến đi với địa điểm đã được đa số lựa chọn không?
+                    </div>
+
+                    <div class="decision-option selected" onclick="selectDecision(this)">
+                        <div class="radio-btn"></div>
+                        <div class="decision-text">
+                            <div class="decision-label">✅ Đồng ý tham gia</div>
+                            <div class="decision-sublabel">Tôi sẽ đi cùng theo địa điểm đã chọn</div>
+                        </div>
+                    </div>
+
+                    <div class="decision-option" onclick="selectDecision(this)">
+                        <div class="radio-btn"></div>
+                        <div class="decision-text">
+                            <div class="decision-label">❌ Không tham gia</div>
+                            <div class="decision-sublabel">Rất tiếc, tôi không thể đi chuyến này</div>
+                        </div>
+                    </div>
+
+                    <button class="vote-btn" onclick="saveDecision()">
+                        Xác nhận
+                    </button>
+                </div>
+
+                <!-- Vote Details Section -->
+                <div class="vote-section">
+                    <div class="vote-header">
+                        <div class="vote-title">📊 Chi Tiết Kết Quả</div>
+                    </div>
+
+                    <div class="vote-option" style="cursor: default;" data-destination="nhatrang">
+                        <div class="option-header">
+                            <div class="option-name">🏖️ Nha Trang</div>
+                            <div class="vote-count">3 votes (60%)</div>
+                        </div>
+                        <div class="option-desc">Biển xanh, cát trắng - Chi phí: 4.1M/người</div>
+                        <div class="vote-progress">
+                            <div class="vote-progress-fill" style="width: 60%"></div>
+                        </div>
+                        <div class="destination-details-card" style="display: none;">
+                            <div class="detail-row">
+                                <span>✈️ Phương tiện:</span>
+                                <strong>Máy bay</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>🏨 Chỗ ở:</span>
+                                <strong>Hotel 4⭐</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>🍜 Ăn uống:</span>
+                                <strong>Bình dân + Hải sản</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>💰 Chi phí dự kiến:</span>
+                                <strong>4.1M/người</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>📝 Ghi chú:</span>
+                                <span>Có tour 4 đảo, tắm bùn I-Resort</span>
+                            </div>
+                        </div>
+                        <button class="expand-btn" onclick="toggleDetails(event, this)">Xem chi tiết ↓</button>
+                        <div class="voters-list">
+                            <div class="voter-avatar" style="background: #FF6B35;" title="Lan Anh">LA</div>
+                            <div class="voter-avatar" style="background: #4ECDC4;" title="Tuấn Hùng">TH</div>
+                            <div class="voter-avatar" style="background: #E91E63;" title="Mai Phương">MP</div>
+                        </div>
+                    </div>
+
+                    <div class="vote-option" style="cursor: default;" data-destination="phuquoc">
+                        <div class="option-header">
+                            <div class="option-name">🏝️ Phú Quốc</div>
+                            <div class="vote-count">1 vote (20%)</div>
+                        </div>
+                        <div class="option-desc">Đảo ngọc thiên đường - Chi phí: 6.8M/người</div>
+                        <div class="vote-progress">
+                            <div class="vote-progress-fill" style="width: 20%"></div>
+                        </div>
+                        <div class="destination-details-card" style="display: none;">
+                            <div class="detail-row">
+                                <span>✈️ Phương tiện:</span>
+                                <strong>Máy bay</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>🏨 Chỗ ở:</span>
+                                <strong>Resort 5⭐</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>🍜 Ăn uống:</span>
+                                <strong>Cao cấp</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>💰 Chi phí dự kiến:</span>
+                                <strong>6.8M/người</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>📝 Ghi chú:</span>
+                                <span>Bao gồm Safari, Vinpearl Land</span>
+                            </div>
+                        </div>
+                        <button class="expand-btn" onclick="toggleDetails(event, this)">Xem chi tiết ↓</button>
+                        <div class="voters-list">
+                            <div class="voter-avatar" style="background: #2196F3;" title="Hoàng Nam">HN</div>
+                        </div>
+                    </div>
+
+                    <div class="vote-option" style="cursor: default;" data-destination="danang">
+                        <div class="option-header">
+                            <div class="option-name">🌅 Đà Nẵng</div>
+                            <div class="vote-count">1 vote (20%)</div>
+                        </div>
+                        <div class="option-desc">Thành phố đáng sống - Chi phí: 3.5M/người</div>
+                        <div class="vote-progress">
+                            <div class="vote-progress-fill" style="width: 20%"></div>
+                        </div>
+                        <div class="destination-details-card" style="display: none;">
+                            <div class="detail-row">
+                                <span>🚗 Phương tiện:</span>
+                                <strong>Xe riêng</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>🏨 Chỗ ở:</span>
+                                <strong>Homestay</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>🍜 Ăn uống:</span>
+                                <strong>Bình dân</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>💰 Chi phí dự kiến:</span>
+                                <strong>3.5M/người</strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>📝 Ghi chú:</span>
+                                <span>Cầu Vàng, Hội An, Bà Nà Hills</span>
+                            </div>
+                        </div>
+                        <button class="expand-btn" onclick="toggleDetails(event, this)">Xem chi tiết ↓</button>
+                        <div class="voters-list">
+                            <div class="voter-avatar" style="background: #9C27B0;" title="Thu Linh">TL</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab Thông tin -->
+            <div class="tab-content" id="info-tab">
+                <div class="card">
+                    <div class="card-title">📋 Thông tin chung</div>
+                    <div class="info-row">
+                        <span class="info-label">Thời gian:</span>
+                        <span class="info-value">3 ngày 2 đêm</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Ngày đi:</span>
+                        <span class="info-value">15/12/2024</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Ngày về:</span>
+                        <span class="info-value">18/12/2024</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Số người:</span>
+                        <span class="info-value">5 người</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Hạn vote:</span>
+                        <span class="info-value">10/12/2024 23:59</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Trạng thái vote:</span>
+                        <span class="info-value" style="color: #FF9800;">4/5 người đã vote</span>
+                    </div>
+                </div>
+
+                <div class="budget-summary">
+                    <div class="budget-title">💰 Chi phí dự kiến</div>
+                    <div class="budget-items">
+                        <div class="budget-item">
+                            <span>Vé máy bay:</span>
+                            <span>2,000,000đ</span>
+                        </div>
+                        <div class="budget-item">
+                            <span>Khách sạn:</span>
+                            <span>800,000đ</span>
+                        </div>
+                        <div class="budget-item">
+                            <span>Ăn uống:</span>
+                            <span>300,000đ</span>
+                        </div>
+                        <div class="budget-item">
+                            <span>Vé tham quan:</span>
+                            <span>1,000,000đ</span>
+                        </div>
+                    </div>
+                    <div class="budget-total">
+                        <span>Tổng:</span>
+                        <span>4,100,000đ</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; margin-top: 12px; text-align: center;">
+                        <div style="font-size: 11px; opacity: 0.9; margin-bottom: 4px;">Chi phí mỗi người</div>
+                        <div style="font-size: 20px; font-weight: 700;">820,000đ</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">👥 Trạng Thái Xác Nhận (5)</div>
+
+                    <div class="filter-tabs">
+                        <div class="filter-tab active">Tất cả</div>
+                        <div class="filter-tab">Đồng ý</div>
+                        <div class="filter-tab">Từ chối</div>
+                        <div class="filter-tab">Chưa phản hồi</div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #FF6B35;">LA</div>
+                        <div class="member-info">
+                            <div class="member-name">Lan Anh</div>
+                            <div class="member-role">👑 Admin</div>
+                            <div style="margin-top: 6px;">
+                                <span class="confirmation-badge confirmed">✅ Đã xác nhận tham gia</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #4ECDC4;">TH</div>
+                        <div class="member-info">
+                            <div class="member-name">Tuấn Hùng</div>
+                            <div class="member-role">👥 Thành viên</div>
+                            <div style="margin-top: 6px;">
+                                <span class="confirmation-badge confirmed">✅ Đã xác nhận tham gia</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #E91E63;">MP</div>
+                        <div class="member-info">
+                            <div class="member-name">Mai Phương</div>
+                            <div class="member-role">👥 Thành viên</div>
+                            <div style="margin-top: 6px;">
+                                <span class="confirmation-badge confirmed">✅ Đã xác nhận tham gia</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #2196F3;">HN</div>
+                        <div class="member-info">
+                            <div class="member-name">Hoàng Nam</div>
+                            <div class="member-role">👥 Thành viên</div>
+                            <div style="margin-top: 6px;">
+                                <span class="confirmation-badge declined">❌ Từ chối tham gia</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-avatar" style="background: #9C27B0;">TL</div>
+                        <div class="member-info">
+                            <div class="member-name">Thu Linh</div>
+                            <div class="member-role">👥 Thành viên</div>
+                            <div style="margin-top: 6px;">
+                                <span class="confirmation-badge waiting">⏳ Chưa phản hồi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📝 Mô tả chuyến đi</div>
+                    <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                        Chuyến đi nghỉ dưỡng cuối năm cùng team. Mục đích chính là thư giãn, tắm biển và thưởng thức hải sản.
+                        Lịch trình linh hoạt, không quá dày, ưu tiên nghỉ ngơi và check-in.
+                        <br><br>
+                        📌 <strong>Lưu ý:</strong>
+                        <br>- Đặt vé máy bay sớm để có giá tốt
+                        <br>- Mang kem chống nắng, mũ rộng vành
+                        <br>- Chuẩn bị đồ bơi, dép đi biển
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Thảo luận -->
+            <div class="tab-content" id="discuss-tab">
+                <div class="card">
+                    <div class="card-title">💬 Thảo luận (8)</div>
+
+                    <div class="comment-input-container">
+                        <textarea class="comment-input" placeholder="Viết bình luận..." rows="2" id="commentInput"></textarea>
+                        <button class="comment-btn" onclick="addComment()">Gửi</button>
+                    </div>
+
+                    <div id="commentsList">
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <div class="comment-avatar" style="background: #FF6B35;">LA</div>
+                                <div class="comment-author">
+                                    <div class="comment-name">Lan Anh</div>
+                                    <div class="comment-time">5 phút trước</div>
+                                </div>
+                            </div>
+                            <div class="comment-text">
+                                Mình vote Nha Trang nhé! Giá vé máy bay đang tốt lắm, mình thấy có vé 800k khứ hồi 😍
+                            </div>
+                            <div class="comment-actions">
+                                <div class="comment-action">👍 5</div>
+                                <div class="comment-action">💬 Trả lời</div>
+                            </div>
+                        </div>
+
+                        <div class="comment-item reply">
+                            <div class="comment-header">
+                                <div class="comment-avatar" style="background: #4ECDC4;">TH</div>
+                                <div class="comment-author">
+                                    <div class="comment-name">Tuấn Hùng</div>
+                                    <div class="comment-time">3 phút trước</div>
+                                </div>
+                            </div>
+                            <div class="comment-text">
+                                <span style="color: #FF6B35; font-weight: 600;">@Lan Anh</span> Vé hãng nào vậy chị? Cho em xin link với ạ 🙏
+                            </div>
+                            <div class="comment-actions">
+                                <div class="comment-action">👍 2</div>
+                                <div class="comment-action">💬 Trả lời</div>
+                            </div>
+                        </div>
+
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <div class="comment-avatar" style="background: #2196F3;">HN</div>
+                                <div class="comment-author">
+                                    <div class="comment-name">Hoàng Nam</div>
+                                    <div class="comment-time">12 phút trước</div>
+                                </div>
+                            </div>
+                            <div class="comment-text">
+                                Mình thích Phú Quốc hơn, có resort đẹp và hoang sơ hơn. Nhưng tùy mọi người 😊
+                            </div>
+                            <div class="comment-actions">
+                                <div class="comment-action">👍 2</div>
+                                <div class="comment-action">💬 Trả lời</div>
+                            </div>
+                        </div>
+
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <div class="comment-avatar" style="background: #9C27B0;">TL</div>
+                                <div class="comment-author">
+                                    <div class="comment-name">Thu Linh</div>
+                                    <div class="comment-time">25 phút trước</div>
+                                </div>
+                            </div>
+                            <div class="comment-text">
+                                Đà Nẵng đi ăn uống rẻ hơn nhiều, lại gần nữa. Mình nghĩ nên chọn Đà Nẵng hoặc Nha Trang thôi 🤔
+                            </div>
+                            <div class="comment-actions">
+                                <div class="comment-action">👍 3</div>
+                                <div class="comment-action">💬 Trả lời</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline & Admin Actions - Bottom Section -->
+        <div class="global-section">
+            <!-- Timeline Section -->
+            <div class="card" style="margin-bottom: 12px;">
+                <div class="card-title">🗓️ Tiến Độ Chuyến Đi</div>
+                <div class="timeline">
+                    <div class="timeline-item completed">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">✅ Tạo Chuyến Đi</div>
+                            <div class="timeline-desc">10/12/2024 - Đã hoàn thành</div>
+                        </div>
+                    </div>
+                    <div class="timeline-line completed"></div>
+
+                    <div class="timeline-item completed">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">✅ Vote Địa Điểm</div>
+                            <div class="timeline-desc">10-15/12/2024 - Đã kết thúc</div>
+                        </div>
+                    </div>
+                    <div class="timeline-line active"></div>
+
+                    <div class="timeline-item active">
+                        <div class="timeline-dot">
+                            <div class="timeline-pulse"></div>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">🔄 Xác Nhận Tham Gia</div>
+                            <div class="timeline-desc">Đang chờ xác nhận từ thành viên</div>
+                        </div>
+                    </div>
+                    <div class="timeline-line"></div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">📋 Lập Kế Hoạch</div>
+                            <div class="timeline-desc">Lên kế hoạch chi tiết</div>
+                        </div>
+                    </div>
+                    <div class="timeline-line"></div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">✈️ Khởi Hành</div>
+                            <div class="timeline-desc">18/12/2024 - Bắt đầu chuyến đi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Actions (Only for Admin) -->
+            <div class="admin-actions-card" id="adminActions" style="display: block;">
+                <div class="admin-actions-title">
+                    <span>👑</span>
+                    <span>Hành động</span>
+                </div>
+                <div class="admin-actions-grid">
+                    <button class="admin-action-btn primary" onclick="planTrip()">
+                        <span>📋</span>
+                        <span>Lập Kế Hoạch</span>
+                    </button>
+                    <button class="admin-action-btn success" onclick="openInviteModal()">
+                        <span>➕</span>
+                        <span>Mời Bạn Bè</span>
+                    </button>
+                    <button class="admin-action-btn warning" onclick="extendVote()">
+                        <span>⏰</span>
+                        <span>Gia Hạn Vote</span>
+                    </button>
+                    <button class="admin-action-btn danger" onclick="cancelTrip()">
+                        <span>🚫</span>
+                        <span>Hủy Chuyến Đi</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon" id="toastIcon">✅</div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Thành công!</div>
+            <div class="toast-message" id="toastMessage">Hành động đã được thực hiện.</div>
+        </div>
+    </div>
+
+    <!-- Modal Invite Friends -->
+    <div class="modal" id="inviteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">👥 Mời Người Tham Gia</div>
+                <button class="modal-close" onclick="closeModal('inviteModal')">×</button>
+            </div>
+
+            <!-- Friends List -->
+            <div class="invite-card">
+                <div class="invite-header">
+                    <div class="invite-icon-large">👥</div>
+                    <div class="invite-header-text">
+                        <h3>Mời Bạn Bè</h3>
+                        <p>Chọn từ danh sách bạn bè của bạn</p>
+                    </div>
+                </div>
+
+                <div class="friend-counter">
+                    <div class="friend-counter-number" id="selectedCount">0</div>
+                    <div class="friend-counter-label">bạn bè đã chọn</div>
+                </div>
+
+                <input type="text" class="form-input" placeholder="🔍 Tìm bạn bè..." oninput="filterFriends(this.value)">
+
+                <div id="friendsList" style="max-height: 300px; overflow-y: auto;">
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #673AB7;">VH</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Văn Hải</div>
+                            <div class="friend-trips">✈️ Đã đi 2 chuyến cùng nhau</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #009688;">QA</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Quỳnh Anh</div>
+                            <div class="friend-trips">✈️ Đã đi 7 chuyến cùng nhau</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #FF5722;">DL</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Đức Long</div>
+                            <div class="friend-trips">✈️ Chưa đi chuyến nào</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #795548;">TN</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Thanh Nga</div>
+                            <div class="friend-trips">✈️ Đã đi 4 chuyến cùng nhau</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #607D8B;">MT</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Minh Tuấn</div>
+                            <div class="friend-trips">✈️ Đã đi 1 chuyến cùng nhau</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #3F51B5;">KA</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Kim Anh</div>
+                            <div class="friend-trips">✈️ Đã đi 5 chuyến cùng nhau</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #00BCD4;">BT</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Bảo Trâm</div>
+                            <div class="friend-trips">✈️ Đã đi 1 chuyến cùng nhau</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #8BC34A;">HL</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Huy Long</div>
+                            <div class="friend-trips">✈️ Chưa đi chuyến nào</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #FFC107;">PN</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Phương Nga</div>
+                            <div class="friend-trips">✈️ Đã đi 3 chuyến cùng nhau</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+
+                    <div class="friend-item" onclick="toggleFriend(this)">
+                        <div class="friend-avatar" style="background: #9E9E9E;">DK</div>
+                        <div class="friend-info">
+                            <div class="friend-name">Duy Khánh</div>
+                            <div class="friend-trips">✈️ Đã đi 6 chuyến cùng nhau</div>
+                        </div>
+                        <div class="friend-checkbox">✓</div>
+                    </div>
+                </div>
+
+                <div class="pagination">
+                    <button class="page-btn" disabled>◀</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">▶</button>
+                </div>
+            </div>
+
+            <!-- GitHub-style Email Invite -->
+            <div class="github-invite-card">
+                <div class="github-invite-header">
+                    <div class="github-icon">📧</div>
+                    <div>
+                        <div class="github-invite-title">Mời qua Email hoặc Username</div>
+                        <div class="github-invite-desc">Gửi lời mời trực tiếp đến email của người bạn muốn mời</div>
+                    </div>
+                </div>
+
+                <div class="invite-input-group">
+                    <input type="text" class="invite-input" placeholder="email@example.com hoặc @username" id="inviteEmail">
+                    <button class="invite-email-btn" onclick="sendEmailInvite()">Gửi lời mời</button>
+                </div>
+
+                <div class="pending-invites">
+                    <div class="pending-title">LỜI MỜI ĐÃ GỬI</div>
+                    <div class="pending-item">
+                        <span class="pending-email">john@example.com</span>
+                        <span class="pending-badge">Chờ xác nhận</span>
+                    </div>
+                    <div class="pending-item">
+                        <span class="pending-email">@sarah_nguyen</span>
+                        <span class="pending-badge">Đã xem</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="invite-btn" id="inviteBtn" onclick="sendInvites()" disabled>
+                Gửi lời mời bạn bè đã chọn
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedVotes = [];
+        let selectedFriends = [];
+
+        // Toast Notification System
+        function showToast(type, title, message) {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+
+            // Remove all type classes
+            toast.classList.remove('success', 'error', 'info', 'warning');
+
+            // Add new type class
+            toast.classList.add(type);
+
+            // Set icon based on type
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'info': 'ℹ️',
+                'warning': '⚠️'
+            };
+            toastIcon.textContent = icons[type] || '✅';
+
+            // Set content
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+
+            // Show toast
+            toast.classList.add('show');
+
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Countdown Timer - DEMO MODE: Starts from 5 minutes
+        let remainingTime = 5 * 60; // 5 minutes in seconds (300 seconds)
+
+        function updateCountdown() {
+            if (remainingTime <= 0) {
+                document.getElementById('countdownDisplay').innerHTML = '<div style="color: #FF5252; font-weight: 700; font-size: 18px;">⏰ Đã hết hạn vote!</div>';
+                document.getElementById('urgentBanner').style.display = 'none';
+                document.getElementById('tripStatus').innerHTML = '<span>⏰</span><span>Vote đã đóng</span>';
+                return;
+            }
+
+            const days = Math.floor(remainingTime / (60 * 60 * 24));
+            const hours = Math.floor((remainingTime % (60 * 60 * 24)) / (60 * 60));
+            const minutes = Math.floor((remainingTime % (60 * 60)) / 60);
+            const seconds = remainingTime % 60;
+
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+            // Update header status and colors based on time
+            if (days > 0) {
+                document.getElementById('tripStatus').innerHTML = '<span>🔥</span><span>Vote đang mở - Còn ' + days + ' ngày</span>';
+            } else if (hours > 0) {
+                document.getElementById('tripStatus').innerHTML = '<span>⚠️</span><span>SẮP HẾT HẠN - Còn ' + hours + ' giờ</span>';
+            } else if (minutes > 2) {
+                document.getElementById('tripStatus').innerHTML = '<span>⏰</span><span>Còn ' + minutes + ' phút</span>';
+            } else {
+                document.getElementById('tripStatus').innerHTML = '<span>🚨</span><span>KHẨN CẤP - Còn ' + minutes + ':' + seconds.toString().padStart(2, '0') + '!</span>';
+            }
+
+            remainingTime--;
+        }
+
+        // Update countdown every second
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Simulate live viewers count (random between 2-5)
+        function updateViewers() {
+            const count = Math.floor(Math.random() * 4) + 2; // 2-5 người
+            document.getElementById('viewerCount').textContent = count + ' người đang xem';
+        }
+
+        setInterval(updateViewers, 8000); // Update every 8 seconds
+        updateViewers();
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // Vote functionality
+        function toggleVote(option) {
+            const destination = option.dataset.destination;
+
+            if (option.classList.contains('selected')) {
+                option.classList.remove('selected');
+                selectedVotes = selectedVotes.filter(v => v !== destination);
+            } else {
+                option.classList.add('selected');
+                selectedVotes.push(destination);
+            }
+
+            document.getElementById('voteBtn').disabled = selectedVotes.length === 0;
+        }
+
+        function submitVote() {
+            if (selectedVotes.length > 0) {
+                alert('✅ Vote thành công!\n\nBạn đã vote cho: ' + selectedVotes.length + ' địa điểm\n\nCảm ơn bạn đã tham gia bình chọn!');
+
+                // Hide urgent banner
+                document.getElementById('urgentBanner').style.display = 'none';
+
+                // Update UI to show voted state
+                document.querySelectorAll('.vote-option.selected').forEach(option => {
+                    const votersList = option.querySelector('.voters-list');
+                    const newVoter = document.createElement('div');
+                    newVoter.className = 'voter-avatar';
+                    newVoter.style.background = '#FFD700';
+                    newVoter.textContent = 'ME';
+                    newVoter.title = 'Bạn';
+                    votersList.appendChild(newVoter);
+                });
+            }
+        }
+
+        function toggleDetails(event, btn) {
+            event.stopPropagation();
+            const detailsCard = btn.previousElementSibling;
+
+            if (detailsCard.style.display === 'none') {
+                detailsCard.style.display = 'block';
+                btn.textContent = 'Thu gọn ↑';
+            } else {
+                detailsCard.style.display = 'none';
+                btn.textContent = 'Xem chi tiết ↓';
+            }
+        }
+
+        // Comment functionality
+        function addComment() {
+            const input = document.getElementById('commentInput');
+            const text = input.value.trim();
+
+            if (text) {
+                const commentsList = document.getElementById('commentsList');
+                const newComment = document.createElement('div');
+                newComment.className = 'comment-item';
+                newComment.innerHTML = `
+                    <div class="comment-header">
+                        <div class="comment-avatar" style="background: #FFD700;">ME</div>
+                        <div class="comment-author">
+                            <div class="comment-name">Bạn</div>
+                            <div class="comment-time">Vừa xong</div>
+                        </div>
+                    </div>
+                    <div class="comment-text">${text}</div>
+                    <div class="comment-actions">
+                        <div class="comment-action">👍 0</div>
+                        <div class="comment-action">💬 Trả lời</div>
+                    </div>
+                `;
+                commentsList.insertBefore(newComment, commentsList.firstChild);
+                input.value = '';
+                showToast('success', 'Đã gửi!', 'Bình luận của bạn đã được thêm vào cuộc thảo luận.');
+            }
+        }
+
+        // Invite friends functionality
+        function openInviteModal() {
+            document.getElementById('inviteModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function toggleFriend(item) {
+            item.classList.toggle('selected');
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const selected = document.querySelectorAll('#friendsList .friend-item.selected').length;
+            document.getElementById('selectedCount').textContent = selected;
+            document.getElementById('inviteBtn').disabled = selected === 0;
+            selectedFriends = selected;
+        }
+
+        function filterFriends(query) {
+            const items = document.querySelectorAll('#friendsList .friend-item');
+            items.forEach(item => {
+                const name = item.querySelector('.friend-name').textContent.toLowerCase();
+                if (name.includes(query.toLowerCase())) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function sendInvites() {
+            if (selectedFriends > 0) {
+                showToast('success', 'Gửi lời mời thành công!', `${selectedFriends} người bạn sẽ nhận được thông báo về chuyến đi này.`);
+                closeModal('inviteModal');
+
+                // Reset selection
+                document.querySelectorAll('#friendsList .friend-item.selected').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                updateSelectedCount();
+            }
+        }
+
+        // Send email invite
+        function sendEmailInvite() {
+            const email = document.getElementById('inviteEmail').value.trim();
+            if (email) {
+                showToast('success', 'Đã gửi lời mời!', `Người nhận sẽ nhận được email về chuyến đi này.`);
+                document.getElementById('inviteEmail').value = '';
+            } else {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập email hoặc username!');
+            }
+        }
+
+        // Leave trip confirmation
+        function confirmLeaveTrip() {
+            const confirmed = confirm('⚠️ Xác nhận rời khỏi chuyến đi?\n\nBạn có chắc chắn muốn rời khỏi "Chuyến đi Nha Trang"?\n\nHành động này không thể hoàn tác.');
+
+            if (confirmed) {
+                alert('✅ Bạn đã rời khỏi chuyến đi.\n\nBạn sẽ không nhận được thông báo về chuyến đi này nữa.');
+                // Redirect to home page (in real app)
+                window.history.back();
+            }
+        }
+
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Enter to send comment
+        document.getElementById('commentInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                addComment();
+            }
+        });
+
+        // Enter to send email invite
+        document.getElementById('inviteEmail').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendEmailInvite();
+            }
+        });
+
+        // Decision functions
+        function selectDecision(element) {
+            document.querySelectorAll('.decision-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        function saveDecision() {
+            const selected = document.querySelector('.decision-option.selected .decision-label');
+            if (!selected) {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng chọn một lựa chọn!');
+                return;
+            }
+
+            const choice = selected.textContent;
+            if (choice.includes('Đồng ý')) {
+                showToast('success', 'Xác nhận thành công!', 'Bạn đã đồng ý tham gia chuyến đi "Nha Trang". Admin đã được thông báo.');
+            } else if (choice.includes('Không tham gia')) {
+                const confirmLeave = confirm('❌ Xác nhận không tham gia?\n\nBạn có chắc chắn không muốn tham gia chuyến đi này không?\n\nAdmin sẽ được thông báo về quyết định của bạn.');
+                if (confirmLeave) {
+                    showToast('info', 'Đã ghi nhận!', 'Cảm ơn bạn đã thông báo. Admin sẽ nhận được thông tin.');
+                }
+            }
+        }
+
+        // Admin functions
+        function planTrip() {
+            showToast('info', 'Lập Kế Hoạch', 'Bạn sẽ được chuyển đến trang lập kế hoạch chi tiết...');
+            // window.location.href = 'plan_trip.html';
+        }
+
+        function extendVote() {
+            const confirm = window.confirm('⏰ Gia Hạn Vote\n\nBạn có muốn gia hạn thời gian vote thêm không?\n\nTất cả thành viên sẽ nhận được thông báo về thời hạn mới.');
+            if (confirm) {
+                showToast('success', 'Đã gia hạn!', 'Đã gia hạn vote thêm 3 ngày. Tất cả thành viên đã được thông báo.');
+            }
+        }
+
+        function cancelTrip() {
+            const confirm = window.confirm('🚫 Hủy Chuyến Đi\n\n⚠️ BẠN CÓ CHẮC CHẮN MUỐN HỦY CHUYẾN ĐI NÀY?\n\nHành động này KHÔNG THỂ HOÀN TÁC!\nTất cả thành viên sẽ nhận được thông báo hủy chuyến.');
+            if (confirm) {
+                const doubleConfirm = window.confirm('⚠️ XÁC NHẬN LẦN CUỐI\n\nBạn thực sự muốn hủy "Chuyến đi Nha Trang"?\n\nNhấn OK để xác nhận hủy chuyến.');
+                if (doubleConfirm) {
+                    showToast('error', 'Đã hủy chuyến đi!', 'Tất cả thành viên đã được thông báo. Bạn sẽ được chuyển về trang chủ...');
+                    // window.location.href = 'index.html';
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

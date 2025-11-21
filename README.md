@@ -2,6 +2,35 @@
 
 Ứng dụng du lịch đa nền tảng sử dụng Kotlin Multiplatform để chia sẻ code giữa iOS và Android.
 
+## 🚀 Quick Start (Cực Đơn Giản!)
+
+### iOS Setup (1 Command):
+
+```bash
+./setup-ios.sh
+open iosApp/iosApp.xcworkspace
+```
+
+**Chi tiết:** Xem [QUICK_START.md](QUICK_START.md)
+
+### Android:
+
+```bash
+# Mở Android Studio → Open Project → Chọn folder này
+# Click Run ▶️
+```
+
+---
+
+## 📚 Documentation
+
+- **[QUICK_START.md](QUICK_START.md)** - Setup siêu đơn giản (RECOMMENDED) ⭐
+- **[DEV_WORKFLOW.md](DEV_WORKFLOW.md)** - Development workflow chi tiết
+- **[MAC_BUILD_GUIDE.md](MAC_BUILD_GUIDE.md)** - Build guide và troubleshooting
+- **[IOS_SETUP.md](IOS_SETUP.md)** - iOS setup thủ công (nếu cần)
+
+---
+
 ## 🏗️ Kiến trúc
 
 Dự án sử dụng **Clean Architecture** với 3 layers chính:
@@ -58,72 +87,67 @@ LazyTravel/
 ## 🚀 Yêu cầu
 
 ### Android
-- Android Studio Arctic Fox hoặc mới hơn
-- JDK 11 hoặc mới hơn
-- Android SDK 24+
+- **Android Studio**: Koala+ (2024.1.1)
+- **JDK**: 21 (LTS)
+- **Android SDK**: 24 - 36
 
-### iOS
-- Xcode 14.0 hoặc mới hơn
-- macOS Monterey hoặc mới hơn
-- CocoaPods (tùy chọn)
+### iOS (macOS only)
+- **macOS**: Monterey+ (M1/M2 hoặc Intel)
+- **Xcode**: 15.0+
+- **Java**: 21 (cho Gradle)
+- **CocoaPods**: Tự động install qua script
 
-## 📦 Cài đặt và Chạy
+---
 
-> ⚠️ **Lưu ý:** Dự án này cần kết nối internet lần đầu để download dependencies.
-> Xem chi tiết trong [SETUP.md](SETUP.md) để biết hướng dẫn đầy đủ và troubleshooting.
+## 📦 Cài đặt (Siêu Đơn Giản!)
 
-### Yêu cầu
-- JDK 17 hoặc mới hơn
-- Android Studio Hedgehog (2023.1.1) hoặc mới hơn (cho Android)
-- Xcode 14+ (cho iOS, chỉ trên macOS)
+### iOS (1 command):
 
-### Quick Start
-
-**1. Clone và Setup:**
 ```bash
-git clone <repository-url>
-cd lazy-travel
-
-# Nếu chưa có gradlew, tạo wrapper:
-gradle wrapper --gradle-version 8.2
+./setup-ios.sh
 ```
 
-**2. Android:**
-```bash
-# Build và install trên emulator/device
-./gradlew :androidApp:installDebug
+Script tự động:
+- ✅ Check & install CocoaPods
+- ✅ Build shared framework
+- ✅ Configure Xcode project
+- ✅ Ready to run!
 
-# Hoặc mở trong Android Studio và click Run
+### Android:
+
+```bash
+# Open Android Studio
+# File → Open → Chọn folder lazy-travel
+# Click Run ▶️
 ```
 
-**3. iOS (macOS only):**
-```bash
-# Build shared framework
-./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
-
-# Mở Xcode project
-open iosApp/iosApp.xcodeproj
-
-# Trong Xcode: Chọn scheme và nhấn Run (⌘R)
-```
-
-Gặp vấn đề? Xem [SETUP.md](SETUP.md) để biết troubleshooting chi tiết.
+**Chi tiết:** Xem [QUICK_START.md](QUICK_START.md) cho hướng dẫn đầy đủ.
 
 ## 🔧 Công nghệ sử dụng
 
 ### Shared Module
-- **Kotlin Multiplatform**: 1.9.20
-- **Coroutines**: 1.7.3 (async/await)
+- **Kotlin Multiplatform**: 2.2.21
+- **Compose Multiplatform**: 1.9.3
+- **Coroutines**: 1.10.2 (async/await)
 - **Kotlin Flow**: State management
+- **Ktor**: 3.3.2 (HTTP client)
+- **Kotlinx Serialization**: 1.9.0 (JSON)
+- **Koin**: 4.1.1 (Dependency Injection)
 
 ### Android
 - **Jetpack Compose**: UI framework hiện đại
 - **Material Design 3**: Design system
 - **Lifecycle**: State management với Compose
+- **Android SDK**: 36 (min 24)
 
 ### iOS
 - **SwiftUI**: Declarative UI framework
-- **Combine**: Reactive programming (nếu cần)
+- **iOS Deployment Target**: 15.0+
+- **CocoaPods**: Dependency management
+
+### Backend
+- **PocketBase**: Backend-as-a-Service
+- API endpoint: `http://103.159.51.215:8090`
 
 ## 📝 Cách thêm tính năng mới
 
