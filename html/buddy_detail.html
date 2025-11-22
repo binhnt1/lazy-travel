@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Hành Trình - TravelVote</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #F5F5F5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: #FAFAFA;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            background: white;
+            border: 1px solid #E0E0E0;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 700;
+            color: #212121;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: white;
+            border: 1px solid #E0E0E0;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Cover Image */
+        .cover-section {
+            position: relative;
+        }
+
+        .cover-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        .cover-badges {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .cover-badge {
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .live-badge {
+            background: #F44336;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .cover-stats {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .stat-badge {
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+        }
+
+        /* Content */
+        .content {
+            padding: 12px;
+        }
+
+        /* Section Box */
+        .section-box {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .see-all {
+            font-size: 13px;
+            color: #FF6B35;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Trip Info */
+        .trip-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .trip-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .trip-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .status-recruiting {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-full {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .status-ongoing {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .info-item {
+            background: #F9F9F9;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .info-icon {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212121;
+        }
+
+        /* Host Info */
+        .host-card {
+            background: linear-gradient(135deg, #FFF9F6 0%, #FFFFFF 100%);
+            border: 1px solid #FFE0D3;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .host-top {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .host-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B35, #F57C00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        }
+
+        .host-info {
+            flex: 1;
+        }
+
+        .host-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .verified-badge {
+            background: #4CAF50;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+
+        .host-stats {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .host-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .host-badge {
+            background: #FFF3EE;
+            color: #FF6B35;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .host-description {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+            margin-top: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #F0F0F0;
+        }
+
+        .host-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .host-action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-message {
+            background: #FF6B35;
+            border: none;
+            color: white;
+        }
+
+        .btn-message:hover {
+            background: #F55A24;
+        }
+
+        .btn-profile {
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #424242;
+        }
+
+        .btn-profile:hover {
+            border-color: #FF6B35;
+            color: #FF6B35;
+        }
+
+        /* Description */
+        .description-text {
+            font-size: 14px;
+            color: #424242;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .trip-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .trip-tag {
+            background: #F5F5F5;
+            border: 1px solid #E0E0E0;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Requirements */
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #424242;
+        }
+
+        .requirement-icon {
+            color: #4CAF50;
+        }
+
+        /* Schedule Preview */
+        .schedule-days {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .schedule-day {
+            background: #F9F9F9;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .schedule-day.active {
+            border-color: #FF6B35;
+            background: #FFF9F6;
+        }
+
+        .day-header-clickable {
+            padding: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-header-clickable:hover {
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .day-header-left {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .day-number-badge {
+            width: 40px;
+            height: 40px;
+            background: #FF6B35;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .schedule-day.active .day-number-badge {
+            background: linear-gradient(135deg, #FF6B35, #F57C00);
+        }
+
+        .day-number-small {
+            font-size: 10px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .day-info {
+            flex: 1;
+        }
+
+        .day-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .day-summary {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .expand-icon {
+            font-size: 20px;
+            color: #999;
+            transition: transform 0.3s;
+        }
+
+        .schedule-day.active .expand-icon {
+            transform: rotate(180deg);
+            color: #FF6B35;
+        }
+
+        .day-timeline {
+            display: none;
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .schedule-day.active .day-timeline {
+            display: block;
+        }
+
+        .timeline-container {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 12px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: #E0E0E0;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -23px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #FF6B35;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #E0E0E0;
+        }
+
+        .timeline-time {
+            display: inline-block;
+            background: #FF6B35;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .timeline-activity {
+            font-size: 13px;
+            color: #212121;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timeline-location {
+            font-size: 11px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .timeline-note {
+            font-size: 11px;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Members */
+        .members-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .member-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            width: 60px;
+        }
+
+        .member-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+
+        .member-role {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            background: #FF6B35;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: 2px solid white;
+        }
+
+        .member-name {
+            font-size: 11px;
+            color: #424242;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60px;
+        }
+
+        .add-member {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px dashed #E0E0E0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #BDBDBD;
+            cursor: pointer;
+        }
+
+        .slots-info {
+            text-align: center;
+            padding: 12px;
+            background: #FFF3EE;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .slots-text {
+            font-size: 14px;
+            color: #FF6B35;
+            font-weight: 600;
+        }
+
+        /* Budget Section */
+        .budget-overview {
+            background: linear-gradient(135deg, #FF6B35 0%, #F57C00 100%);
+            border-radius: 8px;
+            padding: 16px;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .budget-total {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .budget-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .budget-amount {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .budget-breakdown {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .budget-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .budget-item-icon {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .budget-item-amount {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .budget-item-label {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        /* Voting Section */
+        .vote-card {
+            background: #F9F9F9;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .vote-question {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .vote-options {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .vote-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #424242;
+        }
+
+        .vote-bar {
+            flex: 1;
+            height: 6px;
+            background: #E0E0E0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .vote-fill {
+            height: 100%;
+            background: #FF6B35;
+            border-radius: 8px;
+        }
+
+        .vote-percent {
+            font-size: 12px;
+            font-weight: 600;
+            color: #FF6B35;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        .vote-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Photo Album */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            background: #F5F5F5;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .photo-item.more {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Comments */
+        .comment-item {
+            display: flex;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #9C27B0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .comment-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212121;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: #424242;
+            line-height: 1.4;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        .comment-action {
+            font-size: 11px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .comment-input-box {
+            display: flex;
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .comment-send {
+            background: #FF6B35;
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Destination Info */
+        .destination-info-section {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .destination-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .destination-icon-large {
+            font-size: 48px;
+        }
+
+        .destination-title-info {
+            flex: 1;
+        }
+
+        .destination-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .destination-subtitle {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .destination-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .destination-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .destination-tab {
+            padding: 8px 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            background: white;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .destination-tab.active {
+            background: #FF6B35;
+            border-color: #FF6B35;
+            color: white;
+        }
+
+        .destination-content {
+            display: none;
+        }
+
+        .destination-content.active {
+            display: block;
+        }
+
+        .attraction-card {
+            background: #F9F9F9;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .attraction-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .attraction-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .attraction-info {
+            flex: 1;
+        }
+
+        .attraction-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .attraction-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .attraction-rating {
+            color: #FF6B35;
+            font-weight: 600;
+        }
+
+        .attraction-description {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .attraction-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .attraction-tag {
+            background: white;
+            border: 1px solid #E0E0E0;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .food-card {
+            display: flex;
+            gap: 12px;
+            background: #F9F9F9;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .food-image {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .food-info {
+            flex: 1;
+        }
+
+        .food-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .food-description {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+
+        .food-price {
+            font-size: 12px;
+            color: #FF6B35;
+            font-weight: 600;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .service-item {
+            background: #F9F9F9;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .service-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .service-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .service-price {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .info-note {
+            background: #FFF9F6;
+            border: 1px solid #FFE0D3;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .info-note-title {
+            font-weight: 700;
+            color: #FF6B35;
+            margin-bottom: 6px;
+        }
+
+        /* Fixed Bottom Action */
+        .bottom-action {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 428px;
+            background: white;
+            padding: 12px 16px;
+            border-top: 1px solid #E0E0E0;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            font-weight: 600;
+            color: #424242;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            flex: 2;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #FF6B35;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Activity Indicator */
+        .activity-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #4CAF50;
+            margin-bottom: 8px;
+        }
+
+        .activity-dot {
+            width: 6px;
+            height: 6px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <button class="back-btn" onclick="goBack()">←</button>
+                <div class="header-title">Chi tiết hành trình</div>
+                <div class="header-actions">
+                    <button class="action-btn" onclick="shareTrip()">↗</button>
+                    <button class="action-btn" onclick="bookmarkTrip()">🔖</button>
+                    <button class="action-btn" onclick="moreOptions()">⋯</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cover Image -->
+        <div class="cover-section">
+            <div class="cover-image">🏝️</div>
+            <div class="cover-badges">
+                <div class="cover-badge live-badge">
+                    <div class="live-dot"></div>
+                    12 đang xem
+                </div>
+                <div class="cover-badge">📸 32 ảnh</div>
+            </div>
+            <div class="cover-stats">
+                <div class="stat-badge">❤️ 156</div>
+                <div class="stat-badge">💬 48</div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Trip Info -->
+            <div class="section-box">
+                <div class="trip-title">Khám phá Phú Quốc 4N3Đ</div>
+                <div class="trip-subtitle">Hành trình khám phá đảo ngọc cùng những người bạn mới</div>
+                
+                <div class="trip-status status-recruiting">
+                    <span>🟢</span> Đang tuyển thành viên
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-icon">📅</div>
+                        <div class="info-label">Thời gian</div>
+                        <div class="info-value">15-18/12/2024</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">⏱️</div>
+                        <div class="info-label">Thời lượng</div>
+                        <div class="info-value">4 ngày 3 đêm</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">💰</div>
+                        <div class="info-label">Ngân sách</div>
+                        <div class="info-value">5-7 triệu/người</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">👥</div>
+                        <div class="info-label">Số người</div>
+                        <div class="info-value">4-6 người</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Host Info -->
+            <div class="section-box">
+                <div class="section-title">👤 Người tổ chức</div>
+                <div class="host-card">
+                    <div class="host-top">
+                        <div class="host-avatar">MT</div>
+                        <div class="host-info">
+                            <div class="host-name">
+                                Minh Tuấn
+                                <div class="verified-badge">✓</div>
+                            </div>
+                            <div class="host-stats">⭐ 4.9 (156 đánh giá) • 23 chuyến đi • Thành viên 2 năm</div>
+                            <div class="host-badges">
+                                <span class="host-badge">🏆 Top Host</span>
+                                <span class="host-badge">🌟 Super Guide</span>
+                                <span class="host-badge">📸 Photographer</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="host-description">
+                        "Mình là travel enthusiast, đã đi qua 42 tỉnh thành Việt Nam và 8 nước châu Á. Mình yêu thích khám phá những địa điểm mới, gặp gỡ bạn bè mới và tạo ra những kỷ niệm đáng nhớ. Mục tiêu của mình là tổ chức những chuyến đi ý nghĩa, an toàn và vui vẻ cho mọi người!"
+                    </div>
+                    <div class="host-actions">
+                        <button class="host-action-btn btn-message" onclick="messageHost()">
+                            💬 Nhắn tin
+                        </button>
+                        <button class="host-action-btn btn-profile" onclick="viewProfile()">
+                            👤 Xem profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="section-box">
+                <div class="section-title">📝 Mô tả hành trình</div>
+                <div class="description-text">
+                    Xin chào các bạn! Mình đang lên kế hoạch cho chuyến đi Phú Quốc vào tháng 12 và đang tìm thêm những người bạn đồng hành.
+                    <br><br>
+                    Hành trình sẽ bao gồm: tham quan Vinpearl Safari, câu mực đêm, ngắm hoàng hôn tại Sunset Sanato, check-in cầu Hôn và nhiều địa điểm thú vị khác.
+                    <br><br>
+                    Mình ưu tiên các bạn vui vẻ, hòa đồng và yêu thích khám phá. Không yêu cầu kinh nghiệm du lịch, mình sẽ hỗ trợ plan chi tiết!
+                </div>
+                <div class="trip-tags">
+                    <span class="trip-tag">🏝️ Biển đảo</span>
+                    <span class="trip-tag">📸 Photography</span>
+                    <span class="trip-tag">🦑 Câu mực</span>
+                    <span class="trip-tag">🌅 Ngắm hoàng hôn</span>
+                    <span class="trip-tag">🍜 Ẩm thực</span>
+                </div>
+            </div>
+
+            <!-- Requirements -->
+            <div class="section-box">
+                <div class="section-title">📋 Yêu cầu tham gia</div>
+                <div class="requirements-grid">
+                    <div class="requirement-item">
+                        <span class="requirement-icon">✓</span>
+                        Tuổi 22-35
+                    </div>
+                    <div class="requirement-item">
+                        <span class="requirement-icon">✓</span>
+                        Không hút thuốc
+                    </div>
+                    <div class="requirement-item">
+                        <span class="requirement-icon">✓</span>
+                        Yêu thiên nhiên
+                    </div>
+                    <div class="requirement-item">
+                        <span class="requirement-icon">✓</span>
+                        Hòa đồng, vui vẻ
+                    </div>
+                    <div class="requirement-item">
+                        <span class="requirement-icon">✓</span>
+                        Đúng giờ
+                    </div>
+                    <div class="requirement-item">
+                        <span class="requirement-icon">✓</span>
+                        Biết bơi (tốt hơn)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Preview -->
+            <div class="section-box">
+                <div class="section-header">
+                    <div class="section-title">📅 Lịch trình chi tiết</div>
+                </div>
+                <div class="schedule-days">
+                    <!-- Day 1 -->
+                    <div class="schedule-day active" onclick="toggleDay(this)">
+                        <div class="day-header-clickable">
+                            <div class="day-header-left">
+                                <div class="day-number-badge">
+                                    <div>1</div>
+                                    <div class="day-number-small">DAY</div>
+                                </div>
+                                <div class="day-info">
+                                    <div class="day-title">Ngày đầu tiên - Khởi hành</div>
+                                    <div class="day-summary">15/12 • 5 hoạt động • HCM → Phú Quốc</div>
+                                </div>
+                            </div>
+                            <div class="expand-icon">▼</div>
+                        </div>
+                        <div class="day-timeline">
+                            <div class="timeline-container">
+                                <div class="timeline-line"></div>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">06:00</div>
+                                    <div class="timeline-activity">🚗 Tập trung tại sân bay Tân Sơn Nhất</div>
+                                    <div class="timeline-location">📍 Sân bay TSN - Cổng Domestic</div>
+                                    <div class="timeline-note">Có mặt trước 30 phút để làm thủ tục</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">08:15</div>
+                                    <div class="timeline-activity">✈️ Bay sang Phú Quốc (VJ1234)</div>
+                                    <div class="timeline-location">📍 VietJet Air - 1h bay</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">10:00</div>
+                                    <div class="timeline-activity">🏨 Check-in Sol Beach House</div>
+                                    <div class="timeline-location">📍 Bãi Trường, Phú Quốc</div>
+                                    <div class="timeline-note">Phòng view biển, bao gồm bữa sáng</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">12:00</div>
+                                    <div class="timeline-activity">🍜 Ăn trưa - Hải sản tươi sống</div>
+                                    <div class="timeline-location">📍 Nhà hàng Hương Biển</div>
+                                    <div class="timeline-note">Thử món ghẹ hấp, nhum nướng mỡ hành</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">14:00</div>
+                                    <div class="timeline-activity">🏖️ Tự do nghỉ ngơi tại resort</div>
+                                    <div class="timeline-note">Bơi biển, nằm dài, chụp ảnh</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">17:30</div>
+                                    <div class="timeline-activity">🌅 Sunset Sanato Beach Club</div>
+                                    <div class="timeline-location">📍 Ông Lang Beach</div>
+                                    <div class="timeline-note">Check-in spot hot nhất đảo, đặt bàn trước</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">19:30</div>
+                                    <div class="timeline-activity">🍽️ Ăn tối tại Sunset Sanato</div>
+                                    <div class="timeline-note">Set menu hải sản BBQ, cocktail unlimited</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">22:00</div>
+                                    <div class="timeline-activity">😴 Về resort nghỉ ngơi</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day 2 -->
+                    <div class="schedule-day" onclick="toggleDay(this)">
+                        <div class="day-header-clickable">
+                            <div class="day-header-left">
+                                <div class="day-number-badge">
+                                    <div>2</div>
+                                    <div class="day-number-small">DAY</div>
+                                </div>
+                                <div class="day-info">
+                                    <div class="day-title">Safari & Câu mực đêm</div>
+                                    <div class="day-summary">16/12 • 6 hoạt động • Vinpearl Safari</div>
+                                </div>
+                            </div>
+                            <div class="expand-icon">▼</div>
+                        </div>
+                        <div class="day-timeline">
+                            <div class="timeline-container">
+                                <div class="timeline-line"></div>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">07:00</div>
+                                    <div class="timeline-activity">🥐 Ăn sáng buffet tại resort</div>
+                                    <div class="timeline-note">Nhiều món Á - Âu, ăn no để khám phá</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">08:30</div>
+                                    <div class="timeline-activity">🦁 Vinpearl Safari</div>
+                                    <div class="timeline-location">📍 Vinpearl Safari Phú Quốc</div>
+                                    <div class="timeline-note">Vườn thú bán hoang dã lớn nhất VN</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">12:30</div>
+                                    <div class="timeline-activity">🍱 Ăn trưa - Buffet Vinpearl</div>
+                                    <div class="timeline-note">Bao gồm trong vé Safari</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">14:00</div>
+                                    <div class="timeline-activity">🎢 VinWonders - Khu vui chơi</div>
+                                    <div class="timeline-note">Tự do vui chơi, thử các trò chơi</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">18:00</div>
+                                    <div class="timeline-activity">🦑 Câu mực đêm</div>
+                                    <div class="timeline-location">📍 Bến tàu An Thới</div>
+                                    <div class="timeline-note">Tour 3 tiếng, được hướng dẫn kỹ thuật câu</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">21:30</div>
+                                    <div class="timeline-activity">🍻 BBQ hải sản trên tàu</div>
+                                    <div class="timeline-note">Nướng mực vừa câu được, bia và nước ngọt</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">23:00</div>
+                                    <div class="timeline-activity">😴 Về resort nghỉ ngơi</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day 3 -->
+                    <div class="schedule-day" onclick="toggleDay(this)">
+                        <div class="day-header-clickable">
+                            <div class="day-header-left">
+                                <div class="day-number-badge">
+                                    <div>3</div>
+                                    <div class="day-number-small">DAY</div>
+                                </div>
+                                <div class="day-info">
+                                    <div class="day-title">Tour 4 đảo & Lặn biển</div>
+                                    <div class="day-summary">17/12 • 5 hoạt động • Khám phá 4 đảo</div>
+                                </div>
+                            </div>
+                            <div class="expand-icon">▼</div>
+                        </div>
+                        <div class="day-timeline">
+                            <div class="timeline-container">
+                                <div class="timeline-line"></div>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">08:00</div>
+                                    <div class="timeline-activity">⛴️ Khởi hành Tour 4 đảo</div>
+                                    <div class="timeline-location">📍 Bến tàu An Thới</div>
+                                    <div class="timeline-note">Cano nhanh, áo phao, thiết bị lặn đầy đủ</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">09:00</div>
+                                    <div class="timeline-activity">🤿 Hòn Mây Rút - Lặn ngắm san hô</div>
+                                    <div class="timeline-note">San hô đẹp, nhiều cá nhiệt đới</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">10:30</div>
+                                    <div class="timeline-activity">🏝️ Hòn Gầm Ghì - Tắm biển</div>
+                                    <div class="timeline-note">Nước trong xanh, bãi cát trắng</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">12:00</div>
+                                    <div class="timeline-activity">🍴 Ăn trưa trên đảo</div>
+                                    <div class="timeline-location">📍 Nhà hàng Hòn Thơm</div>
+                                    <div class="timeline-note">Buffet hải sản nướng và lẩu</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">14:00</div>
+                                    <div class="timeline-activity">🌊 Hòn Móng Tay - Tham quan</div>
+                                    <div class="timeline-note">Check-in view đẹp</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">15:30</div>
+                                    <div class="timeline-activity">🐠 Hòn Dăm Ngang - Lặn tiếp</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">17:00</div>
+                                    <div class="timeline-activity">🚤 Về bến An Thới</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">19:00</div>
+                                    <div class="timeline-activity">🌙 Chợ đêm Phú Quốc</div>
+                                    <div class="timeline-location">📍 Chợ Đêm Dương Đông</div>
+                                    <div class="timeline-note">Mua đặc sản, ăn vặt, check-in</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">22:00</div>
+                                    <div class="timeline-activity">😴 Về resort nghỉ ngơi</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day 4 -->
+                    <div class="schedule-day" onclick="toggleDay(this)">
+                        <div class="day-header-clickable">
+                            <div class="day-header-left">
+                                <div class="day-number-badge">
+                                    <div>4</div>
+                                    <div class="day-number-small">DAY</div>
+                                </div>
+                                <div class="day-info">
+                                    <div class="day-title">Relax & Bay về HCM</div>
+                                    <div class="day-summary">18/12 • 4 hoạt động • Về nhà</div>
+                                </div>
+                            </div>
+                            <div class="expand-icon">▼</div>
+                        </div>
+                        <div class="day-timeline">
+                            <div class="timeline-container">
+                                <div class="timeline-line"></div>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">08:00</div>
+                                    <div class="timeline-activity">🥐 Ăn sáng buffet lần cuối</div>
+                                    <div class="timeline-note">Tận hưởng view biển buổi sáng</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">10:00</div>
+                                    <div class="timeline-activity">💆 Spa & Massage</div>
+                                    <div class="timeline-location">📍 Onsen Mud Spa</div>
+                                    <div class="timeline-note">Thư giãn sau 3 ngày vui chơi</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">12:00</div>
+                                    <div class="timeline-activity">🏨 Check-out khách sạn</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">12:30</div>
+                                    <div class="timeline-activity">🛍️ Mua đặc sản mang về</div>
+                                    <div class="timeline-location">📍 Siêu thị đặc sản Phú Quốc</div>
+                                    <div class="timeline-note">Nước mắm, sim rượu, tiêu, mật ong</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">14:00</div>
+                                    <div class="timeline-activity">🍜 Ăn trưa trước khi bay</div>
+                                    <div class="timeline-location">📍 Bún quậy Kiến Xây</div>
+                                    <div class="timeline-note">Món đặc sản nhất định phải thử</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">16:00</div>
+                                    <div class="timeline-activity">✈️ Bay về HCM (VJ5678)</div>
+                                    <div class="timeline-location">📍 Sân bay Phú Quốc</div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">17:30</div>
+                                    <div class="timeline-activity">👋 Kết thúc hành trình</div>
+                                    <div class="timeline-location">📍 Sân bay Tân Sơn Nhất</div>
+                                    <div class="timeline-note">Hẹn gặp lại ở chuyến đi tiếp theo! 🎉</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Members -->
+            <div class="section-box">
+                <div class="section-header">
+                    <div class="section-title">👥 Thành viên (3/6)</div>
+                </div>
+                <div class="members-grid">
+                    <div class="member-item">
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #FF6B35, #F57C00);">
+                            MT
+                            <div class="member-role">👑</div>
+                        </div>
+                        <div class="member-name">Minh Tuấn</div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" style="background: #9C27B0;">TL</div>
+                        <div class="member-name">Thu Linh</div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" style="background: #4CAF50;">HN</div>
+                        <div class="member-name">Hoàng Nam</div>
+                    </div>
+                    <div class="member-item">
+                        <div class="add-member" onclick="inviteMember()">+</div>
+                        <div class="member-name">Mời bạn</div>
+                    </div>
+                </div>
+                <div class="slots-info">
+                    <div class="slots-text">🎉 Còn 3 chỗ trống - Tham gia ngay!</div>
+                </div>
+            </div>
+
+            <!-- Budget -->
+            <div class="section-box">
+                <div class="section-header">
+                    <div class="section-title">💰 Chi phí dự kiến</div>
+                    <span class="see-all" onclick="viewBudgetDetail()">Chi tiết →</span>
+                </div>
+                <div class="budget-overview">
+                    <div class="budget-total">
+                        <div class="budget-label">Tổng chi phí/người</div>
+                        <div class="budget-amount">5.800.000đ</div>
+                    </div>
+                    <div class="budget-breakdown">
+                        <div class="budget-item">
+                            <div class="budget-item-icon">✈️</div>
+                            <div class="budget-item-amount">2.5tr</div>
+                            <div class="budget-item-label">Vé máy bay</div>
+                        </div>
+                        <div class="budget-item">
+                            <div class="budget-item-icon">🏨</div>
+                            <div class="budget-item-amount">1.8tr</div>
+                            <div class="budget-item-label">Khách sạn</div>
+                        </div>
+                        <div class="budget-item">
+                            <div class="budget-item-icon">🎫</div>
+                            <div class="budget-item-amount">1.5tr</div>
+                            <div class="budget-item-label">Hoạt động</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voting -->
+            <div class="section-box">
+                <div class="section-header">
+                    <div class="section-title">🗳️ Bình chọn đang diễn ra</div>
+                    <span class="see-all" onclick="viewAllVotes()">Tất cả →</span>
+                </div>
+                
+                <div class="vote-card">
+                    <div class="vote-question">Chọn resort nào?</div>
+                    <div class="vote-options">
+                        <div class="vote-option">
+                            <span>🏖️ Sol Beach</span>
+                            <div class="vote-bar">
+                                <div class="vote-fill" style="width: 60%;"></div>
+                            </div>
+                            <span class="vote-percent">60%</span>
+                        </div>
+                        <div class="vote-option">
+                            <span>🌴 Salinda</span>
+                            <div class="vote-bar">
+                                <div class="vote-fill" style="width: 30%;"></div>
+                            </div>
+                            <span class="vote-percent">30%</span>
+                        </div>
+                        <div class="vote-option">
+                            <span>🌊 Eden</span>
+                            <div class="vote-bar">
+                                <div class="vote-fill" style="width: 10%;"></div>
+                            </div>
+                            <span class="vote-percent">10%</span>
+                        </div>
+                    </div>
+                    <div class="vote-meta">
+                        <span>3 người đã vote</span>
+                        <span>Còn 2 ngày</span>
+                    </div>
+                </div>
+
+                <div class="vote-card">
+                    <div class="vote-question">Hãng bay ưu tiên?</div>
+                    <div class="vote-options">
+                        <div class="vote-option">
+                            <span>✈️ VietJet</span>
+                            <div class="vote-bar">
+                                <div class="vote-fill" style="width: 45%;"></div>
+                            </div>
+                            <span class="vote-percent">45%</span>
+                        </div>
+                        <div class="vote-option">
+                            <span>🛫 Vietnam Airlines</span>
+                            <div class="vote-bar">
+                                <div class="vote-fill" style="width: 55%;"></div>
+                            </div>
+                            <span class="vote-percent">55%</span>
+                        </div>
+                    </div>
+                    <div class="vote-meta">
+                        <span>3 người đã vote</span>
+                        <span>Còn 3 ngày</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photo Album -->
+            <div class="section-box">
+                <div class="section-header">
+                    <div class="section-title">📸 Album ảnh</div>
+                    <span class="see-all" onclick="viewAllPhotos()">Xem tất cả (32) →</span>
+                </div>
+                <div class="photo-grid">
+                    <div class="photo-item" onclick="viewPhoto(1)">🏖️</div>
+                    <div class="photo-item" onclick="viewPhoto(2)">🌅</div>
+                    <div class="photo-item" onclick="viewPhoto(3)">🦑</div>
+                    <div class="photo-item" onclick="viewPhoto(4)">🏝️</div>
+                    <div class="photo-item" onclick="viewPhoto(5)">🤿</div>
+                    <div class="photo-item more" onclick="viewAllPhotos()">+27</div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="section-box">
+                <div class="section-header">
+                    <div class="section-title">💬 Thảo luận (48)</div>
+                </div>
+                
+                <div class="comment-item">
+                    <div class="comment-avatar" style="background: #3F51B5;">HM</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-name">Hải Minh</span>
+                            <span class="comment-time">2 giờ trước</span>
+                        </div>
+                        <div class="comment-text">Trip này có đi được cho người sợ độ cao không ạ? Mình muốn tham gia nhưng hơi lo phần cáp treo.</div>
+                        <div class="comment-actions">
+                            <span class="comment-action">❤️ 3</span>
+                            <span class="comment-action">Trả lời</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-avatar" style="background: linear-gradient(135deg, #FF6B35, #F57C00);">MT</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-name">Minh Tuấn</span>
+                            <span class="comment-time">1 giờ trước</span>
+                        </div>
+                        <div class="comment-text">@Hải Minh: Cáp treo là hoạt động optional nhé bạn, có thể chọn đi xe shuttle thay thế. Không vấn đề gì đâu! 😊</div>
+                        <div class="comment-actions">
+                            <span class="comment-action">❤️ 5</span>
+                            <span class="comment-action">Trả lời</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-avatar" style="background: #E91E63;">LA</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-name">Lan Anh</span>
+                            <span class="comment-time">30 phút trước</span>
+                        </div>
+                        <div class="comment-text">Mình đã đi Phú Quốc 3 lần rồi, trip này plan rất hợp lý. Sunset Sanato là must-go luôn! 🌅</div>
+                        <div class="comment-actions">
+                            <span class="comment-action">❤️ 8</span>
+                            <span class="comment-action">Trả lời</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-input-box">
+                    <input type="text" class="comment-input" placeholder="Viết bình luận...">
+                    <button class="comment-send" onclick="sendComment()">Gửi</button>
+                </div>
+            </div>
+
+            <!-- Destination Info -->
+            <div class="destination-info-section">
+                <div class="destination-header">
+                    <div class="destination-icon-large">🏝️</div>
+                    <div class="destination-title-info">
+                        <div class="destination-name">Về Phú Quốc</div>
+                        <div class="destination-subtitle">Đảo Ngọc của Việt Nam</div>
+                    </div>
+                </div>
+
+                <div class="destination-tabs">
+                    <div class="destination-tab active" onclick="switchDestinationTab(event, 'attractions')">🎯 Điểm tham quan</div>
+                    <div class="destination-tab" onclick="switchDestinationTab(event, 'food')">🍜 Ẩm thực</div>
+                    <div class="destination-tab" onclick="switchDestinationTab(event, 'services')">🎢 Dịch vụ</div>
+                    <div class="destination-tab" onclick="switchDestinationTab(event, 'tips')">💡 Mẹo hay</div>
+                </div>
+
+                <!-- Attractions Tab -->
+                <div class="destination-content active" id="attractions">
+                    <div class="attraction-card">
+                        <div class="attraction-header">
+                            <div class="attraction-icon">🦁</div>
+                            <div class="attraction-info">
+                                <div class="attraction-name">Vinpearl Safari</div>
+                                <div class="attraction-meta">
+                                    <span class="attraction-rating">⭐ 4.8</span>
+                                    <span>• 15km từ trung tâm</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attraction-description">
+                            Vườn thú bán hoang dã lớn nhất Việt Nam với hơn 150 loài động vật quý hiếm. Có chương trình Safari bus đi xem động vật tự do và khu vui chơi cho trẻ em.
+                        </div>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">Gia đình</span>
+                            <span class="attraction-tag">Động vật</span>
+                            <span class="attraction-tag">Cả ngày</span>
+                            <span class="attraction-tag">💰 500k-800k</span>
+                        </div>
+                    </div>
+
+                    <div class="attraction-card">
+                        <div class="attraction-header">
+                            <div class="attraction-icon">🌅</div>
+                            <div class="attraction-info">
+                                <div class="attraction-name">Sunset Sanato Beach Club</div>
+                                <div class="attraction-meta">
+                                    <span class="attraction-rating">⭐ 4.9</span>
+                                    <span>• Ông Lang Beach</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attraction-description">
+                            Beach club sang trọng với view hoàng hôn đẹp nhất đảo. Có hồ bơi vô cực, nhà hàng cao cấp và không gian sống ảo cực đỉnh.
+                        </div>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">Beach club</span>
+                            <span class="attraction-tag">Sống ảo</span>
+                            <span class="attraction-tag">Lãng mạn</span>
+                            <span class="attraction-tag">💰 300k-1tr</span>
+                        </div>
+                    </div>
+
+                    <div class="attraction-card">
+                        <div class="attraction-header">
+                            <div class="attraction-icon">🏝️</div>
+                            <div class="attraction-info">
+                                <div class="attraction-name">Hòn Thơm Cable Car</div>
+                                <div class="attraction-meta">
+                                    <span class="attraction-rating">⭐ 4.7</span>
+                                    <span>• Cáp treo dài nhất thế giới</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attraction-description">
+                            Cáp treo 3 dây vượt biển dài 7.899m nối từ đất liền ra đảo Hòn Thơm. Trải nghiệm tuyệt vời ngắm toàn cảnh biển từ trên cao.
+                        </div>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">Cáp treo</span>
+                            <span class="attraction-tag">View đẹp</span>
+                            <span class="attraction-tag">Mạo hiểm</span>
+                            <span class="attraction-tag">💰 600k khứ hồi</span>
+                        </div>
+                    </div>
+
+                    <div class="attraction-card">
+                        <div class="attraction-header">
+                            <div class="attraction-icon">🦑</div>
+                            <div class="attraction-info">
+                                <div class="attraction-name">Câu mực đêm</div>
+                                <div class="attraction-meta">
+                                    <span class="attraction-rating">⭐ 4.6</span>
+                                    <span>• Tour 3-4 tiếng</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="attraction-description">
+                            Trải nghiệm câu mực đêm trên biển, được hướng dẫn kỹ thuật câu và nướng mực tươi ngay trên tàu. Hoạt động rất được du khách yêu thích.
+                        </div>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">Đêm</span>
+                            <span class="attraction-tag">Trải nghiệm</span>
+                            <span class="attraction-tag">Hải sản</span>
+                            <span class="attraction-tag">💰 350k-500k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Food Tab -->
+                <div class="destination-content" id="food">
+                    <div class="food-card">
+                        <div class="food-image">🦑</div>
+                        <div class="food-info">
+                            <div class="food-name">Gỏi cá trích Phú Quốc</div>
+                            <div class="food-description">
+                                Món ăn đặc sản của đảo, cá trích tươi trộn với dừa nạo, đậu phộng, rau sống và nước mắm chua ngọt. Vị chua chua, giòn giòn rất đặc trưng.
+                            </div>
+                            <div class="food-price">💰 50k - 80k/phần</div>
+                        </div>
+                    </div>
+
+                    <div class="food-card">
+                        <div class="food-image">🍜</div>
+                        <div class="food-info">
+                            <div class="food-name">Bún quậy Kiến Xây</div>
+                            <div class="food-description">
+                                Món bún nóng ăn kèm với nhiều loại chả cá, tương ớt và rau sống. Tô bún nhỏ nhưng ăn được nhiều lần vì có "quậy" (múc) liên tục.
+                            </div>
+                            <div class="food-price">💰 30k - 50k/người</div>
+                        </div>
+                    </div>
+
+                    <div class="food-card">
+                        <div class="food-image">🦞</div>
+                        <div class="food-info">
+                            <div class="food-name">Nhum nướng mỡ hành</div>
+                            <div class="food-description">
+                                Nhum biển tươi nướng mỡ hành thơm phức, ăn kèm bánh tráng nướng. Đây là món must-try khi đến Phú Quốc, vị ngọt đậm đà của nhum rất hấp dẫn.
+                            </div>
+                            <div class="food-price">💰 20k - 30k/con</div>
+                        </div>
+                    </div>
+
+                    <div class="food-card">
+                        <div class="food-image">🐚</div>
+                        <div class="food-info">
+                            <div class="food-name">Ghẹ hấp bia & Sò huyết nướng</div>
+                            <div class="food-description">
+                                Ghẹ to, thịt chắc hấp bia thơm ngon. Sò huyết nướng mỡ hành ăn kèm bánh tráng. Combo hải sản tuyệt vời cho nhóm bạn.
+                            </div>
+                            <div class="food-price">💰 200k - 500k/kg</div>
+                        </div>
+                    </div>
+
+                    <div class="food-card">
+                        <div class="food-image">🍨</div>
+                        <div class="food-info">
+                            <div class="food-name">Kem sim rượu</div>
+                            <div class="food-description">
+                                Kem làm từ sim Phú Quốc - đặc sản của đảo. Vị chua chua ngọt ngọt độc đáo, có chút men rượu nhẹ rất thú vị.
+                            </div>
+                            <div class="food-price">💰 15k - 25k/cây</div>
+                        </div>
+                    </div>
+
+                    <div class="info-note">
+                        <div class="info-note-title">💡 Địa điểm ăn uống được recommend:</div>
+                        • Chợ đêm Dương Đông (giá bình dân, đa dạng)<br>
+                        • Nhà hàng Hương Biển (hải sản tươi sống)<br>
+                        • Quán Cô Ba (ốc đặc sản)<br>
+                        • Khu ẩm thực Vinpearl (cao cấp)<br>
+                        • Các quán ven biển Bãi Trường
+                    </div>
+                </div>
+
+                <!-- Services Tab -->
+                <div class="destination-content" id="services">
+                    <div class="service-grid">
+                        <div class="service-item">
+                            <div class="service-icon">🤿</div>
+                            <div class="service-name">Lặn biển ngắm san hô</div>
+                            <div class="service-price">300k - 500k</div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-icon">🚤</div>
+                            <div class="service-name">Tour 4 đảo</div>
+                            <div class="service-price">450k - 650k</div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-icon">🏄</div>
+                            <div class="service-name">Lướt ván, dù bay</div>
+                            <div class="service-price">200k - 400k</div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-icon">🛵</div>
+                            <div class="service-name">Thuê xe máy</div>
+                            <div class="service-price">100k - 150k/ngày</div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-icon">🚗</div>
+                            <div class="service-name">Thuê ô tô 4 chỗ</div>
+                            <div class="service-price">600k - 800k/ngày</div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-icon">💆</div>
+                            <div class="service-name">Spa & Massage</div>
+                            <div class="service-price">250k - 1tr</div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-icon">🎣</div>
+                            <div class="service-name">Câu cá biển</div>
+                            <div class="service-price">300k - 600k</div>
+                        </div>
+
+                        <div class="service-item">
+                            <div class="service-icon">📸</div>
+                            <div class="service-name">Photographer thuê</div>
+                            <div class="service-price">500k - 2tr/ngày</div>
+                        </div>
+                    </div>
+
+                    <div class="info-note" style="margin-top: 16px;">
+                        <div class="info-note-title">⚠️ Lưu ý:</div>
+                        • Đặt tour trước 1-2 ngày để được giá tốt<br>
+                        • So sánh giá ở nhiều nơi trước khi book<br>
+                        • Mùa cao điểm giá có thể tăng 20-30%<br>
+                        • Nên thuê xe để di chuyển tự do hơn<br>
+                        • Đặt spa trước vì thường đông khách
+                    </div>
+                </div>
+
+                <!-- Tips Tab -->
+                <div class="destination-content" id="tips">
+                    <div class="info-note">
+                        <div class="info-note-title">🌤️ Thời tiết & Mùa du lịch:</div>
+                        • <strong>Tháng 11-3:</strong> Mùa đẹp nhất, nắng ráo, biển êm<br>
+                        • <strong>Tháng 4-5:</strong> Nóng, ít mưa, giá vừa phải<br>
+                        • <strong>Tháng 6-10:</strong> Mùa mưa, sóng to, giá rẻ nhất<br>
+                        • Nên đi vào tháng 12-2 để có thời tiết đẹp nhất
+                    </div>
+
+                    <div class="info-note">
+                        <div class="info-note-title">✈️ Di chuyển:</div>
+                        • Bay từ HCM: 1h bay, giá 800k - 2tr khứ hồi<br>
+                        • Bay từ Hà Nội: 2h bay, giá 1.5tr - 3tr<br>
+                        • Nên book vé sớm 2-3 tháng để giá tốt<br>
+                        • Có nhiều chuyến bay mỗi ngày từ cả 2 thành phố<br>
+                        • Sân bay cách trung tâm 10km, taxi 150k-200k
+                    </div>
+
+                    <div class="info-note">
+                        <div class="info-note-title">🏨 Nơi ở:</div>
+                        • <strong>Bãi Trường:</strong> Resort cao cấp, view đẹp, giá cao<br>
+                        • <strong>Dương Đông:</strong> Gần chợ, tiện ăn uống, giá vừa<br>
+                        • <strong>Ông Lang:</strong> Yên tĩnh, beach club đẹp<br>
+                        • <strong>An Thới:</strong> Gần cảng tour 4 đảo, giá rẻ<br>
+                        • Book qua app có thể rẻ hơn 20-30%
+                    </div>
+
+                    <div class="info-note">
+                        <div class="info-note-title">💰 Ngân sách tham khảo (3N4Đ):</div>
+                        • <strong>Tiết kiệm:</strong> 3-4 triệu/người<br>
+                        • <strong>Trung bình:</strong> 5-7 triệu/người<br>
+                        • <strong>Cao cấp:</strong> 10-15 triệu/người<br>
+                        • <strong>Luxury:</strong> 20+ triệu/người<br>
+                        <br>
+                        Đã bao gồm: vé máy bay, khách sạn, ăn uống, tour, di chuyển
+                    </div>
+
+                    <div class="info-note">
+                        <div class="info-note-title">🎒 Đồ nên mang theo:</div>
+                        • Kem chống nắng SPF 50+ (bắt buộc!)<br>
+                        • Đồ bơi, khăn tắm<br>
+                        • Giày đi biển, dép lê<br>
+                        • Nón, kính râm<br>
+                        • Thuốc say sóng (nếu đi tour đảo)<br>
+                        • Áo khoác mỏng (phòng lạnh máy lạnh)<br>
+                        • Pin dự phòng & túi chống nước cho điện thoại
+                    </div>
+
+                    <div class="info-note">
+                        <div class="info-note-title">🛍️ Đặc sản nên mua:</div>
+                        • <strong>Nước mắm:</strong> 50k - 200k/chai (Hùng Thành, Phú Quốc)<br>
+                        • <strong>Tiêu:</strong> 100k - 300k/kg (tiêu hạt, bột)<br>
+                        • <strong>Sim rượu:</strong> 150k - 300k/chai<br>
+                        • <strong>Mật ong:</strong> 200k - 500k/kg<br>
+                        • <strong>Ngọc trai:</strong> 500k - 10tr (tùy loại)<br>
+                        • Mua ở siêu thị đặc sản tin cậy hơn
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Action -->
+        <div class="bottom-action">
+            <button class="btn-secondary" onclick="saveTrip()">
+                🔖 Lưu
+            </button>
+            <button class="btn-primary" onclick="joinTrip()">
+                ✨ Yêu cầu tham gia
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        function goBack() {
+            alert('← Quay lại');
+        }
+
+        function shareTrip() {
+            alert('↗ Chia sẻ hành trình');
+        }
+
+        function bookmarkTrip() {
+            alert('🔖 Đã lưu hành trình');
+        }
+
+        function moreOptions() {
+            alert('⋯ Menu tùy chọn:\n- Báo cáo\n- Ẩn\n- Sao chép link');
+        }
+
+        // Host
+        function messageHost() {
+            alert('💬 Mở chat với Minh Tuấn');
+        }
+
+        function viewProfile() {
+            alert('👤 Xem profile của Minh Tuấn');
+        }
+
+        // Schedule - Toggle Day
+        function toggleDay(element) {
+            const isActive = element.classList.contains('active');
+            
+            // Remove active from all days
+            document.querySelectorAll('.schedule-day').forEach(day => {
+                day.classList.remove('active');
+            });
+            
+            // If it wasn't active, make it active (collapse if already open)
+            if (!isActive) {
+                element.classList.add('active');
+            }
+        }
+
+        // Members
+        function inviteMember() {
+            alert('➕ Mời bạn bè tham gia');
+        }
+
+        // Budget
+        function viewBudgetDetail() {
+            alert('💰 Xem chi tiết chi phí');
+        }
+
+        // Voting
+        function viewAllVotes() {
+            alert('🗳️ Xem tất cả bình chọn');
+        }
+
+        // Photos
+        function viewPhoto(id) {
+            alert('🖼️ Xem ảnh #' + id);
+        }
+
+        function viewAllPhotos() {
+            alert('📸 Xem tất cả 32 ảnh');
+        }
+
+        // Comments
+        function sendComment() {
+            const input = document.querySelector('.comment-input');
+            if (input.value.trim()) {
+                alert('✅ Đã gửi bình luận: ' + input.value);
+                input.value = '';
+            }
+        }
+
+        // Destination Info Tabs
+        function switchDestinationTab(event, tabName) {
+            // Remove active from all tabs
+            document.querySelectorAll('.destination-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active from all contents
+            document.querySelectorAll('.destination-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Add active to clicked tab
+            event.currentTarget.classList.add('active');
+            
+            // Show corresponding content
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Bottom Actions
+        function saveTrip() {
+            alert('🔖 Đã lưu hành trình vào danh sách');
+        }
+
+        function joinTrip() {
+            alert('✅ Gửi yêu cầu tham gia thành công!\n\nHost sẽ xem xét và phản hồi trong 24h.');
+        }
+    </script>
+</body>
+
+</html>
