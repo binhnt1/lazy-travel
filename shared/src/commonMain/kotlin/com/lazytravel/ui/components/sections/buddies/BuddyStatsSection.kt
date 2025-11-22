@@ -15,15 +15,6 @@ import androidx.compose.ui.unit.sp
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.core.i18n.localizedString
 
-/**
- * BuddyStatsSection - Stats bar showing trip counts
- * Based on buddies.html .stats-bar
- *
- * Shows three stats:
- * - Open trips count
- * - This week trips count
- * - Total matched count
- */
 @Composable
 fun BuddyStatsSection(
     openTrips: Int = 0,

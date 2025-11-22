@@ -38,15 +38,15 @@ import com.lazytravel.core.i18n.localizedString
 import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.utils.parseHexColor
-import org.jetbrains.compose.resources.painterResource
-import lazytravel.shared.generated.resources.Res
-import lazytravel.shared.generated.resources.ic_check_circle
-import lazytravel.shared.generated.resources.ic_clock
-import lazytravel.shared.generated.resources.ic_heart
-import lazytravel.shared.generated.resources.ic_heart_filled
-import lazytravel.shared.generated.resources.ic_location
-import lazytravel.shared.generated.resources.ic_plane
-import lazytravel.shared.generated.resources.ic_users
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Flight
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.ui.graphics.vector.ImageVector
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -128,7 +128,7 @@ fun TourHotCard(
                             .padding(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        tour.badges?.take(2)?.forEach { badge ->
+                        tour.badges.take(2).forEach { badge ->
                             val (bgColor, textColor, icon) = when (badge.uppercase()) {
                                 Tour.BADGE_HOT -> Triple(Color(0xFFE53935), Color.White, "🔥")
                                 Tour.BADGE_SALE -> Triple(Color(0xFFFFEB3B), Color(0xFF333333), "")
@@ -181,7 +181,7 @@ fun TourHotCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            painter = painterResource(if (isFavorite) Res.drawable.ic_heart_filled else Res.drawable.ic_heart),
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             contentDescription = "Favorite",
                             tint = Color(0xFFE53935),
                             modifier = Modifier.size(12.dp)
@@ -210,7 +210,7 @@ fun TourHotCard(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Icon(
-                            painter = painterResource(Res.drawable.ic_location),
+                            imageVector = Icons.Filled.LocationOn,
                             contentDescription = null,
                             tint = Color.White,
                             modifier = Modifier.size(14.dp)
@@ -234,7 +234,7 @@ fun TourHotCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                painter = painterResource(Res.drawable.ic_clock),
+                                imageVector = Icons.Filled.Schedule,
                                 contentDescription = null,
                                 tint = Color.White.copy(alpha = 0.9f),
                                 modifier = Modifier.size(11.dp)
@@ -253,7 +253,7 @@ fun TourHotCard(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    painter = painterResource(Res.drawable.ic_users),
+                                    imageVector = Icons.Filled.People,
                                     contentDescription = null,
                                     tint = Color.White.copy(alpha = 0.9f),
                                     modifier = Modifier.size(11.dp)
@@ -303,7 +303,7 @@ fun TourHotCard(
 
                         if (provider.isVerified) {
                             Icon(
-                                painter = painterResource(Res.drawable.ic_check_circle),
+                                imageVector = Icons.Filled.CheckCircle,
                                 contentDescription = "Verified",
                                 tint = AppColors.Primary,
                                 modifier = Modifier.size(10.dp)
@@ -334,7 +334,7 @@ fun TourHotCard(
                     // Airline from expanded relation
                     tour.expandedFlightProvider?.let { airline ->
                         FeatureTag(
-                            icon = Res.drawable.ic_plane,
+                            icon = Icons.Filled.Flight,
                             text = "Bay ${airline.name}"
                         )
                     }
@@ -446,7 +446,7 @@ fun TourHotCard(
 
 @Composable
 private fun FeatureTag(
-    icon: org.jetbrains.compose.resources.DrawableResource? = null,
+    icon: ImageVector? = null,
     text: String,
     emoji: String? = null
 ) {
@@ -466,7 +466,7 @@ private fun FeatureTag(
                 )
             } else if (icon != null) {
                 Icon(
-                    painter = painterResource(icon),
+                    imageVector = icon,
                     contentDescription = null,
                     tint = Color(0xFF888888),
                     modifier = Modifier.size(10.dp)
