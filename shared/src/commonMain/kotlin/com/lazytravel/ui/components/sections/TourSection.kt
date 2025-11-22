@@ -15,7 +15,7 @@ import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.core.i18n.localizedString
 import com.lazytravel.data.base.BaseRepository
-import com.lazytravel.ui.components.cards.tours.TourCard
+import com.lazytravel.ui.components.cards.tours.TourHotCard
 import kotlinx.coroutines.launch
 
 @Composable
@@ -110,7 +110,7 @@ fun TourSection(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(tours) { tour ->
-                        TourCard(
+                        TourHotCard(
                             tour = tour,
                             onClick = { onTourClick(tour) },
                             modifier = Modifier.width(290.dp)
