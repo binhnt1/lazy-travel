@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Tour Du Lịch</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding-bottom: 70px;
+    }
+    
+    /* Header */
+    .header {
+      background: #fff;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e0e0e0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a73e8;
+    }
+    
+    .logo img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+    
+    .header-icons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      position: relative;
+    }
+    
+    .icon-btn i { color: #555; font-size: 16px; }
+    
+    .badge-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background: #e53935;
+      border-radius: 50%;
+    }
+    
+    .search-box {
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .search-box i { color: #888; }
+    .search-box input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 14px;
+      background: transparent;
+    }
+    
+    /* Section Container - uniform width */
+    .section-container {
+      margin: 16px 16px;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    /* Featured Tours Section */
+    .featured-section {
+      background: #F1C40F;
+      padding: 20px 16px;
+      margin: 16px 0;
+      position: relative;
+    }
+    
+    .featured-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #f39c12, transparent);
+    }
+    
+    .featured-section .section-header {
+      padding: 0 16px 16px;
+      border-bottom: none;
+    }
+    
+    .featured-section .section-title {
+      color: #2c3e50;
+    }
+    
+    .featured-section .see-all {
+      color: #2c3e50;
+    }
+    
+    .featured-section .scroll-container {
+      padding: 0 16px 4px 16px;
+      gap: 12px;
+    }
+    
+    .featured-section .featured-card {
+      margin: 0;
+    }
+    
+    /* Luxury Tours Section */
+    .luxury-section {
+      background: #050A30;
+      padding: 20px 16px;
+      margin: 16px 0;
+      position: relative;
+    }
+    
+    .luxury-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    }
+    
+    .luxury-section::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    }
+    
+    .luxury-section .section-header {
+      padding: 0 16px 16px;
+      border-bottom: none;
+    }
+    
+    .luxury-section .section-title {
+      color: #fff;
+    }
+    
+    .luxury-section .see-all {
+      color: #d4af37;
+    }
+    
+    .luxury-section .scroll-container {
+      padding: 0 16px 4px;
+      gap: 12px;
+    }
+    
+    .luxury-section .luxury-card {
+      margin: 0;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    
+    .luxury-section .luxury-content {
+      background: transparent;
+    }
+    
+    .luxury-section .tour-company span {
+      color: #fff;
+    }
+    
+    .luxury-section .luxury-title {
+      color: #fff;
+    }
+    
+    .luxury-section .amenity {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    
+    .luxury-section .amenity i {
+      color: #d4af37;
+    }
+    
+    .luxury-section .amenity span {
+      color: #fff;
+    }
+    
+    .luxury-section .luxury-bottom {
+      border-top: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    
+    .luxury-section .luxury-price {
+      color: #d4af37;
+    }
+    
+    .luxury-section .luxury-btn {
+      background: linear-gradient(135deg, #d4af37, #f4e4a6);
+      color: #050A30;
+    }
+    
+    /* Section Title */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section-title img {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .see-all {
+      font-size: 13px;
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    /* Horizontal Scroll */
+    .scroll-container {
+      display: flex;
+      gap: 12px;
+      padding: 0 16px 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+    }
+    
+    .scroll-container::-webkit-scrollbar { display: none; }
+    
+    /* Featured Tour Card */
+    .featured-card {
+      min-width: 280px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      scroll-snap-align: start;
+    }
+    
+    .featured-image {
+      height: 140px;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .featured-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 8px 10px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      color: #fff;
+    }
+    
+    .featured-location {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .featured-stats {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      opacity: 0.9;
+      margin-top: 2px;
+    }
+    
+    .badge-row {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      display: flex;
+      gap: 6px;
+    }
+    
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    
+    .badge-hot { background: #e53935; color: #fff; }
+    .badge-sale { background: #ffeb3b; color: #333; }
+    .badge-new { background: #4caf50; color: #fff; }
+    
+    .favorite-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .favorite-btn i { color: #e53935; font-size: 12px; }
+    
+    .featured-content { padding: 10px; }
+    
+    .tour-company {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    
+    .tour-company img {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .tour-company span {
+      font-size: 11px;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .tour-company .verified {
+      color: #1a73e8;
+      font-size: 10px;
+    }
+    
+    .tour-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #222;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .tour-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    
+    .feature-tag {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      font-size: 10px;
+      color: #555;
+    }
+    
+    .feature-tag i { font-size: 10px; color: #888; }
+    
+    .tour-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 8px;
+      border-top: 1px solid #f0f0f0;
+    }
+    
+    .price-old {
+      font-size: 11px;
+      color: #999;
+      text-decoration: line-through;
+    }
+    
+    .price-current {
+      font-size: 16px;
+      font-weight: 700;
+      color: #e53935;
+    }
+    
+    .price-note {
+      font-size: 10px;
+      color: #888;
+    }
+    
+    .rating-block {
+      text-align: right;
+    }
+    
+    .rating-stars {
+      color: #ffc107;
+      font-size: 10px;
+    }
+    
+    .rating-text {
+      font-size: 11px;
+      color: #666;
+    }
+    
+    .booked-count {
+      font-size: 10px;
+      color: #4caf50;
+    }
+    
+    /* Luxury Card */
+    .luxury-card {
+      min-width: 300px;
+      border: 1px solid #d4af37;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #fffef5 0%, #fff9e6 100%);
+      overflow: hidden;
+      scroll-snap-align: start;
+    }
+    
+    .luxury-image {
+      height: 150px;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .luxury-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: linear-gradient(135deg, #d4af37, #f4e4a6);
+      color: #5d4e0e;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .luxury-content { padding: 12px; }
+    
+    .luxury-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .luxury-amenities {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .amenity {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid #e8e0c0;
+      border-radius: 8px;
+      min-width: 60px;
+    }
+    
+    .amenity i { color: #d4af37; font-size: 16px; }
+    .amenity span { font-size: 9px; color: #666; }
+    
+    .luxury-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid #e8e0c0;
+    }
+    
+    .luxury-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: #b8860b;
+    }
+    
+    .luxury-btn {
+      background: linear-gradient(135deg, #d4af37, #b8860b);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    /* Hotel Provider - Creative Design */
+    .hotel-provider {
+      padding: 16px;
+    }
+    
+    .hotel-showcase {
+      position: relative;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    
+    .hotel-showcase::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .hotel-showcase-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hotel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    
+    .hotel-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .hotel-icon-circle {
+      width: 56px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .hotel-icon-circle img {
+      width: 32px;
+      height: 32px;
+    }
+    
+    .hotel-brand-info {
+      color: #fff;
+    }
+    
+    .hotel-brand-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    
+    .hotel-brand-tagline {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+    
+    .hotel-rating-badge {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 8px 12px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    
+    .hotel-rating-score {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffd700;
+      line-height: 1;
+    }
+    
+    .hotel-rating-stars {
+      font-size: 10px;
+      color: #ffd700;
+    }
+    
+    .hotel-stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .hotel-stat {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    
+    .hotel-stat-number {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .hotel-stat-label {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .hotel-highlights {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .hotel-highlight-tag {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .hotel-highlight-tag i {
+      font-size: 12px;
+      color: #ffd700;
+    }
+    
+    .hotel-benefits {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    
+    .hotel-benefit-item {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #dee2e6;
+    }
+    
+    .hotel-benefit-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .hotel-benefit-icon i {
+      color: #fff;
+      font-size: 20px;
+    }
+    
+    .hotel-benefit-text {
+      flex: 1;
+    }
+    
+    .hotel-benefit-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e3c72;
+      margin-bottom: 2px;
+    }
+    
+    .hotel-benefit-desc {
+      font-size: 10px;
+      color: #6c757d;
+    }
+    
+    .hotel-action-bar {
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .hotel-action-text {
+      flex: 1;
+    }
+    
+    .hotel-action-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e3c72;
+      margin-bottom: 2px;
+    }
+    
+    .hotel-action-subtitle {
+      font-size: 11px;
+      color: #2a5298;
+      font-weight: 600;
+    }
+    
+    .hotel-search-btn {
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+    }
+    
+    .hotel-search-btn i {
+      font-size: 16px;
+    }
+    
+    .insurance-provider {
+      padding: 16px;
+    }
+    
+    .insurance-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%);
+      border-radius: 8px;
+    }
+    
+    .insurance-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #1976d2, #1e88e5);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+    }
+    
+    .insurance-icon i {
+      color: #fff;
+      font-size: 28px;
+    }
+    
+    .insurance-intro {
+      flex: 1;
+    }
+    
+    .insurance-badge {
+      display: inline-block;
+      background: #1976d2;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    
+    .insurance-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1565c0;
+      margin-bottom: 2px;
+    }
+    
+    .insurance-subtitle {
+      font-size: 11px;
+      color: #666;
+    }
+    
+    .insurance-plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .plan-card {
+      background: #fff;
+      border: 2px solid #e3f2fd;
+      border-radius: 8px;
+      padding: 12px 8px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .plan-card.featured {
+      border-color: #1976d2;
+      background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+    }
+    
+    .plan-popular {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff5252;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 8px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    
+    .plan-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    
+    .plan-coverage {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1976d2;
+      margin-bottom: 4px;
+    }
+    
+    .plan-price {
+      font-size: 10px;
+      color: #666;
+    }
+    
+    .insurance-benefits {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 3px solid #1976d2;
+    }
+    
+    .benefit-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .benefit-icon i {
+      color: #1976d2;
+      font-size: 16px;
+    }
+    
+    .benefit-text {
+      flex: 1;
+    }
+    
+    .benefit-label {
+      font-size: 10px;
+      color: #888;
+      line-height: 1.2;
+    }
+    
+    .benefit-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+      line-height: 1.2;
+    }
+    
+    .insurance-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: linear-gradient(135deg, #1976d2, #1565c0);
+      border-radius: 8px;
+    }
+    
+    .insurance-offer {
+      color: #fff;
+    }
+    
+    .offer-text {
+      font-size: 11px;
+      opacity: 0.9;
+      margin-bottom: 2px;
+    }
+    
+    .offer-price {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    
+    .offer-note {
+      font-size: 9px;
+      opacity: 0.8;
+    }
+    
+    .insurance-cta {
+      background: #fff;
+      color: #1976d2;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Visa Provider - Creative Design */
+    .visa-provider {
+      padding: 16px;
+    }
+    
+    .visa-header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    
+    .visa-logo-circle {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 8px;
+      background: linear-gradient(135deg, #4caf50, #66bb6a);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+    }
+    
+    .visa-logo-circle i {
+      color: #fff;
+      font-size: 32px;
+    }
+    
+    .visa-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #2e7d32;
+      margin-bottom: 4px;
+    }
+    
+    .visa-tagline {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .visa-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .stat-box {
+      text-align: center;
+      padding: 12px 8px;
+      background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+      border-radius: 8px;
+      border: 1px solid #c5e1a5;
+    }
+    
+    .stat-number {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2e7d32;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 9px;
+      color: #558b2f;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    
+    .visa-countries {
+      margin-bottom: 16px;
+    }
+    
+    .countries-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .countries-title i {
+      color: #4caf50;
+    }
+    
+    .countries-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    
+    .country-item {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 8px 4px;
+      text-align: center;
+    }
+    
+    .country-flag {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    
+    .country-name {
+      font-size: 9px;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .visa-process {
+      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .process-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #2e7d32;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .process-steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .step-item {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+    
+    .step-item:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 12px;
+      color: #81c784;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    
+    .step-number {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #4caf50, #66bb6a);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0 auto 4px;
+    }
+    
+    .step-text {
+      font-size: 9px;
+      color: #558b2f;
+      font-weight: 600;
+    }
+    
+    .visa-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: linear-gradient(135deg, #4caf50, #43a047);
+      border-radius: 8px;
+    }
+    
+    .visa-guarantee {
+      color: #fff;
+    }
+    
+    .guarantee-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    
+    .guarantee-badge i {
+      font-size: 16px;
+    }
+    
+    .guarantee-text {
+      font-size: 10px;
+      opacity: 0.9;
+    }
+    
+    .visa-cta {
+      background: #fff;
+      color: #2e7d32;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Services Grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 16px;
+    }
+    
+    .service-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 8px;
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-radius: 8px;
+    }
+    
+    .service-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .service-icon img {
+      width: 28px;
+      height: 28px;
+    }
+    
+    .service-name {
+      font-size: 10px;
+      color: #333;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    /* Enhanced Tour Card */
+    .enhanced-tour-card {
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .enhanced-tour-card:last-child {
+      border-bottom: none;
+    }
+    
+    .etc-header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .etc-image {
+      width: 120px;
+      height: 100px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+    
+    .etc-badge {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 600;
+    }
+    
+    .etc-main {
+      flex: 1;
+    }
+    
+    .etc-company {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    
+    .etc-company img {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+    }
+    
+    .etc-company span {
+      font-size: 11px;
+      color: #666;
+    }
+    
+    .etc-company .rating-inline {
+      color: #ffc107;
+      font-size: 10px;
+    }
+    
+    .etc-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #222;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    
+    .etc-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    
+    .highlight-tag {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      color: #555;
+    }
+    
+    .highlight-tag i {
+      font-size: 9px;
+      color: #888;
+    }
+    
+    .etc-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+    
+    .detail-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    
+    .detail-info {
+      flex: 1;
+    }
+    
+    .detail-label {
+      font-size: 9px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    
+    .detail-value {
+      font-size: 11px;
+      color: #333;
+      font-weight: 600;
+      margin-top: 1px;
+    }
+    
+    .etc-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid #f0f0f0;
+    }
+    
+    .etc-price-block {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .etc-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    
+    .etc-price-old {
+      font-size: 12px;
+      color: #999;
+      text-decoration: line-through;
+    }
+    
+    .etc-discount {
+      background: #ff5252;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    
+    .etc-price-current {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e53935;
+      line-height: 1;
+      margin-top: 4px;
+    }
+    
+    .etc-price-note {
+      font-size: 10px;
+      color: #888;
+      margin-top: 2px;
+    }
+    
+    .etc-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .etc-btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .etc-btn-secondary {
+      background: #f5f5f5;
+      color: #333;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .etc-btn-primary {
+      background: #1a73e8;
+      color: #fff;
+    }
+    
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: #fff;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      border-top: 1px solid #e0e0e0;
+      z-index: 100;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: #888;
+      font-size: 10px;
+      text-decoration: none;
+    }
+    
+    .nav-item.active { color: #1a73e8; }
+    .nav-item i { font-size: 20px; }
+    
+    .nav-item img {
+      width: 24px;
+      height: 24px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">
+        <img src="https://cdn-icons-png.flaticon.com/512/201/201623.png" alt="logo">
+        TravelGo
+      </div>
+      <div class="header-icons">
+        <div class="icon-btn">
+          <i class="far fa-bell"></i>
+          <span class="badge-dot"></span>
+        </div>
+        <div class="icon-btn">
+          <i class="far fa-comment-dots"></i>
+        </div>
+      </div>
+    </div>
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Tìm tour, điểm đến, công ty...">
+      <i class="fas fa-sliders-h"></i>
+    </div>
+  </div>
+  
+  <!-- Services Grid -->
+  <div class="section-container">
+    <div class="section-header">
+      <div class="section-title">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="">
+        Dịch vụ
+      </div>
+    </div>
+    <div class="services-grid">
+      <div class="service-item">
+        <div class="service-icon" style="background:#e3f2fd">
+          <img src="https://cdn-icons-png.flaticon.com/512/201/201623.png" alt="">
+        </div>
+        <span class="service-name">Tour du lịch</span>
+      </div>
+      <div class="service-item">
+        <div class="service-icon" style="background:#fce4ec">
+          <img src="https://cdn-icons-png.flaticon.com/512/2313/2313906.png" alt="">
+        </div>
+        <span class="service-name">Vé máy bay</span>
+      </div>
+      <div class="service-item">
+        <div class="service-icon" style="background:#e8f5e9">
+          <img src="https://cdn-icons-png.flaticon.com/512/235/235889.png" alt="">
+        </div>
+        <span class="service-name">Khách sạn</span>
+      </div>
+      <div class="service-item">
+        <div class="service-icon" style="background:#fff3e0">
+          <img src="https://cdn-icons-png.flaticon.com/512/2503/2503508.png" alt="">
+        </div>
+        <span class="service-name">Visa</span>
+      </div>
+      <div class="service-item">
+        <div class="service-icon" style="background:#f3e5f5">
+          <img src="https://cdn-icons-png.flaticon.com/512/2830/2830312.png" alt="">
+        </div>
+        <span class="service-name">Bảo hiểm</span>
+      </div>
+      <div class="service-item">
+        <div class="service-icon" style="background:#e0f2f1">
+          <img src="https://cdn-icons-png.flaticon.com/512/3097/3097180.png" alt="">
+        </div>
+        <span class="service-name">Thuê xe</span>
+      </div>
+      <div class="service-item">
+        <div class="service-icon" style="background:#fafafa">
+          <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="">
+        </div>
+        <span class="service-name">Bản đồ</span>
+      </div>
+      <div class="service-item">
+        <div class="service-icon" style="background:#fff8e1">
+          <img src="https://cdn-icons-png.flaticon.com/512/4727/4727266.png" alt="">
+        </div>
+        <span class="service-name">Ưu đãi</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Insurance Provider - Creative -->
+  
+  <!-- Featured Tours -->
+  <div class="featured-section">
+    <div class="section-header">
+      <div class="section-title">
+        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="">
+        Tour nổi bật
+      </div>
+      <a href="#" class="see-all">Xem tất cả →</a>
+    </div>
+    <div class="scroll-container">
+      <!-- Featured Card 1 -->
+      <div class="featured-card">
+        <div class="featured-image" style="background-image: url('https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=400')">
+          <div class="badge-row">
+            <span class="badge badge-hot">🔥 HOT</span>
+            <span class="badge badge-sale">-25%</span>
+          </div>
+          <div class="favorite-btn"><i class="fas fa-heart"></i></div>
+          <div class="featured-overlay">
+            <div class="featured-location"><i class="fas fa-map-marker-alt"></i> Đà Nẵng - Hội An</div>
+            <div class="featured-stats">
+              <span><i class="fas fa-clock"></i> 4N3Đ</span>
+              <span><i class="fas fa-users"></i> 2,345 đã đặt</span>
+            </div>
+          </div>
+        </div>
+        <div class="featured-content">
+          <div class="tour-company">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="">
+            <span>Vietravel</span>
+            <i class="fas fa-check-circle verified"></i>
+          </div>
+          <div class="tour-title">Tour Đà Nẵng - Bà Nà Hills - Hội An - Cù Lao Chàm 4N3Đ</div>
+          <div class="tour-features">
+            <span class="feature-tag"><i class="fas fa-plane"></i> Bay VietJet</span>
+            <span class="feature-tag"><i class="fas fa-hotel"></i> 4 sao</span>
+            <span class="feature-tag"><i class="fas fa-utensils"></i> 8 bữa ăn</span>
+            <span class="feature-tag"><i class="fas fa-bus"></i> Xe đưa đón</span>
+          </div>
+          <div class="tour-bottom">
+            <div class="price-block">
+              <div class="price-old">5.990.000đ</div>
+              <div class="price-current">4.490.000đ</div>
+              <div class="price-note">/ khách</div>
+            </div>
+            <div class="rating-block">
+              <div class="rating-stars">★★★★★</div>
+              <div class="rating-text">4.8 (234 đánh giá)</div>
+              <div class="booked-count">✓ Còn 8 chỗ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Featured Card 2 -->
+      <div class="featured-card">
+        <div class="featured-image" style="background-image: url('https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400')">
+          <div class="badge-row">
+            <span class="badge badge-new">✨ MỚI</span>
+          </div>
+          <div class="favorite-btn"><i class="far fa-heart"></i></div>
+          <div class="featured-overlay">
+            <div class="featured-location"><i class="fas fa-map-marker-alt"></i> Bali, Indonesia</div>
+            <div class="featured-stats">
+              <span><i class="fas fa-clock"></i> 5N4Đ</span>
+              <span><i class="fas fa-users"></i> 1,892 đã đặt</span>
+            </div>
+          </div>
+        </div>
+        <div class="featured-content">
+          <div class="tour-company">
+            <img src="https://cdn-icons-png.flaticon.com/512/3125/3125713.png" alt="">
+            <span>Saigontourist</span>
+            <i class="fas fa-check-circle verified"></i>
+          </div>
+          <div class="tour-title">Tour Bali - Đền Tanah Lot - Ubud - Kintamani 5N4Đ</div>
+          <div class="tour-features">
+            <span class="feature-tag"><i class="fas fa-plane"></i> Bay Vietnam Airlines</span>
+            <span class="feature-tag"><i class="fas fa-hotel"></i> 5 sao</span>
+            <span class="feature-tag"><i class="fas fa-utensils"></i> 10 bữa ăn</span>
+          </div>
+          <div class="tour-bottom">
+            <div class="price-block">
+              <div class="price-old">15.990.000đ</div>
+              <div class="price-current">12.990.000đ</div>
+              <div class="price-note">/ khách</div>
+            </div>
+            <div class="rating-block">
+              <div class="rating-stars">★★★★★</div>
+              <div class="rating-text">4.9 (567 đánh giá)</div>
+              <div class="booked-count">✓ Còn 12 chỗ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Featured Card 3 -->
+      <div class="featured-card">
+        <div class="featured-image" style="background-image: url('https://images.unsplash.com/photo-1506665531195-3566af2b4dfa?w=400')">
+          <div class="badge-row">
+            <span class="badge badge-hot">🔥 HOT</span>
+          </div>
+          <div class="favorite-btn"><i class="far fa-heart"></i></div>
+          <div class="featured-overlay">
+            <div class="featured-location"><i class="fas fa-map-marker-alt"></i> Sapa, Lào Cai</div>
+            <div class="featured-stats">
+              <span><i class="fas fa-clock"></i> 3N2Đ</span>
+              <span><i class="fas fa-users"></i> 3,120 đã đặt</span>
+            </div>
+          </div>
+        </div>
+        <div class="featured-content">
+          <div class="tour-company">
+            <img src="https://cdn-icons-png.flaticon.com/512/2904/2904825.png" alt="">
+            <span>Fiditour</span>
+            <i class="fas fa-check-circle verified"></i>
+          </div>
+          <div class="tour-title">Tour Sapa - Fansipan - Bản Cát Cát - Hàm Rồng 3N2Đ</div>
+          <div class="tour-features">
+            <span class="feature-tag"><i class="fas fa-train"></i> Tàu hỏa</span>
+            <span class="feature-tag"><i class="fas fa-hotel"></i> 3 sao</span>
+            <span class="feature-tag"><i class="fas fa-utensils"></i> 5 bữa ăn</span>
+          </div>
+          <div class="tour-bottom">
+            <div class="price-block">
+              <div class="price-old">3.500.000đ</div>
+              <div class="price-current">2.790.000đ</div>
+              <div class="price-note">/ khách</div>
+            </div>
+            <div class="rating-block">
+              <div class="rating-stars">★★★★☆</div>
+              <div class="rating-text">4.6 (892 đánh giá)</div>
+              <div class="booked-count">✓ Còn 5 chỗ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="section-container">
+    <div class="insurance-provider">
+      <div class="insurance-header">
+        <div class="insurance-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="insurance-intro">
+          <span class="insurance-badge">Đối tác chính thức</span>
+          <div class="insurance-title">Bảo Việt Travel Insurance</div>
+          <div class="insurance-subtitle">Bảo vệ toàn diện mọi chuyến đi</div>
+        </div>
+      </div>
+      
+      <div class="insurance-plans">
+        <div class="plan-card">
+          <div class="plan-name">Cơ bản</div>
+          <div class="plan-coverage">1 tỷ đ</div>
+          <div class="plan-price">50k/ngày</div>
+        </div>
+        <div class="plan-card featured">
+          <span class="plan-popular">PHỔ BIẾN</span>
+          <div class="plan-name">Tiêu chuẩn</div>
+          <div class="plan-coverage">2 tỷ đ</div>
+          <div class="plan-price">80k/ngày</div>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Cao cấp</div>
+          <div class="plan-coverage">5 tỷ đ</div>
+          <div class="plan-price">150k/ngày</div>
+        </div>
+      </div>
+      
+      <div class="insurance-benefits">
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class="fas fa-hospital"></i>
+          </div>
+          <div class="benefit-text">
+            <div class="benefit-label">Y tế khẩn cấp</div>
+            <div class="benefit-value">Hỗ trợ 24/7</div>
+          </div>
+        </div>
+        
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class="fas fa-suitcase-rolling"></i>
+          </div>
+          <div class="benefit-text">
+            <div class="benefit-label">Hành lý thất lạc</div>
+            <div class="benefit-value">Bồi thường 100%</div>
+          </div>
+        </div>
+        
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class="fas fa-plane-slash"></i>
+          </div>
+          <div class="benefit-text">
+            <div class="benefit-label">Hủy/Hoãn chuyến</div>
+            <div class="benefit-value">Đền bù chi phí</div>
+          </div>
+        </div>
+        
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <div class="benefit-text">
+            <div class="benefit-label">Tư vấn miễn phí</div>
+            <div class="benefit-value">Hotline 1900xxx</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="insurance-footer">
+        <div class="insurance-offer">
+          <div class="offer-text">Giá ưu đãi chỉ từ</div>
+          <div class="offer-price">50.000đ/ngày</div>
+          <div class="offer-note">Giảm 20% khi mua cùng tour</div>
+        </div>
+        <button class="insurance-cta">Mua ngay</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Luxury Tours -->
+  <div class="luxury-section">
+    <div class="section-header">
+      <div class="section-title">
+        <img src="https://cdn-icons-png.flaticon.com/512/2917/2917995.png" alt="">
+        Tour Luxury
+      </div>
+      <a href="#" class="see-all">Xem tất cả →</a>
+    </div>
+    <div class="scroll-container">
+      <!-- Luxury Card 1 -->
+      <div class="luxury-card">
+        <div class="luxury-image" style="background-image: url('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400')">
+          <div class="luxury-badge"><i class="fas fa-crown"></i> LUXURY</div>
+          <div class="favorite-btn"><i class="far fa-heart"></i></div>
+        </div>
+        <div class="luxury-content">
+          <div class="tour-company">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="">
+            <span>Vietravel Premium</span>
+            <i class="fas fa-gem" style="color:#d4af37; font-size:10px"></i>
+          </div>
+          <div class="luxury-title">Nhật Bản - Tokyo - Osaka - Kyoto 7N6Đ</div>
+          <div class="luxury-amenities">
+            <div class="amenity">
+              <i class="fas fa-plane"></i>
+              <span>Business</span>
+            </div>
+            <div class="amenity">
+              <i class="fas fa-hotel"></i>
+              <span>5 sao</span>
+            </div>
+            <div class="amenity">
+              <i class="fas fa-user-tie"></i>
+              <span>HDV riêng</span>
+            </div>
+            <div class="amenity">
+              <i class="fas fa-car"></i>
+              <span>Xe VIP</span>
+            </div>
+          </div>
+          <div class="luxury-bottom">
+            <div class="luxury-price">68.900.000đ</div>
+            <button class="luxury-btn">Đặt ngay</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Luxury Card 2 -->
+      <div class="luxury-card">
+        <div class="luxury-image" style="background-image: url('https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400')">
+          <div class="luxury-badge"><i class="fas fa-crown"></i> LUXURY</div>
+          <div class="favorite-btn"><i class="far fa-heart"></i></div>
+        </div>
+        <div class="luxury-content">
+          <div class="tour-company">
+            <img src="https://cdn-icons-png.flaticon.com/512/3125/3125713.png" alt="">
+            <span>Saigontourist Exclusive</span>
+            <i class="fas fa-gem" style="color:#d4af37; font-size:10px"></i>
+          </div>
+          <div class="luxury-title">Pháp - Paris - Nice - Monaco 10N9Đ</div>
+          <div class="luxury-amenities">
+            <div class="amenity">
+              <i class="fas fa-plane"></i>
+              <span>First Class</span>
+            </div>
+            <div class="amenity">
+              <i class="fas fa-hotel"></i>
+              <span>5 sao+</span>
+            </div>
+            <div class="amenity">
+              <i class="fas fa-utensils"></i>
+              <span>Michelin</span>
+            </div>
+            <div class="amenity">
+              <i class="fas fa-ship"></i>
+              <span>Du thuyền</span>
+            </div>
+          </div>
+          <div class="luxury-bottom">
+            <div class="luxury-price">159.000.000đ</div>
+            <button class="luxury-btn">Đặt ngay</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Visa Provider - Creative -->
+  <div class="section-container">
+    <div class="visa-provider">
+      <div class="visa-header">
+        <div class="visa-logo-circle">
+          <i class="fas fa-passport"></i>
+        </div>
+        <div class="visa-title">Vietnam Visa Express</div>
+        <div class="visa-tagline">Làm visa nhanh chóng - Tỷ lệ đậu cao</div>
+      </div>
+      
+      <div class="visa-stats">
+        <div class="stat-box">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Quốc gia</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Tỷ lệ đậu</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">3-5</div>
+          <div class="stat-label">Ngày làm</div>
+        </div>
+      </div>
+      
+      <div class="visa-countries">
+        <div class="countries-title">
+          <i class="fas fa-globe-asia"></i>
+          Các quốc gia phổ biến
+        </div>
+        <div class="countries-grid">
+          <div class="country-item">
+            <div class="country-flag">🇯🇵</div>
+            <div class="country-name">Nhật Bản</div>
+          </div>
+          <div class="country-item">
+            <div class="country-flag">🇰🇷</div>
+            <div class="country-name">Hàn Quốc</div>
+          </div>
+          <div class="country-item">
+            <div class="country-flag">🇺🇸</div>
+            <div class="country-name">Mỹ</div>
+          </div>
+          <div class="country-item">
+            <div class="country-flag">🇦🇺</div>
+            <div class="country-name">Úc</div>
+          </div>
+          <div class="country-item">
+            <div class="country-flag">🇨🇦</div>
+            <div class="country-name">Canada</div>
+          </div>
+          <div class="country-item">
+            <div class="country-flag">🇬🇧</div>
+            <div class="country-name">Anh</div>
+          </div>
+          <div class="country-item">
+            <div class="country-flag">🇩🇪</div>
+            <div class="country-name">Đức</div>
+          </div>
+          <div class="country-item">
+            <div class="country-flag">🇫🇷</div>
+            <div class="country-name">Pháp</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="visa-process">
+        <div class="process-title">
+          <i class="fas fa-tasks"></i>
+          Quy trình làm visa
+        </div>
+        <div class="process-steps">
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-text">Gửi hồ sơ</div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-text">Kiểm tra</div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-text">Nộp hồ sơ</div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-text">Nhận visa</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="visa-footer">
+        <div class="visa-guarantee">
+          <div class="guarantee-badge">
+            <i class="fas fa-certificate"></i>
+            <span>CAM KẾT HOÀN TIỀN</span>
+          </div>
+          <div class="guarantee-text">Nếu hồ sơ không được duyệt</div>
+        </div>
+        <button class="visa-cta">Tư vấn ngay</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Enhanced Tours -->
+  <div class="section-container">
+    <div class="section-header">
+      <div class="section-title">
+        <img src="https://cdn-icons-png.flaticon.com/512/3082/3082060.png" alt="">
+        Tour dành cho bạn
+      </div>
+      <a href="#" class="see-all">Lọc →</a>
+    </div>
+    
+    <!-- Enhanced Tour Card 1 -->
+    <div class="enhanced-tour-card">
+      <div class="etc-header">
+        <div class="etc-image" style="background-image: url('https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=200')">
+          <span class="badge badge-sale etc-badge">-20%</span>
+        </div>
+        <div class="etc-main">
+          <div class="etc-company">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="">
+            <span>Vietravel</span>
+            <span class="rating-inline">★ 4.7</span>
+          </div>
+          <div class="etc-title">Phú Quốc - Vinpearl Safari - Câu Cá Lặn Ngắm San Hô 3N2Đ</div>
+          <div class="etc-highlights">
+            <span class="highlight-tag"><i class="fas fa-calendar-check"></i> 20/12, 25/12, 01/01</span>
+            <span class="highlight-tag"><i class="fas fa-users"></i> Còn 15 chỗ</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="etc-details">
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#e3f2fd; color:#1976d2">
+            <i class="fas fa-plane"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Di chuyển</div>
+            <div class="detail-value">Bay VietJet Air</div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#fce4ec; color:#c2185b">
+            <i class="fas fa-hotel"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Khách sạn</div>
+            <div class="detail-value">4 sao tiêu chuẩn</div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#fff3e0; color:#f57c00">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Bữa ăn</div>
+            <div class="detail-value">6 bữa theo tour</div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#e8f5e9; color:#388e3c">
+            <i class="fas fa-ticket-alt"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Vé tham quan</div>
+            <div class="detail-value">Đầy đủ theo CT</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="etc-footer">
+        <div class="etc-price-block">
+          <div class="etc-price-row">
+            <span class="etc-price-old">4.500.000đ</span>
+            <span class="etc-discount">-20%</span>
+          </div>
+          <div class="etc-price-current">3.600.000đ</div>
+          <div class="etc-price-note">/ khách (đã bao gồm VAT)</div>
+        </div>
+        <div class="etc-actions">
+          <button class="etc-btn etc-btn-secondary"><i class="far fa-heart"></i></button>
+          <button class="etc-btn etc-btn-primary">Đặt tour</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Enhanced Tour Card 2 -->
+    <div class="enhanced-tour-card">
+      <div class="etc-header">
+        <div class="etc-image" style="background-image: url('https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=200')">
+          <span class="badge badge-hot etc-badge">HOT</span>
+        </div>
+        <div class="etc-main">
+          <div class="etc-company">
+            <img src="https://cdn-icons-png.flaticon.com/512/3125/3125713.png" alt="">
+            <span>Saigontourist</span>
+            <span class="rating-inline">★ 4.8</span>
+          </div>
+          <div class="etc-title">Thái Lan - Bangkok - Pattaya - Đảo Coral 5N4Đ</div>
+          <div class="etc-highlights">
+            <span class="highlight-tag"><i class="fas fa-calendar-check"></i> 22/12, 29/12</span>
+            <span class="highlight-tag"><i class="fas fa-users"></i> Còn 8 chỗ</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="etc-details">
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#e3f2fd; color:#1976d2">
+            <i class="fas fa-plane"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Di chuyển</div>
+            <div class="detail-value">Vietnam Airlines</div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#fce4ec; color:#c2185b">
+            <i class="fas fa-hotel"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Khách sạn</div>
+            <div class="detail-value">4 sao quốc tế</div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#fff3e0; color:#f57c00">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Bữa ăn</div>
+            <div class="detail-value">10 bữa đặc sản</div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#f3e5f5; color:#7b1fa2">
+            <i class="fas fa-passport"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Visa</div>
+            <div class="detail-value">Hỗ trợ làm visa</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="etc-footer">
+        <div class="etc-price-block">
+          <div class="etc-price-row">
+            <span class="etc-price-old">9.990.000đ</span>
+            <span class="etc-discount">-20%</span>
+          </div>
+          <div class="etc-price-current">7.990.000đ</div>
+          <div class="etc-price-note">/ khách (đã bao gồm VAT)</div>
+        </div>
+        <div class="etc-actions">
+          <button class="etc-btn etc-btn-secondary"><i class="far fa-heart"></i></button>
+          <button class="etc-btn etc-btn-primary">Đặt tour</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Hotel Provider - Creative -->
+  <div class="section-container">
+    <div class="hotel-provider">
+      <div class="hotel-showcase">
+        <div class="hotel-showcase-content">
+          <div class="hotel-header">
+            <div class="hotel-brand">
+              <div class="hotel-icon-circle">
+                <img src="https://cdn-icons-png.flaticon.com/512/235/235889.png" alt="">
+              </div>
+              <div class="hotel-brand-info">
+                <div class="hotel-brand-name">VnTrip Hotels</div>
+                <div class="hotel-brand-tagline">Đặt phòng thông minh</div>
+              </div>
+            </div>
+            <div class="hotel-rating-badge">
+              <div class="hotel-rating-score">4.7</div>
+              <div class="hotel-rating-stars">★★★★★</div>
+            </div>
+          </div>
+          
+          <div class="hotel-stats-row">
+            <div class="hotel-stat">
+              <div class="hotel-stat-number">5000+</div>
+              <div class="hotel-stat-label">Khách sạn</div>
+            </div>
+            <div class="hotel-stat">
+              <div class="hotel-stat-number">50K+</div>
+              <div class="hotel-stat-label">Đặt/tháng</div>
+            </div>
+            <div class="hotel-stat">
+              <div class="hotel-stat-number">40%</div>
+              <div class="hotel-stat-label">Giảm giá</div>
+            </div>
+          </div>
+          
+          <div class="hotel-highlights">
+            <div class="hotel-highlight-tag">
+              <i class="fas fa-shield-alt"></i>
+              <span>Giá tốt nhất</span>
+            </div>
+            <div class="hotel-highlight-tag">
+              <i class="fas fa-clock"></i>
+              <span>Xác nhận nhanh</span>
+            </div>
+            <div class="hotel-highlight-tag">
+              <i class="fas fa-undo"></i>
+              <span>Hoàn tiền dễ dàng</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="hotel-benefits">
+        <div class="hotel-benefit-item">
+          <div class="hotel-benefit-icon">
+            <i class="fas fa-calendar-times"></i>
+          </div>
+          <div class="hotel-benefit-text">
+            <div class="hotel-benefit-title">Hủy miễn phí</div>
+            <div class="hotel-benefit-desc">Không mất phí hủy phòng</div>
+          </div>
+        </div>
+        
+        <div class="hotel-benefit-item">
+          <div class="hotel-benefit-icon">
+            <i class="fas fa-credit-card"></i>
+          </div>
+          <div class="hotel-benefit-text">
+            <div class="hotel-benefit-title">Trả sau</div>
+            <div class="hotel-benefit-desc">Thanh toán tại khách sạn</div>
+          </div>
+        </div>
+        
+        <div class="hotel-benefit-item">
+          <div class="hotel-benefit-icon">
+            <i class="fas fa-gift"></i>
+          </div>
+          <div class="hotel-benefit-text">
+            <div class="hotel-benefit-title">Tích điểm</div>
+            <div class="hotel-benefit-desc">Đổi quà hấp dẫn</div>
+          </div>
+        </div>
+        
+        <div class="hotel-benefit-item">
+          <div class="hotel-benefit-icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <div class="hotel-benefit-text">
+            <div class="hotel-benefit-title">Hỗ trợ 24/7</div>
+            <div class="hotel-benefit-desc">Hotline luôn sẵn sàng</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="hotel-action-bar">
+        <div class="hotel-action-text">
+          <div class="hotel-action-title">Tìm khách sạn ngay!</div>
+          <div class="hotel-action-subtitle">Ưu đãi hấp dẫn đang chờ bạn</div>
+        </div>
+        <button class="hotel-search-btn">
+          <span>Tìm ngay</span>
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Enhanced Tours Continue -->
+  <div class="section-container">
+    <!-- Enhanced Tour Card 3 -->
+    <div class="enhanced-tour-card">
+      <div class="etc-header">
+        <div class="etc-image" style="background-image: url('https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?w=200')">
+          <span class="badge badge-new etc-badge">NEW</span>
+        </div>
+        <div class="etc-main">
+          <div class="etc-company">
+            <img src="https://cdn-icons-png.flaticon.com/512/2904/2904825.png" alt="">
+            <span>Fiditour</span>
+            <span class="rating-inline">★ 4.6</span>
+          </div>
+          <div class="etc-title">Singapore - Universal Studio - Garden by the Bay 4N3Đ</div>
+          <div class="etc-highlights">
+            <span class="highlight-tag"><i class="fas fa-calendar-check"></i> 24/12, 31/12</span>
+            <span class="highlight-tag"><i class="fas fa-users"></i> Còn 10 chỗ</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="etc-details">
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#e3f2fd; color:#1976d2">
+            <i class="fas fa-plane"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Di chuyển</div>
+            <div class="detail-value">Singapore Airlines</div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#fce4ec; color:#c2185b">
+            <i class="fas fa-hotel"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Khách sạn</div>
+            <div class="detail-value">4 sao Marina Bay</div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#fff3e0; color:#f57c00">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Bữa ăn</div>
+            <div class="detail-value">8 bữa đa dạng</div>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#e0f2f1; color:#00796b">
+            <i class="fas fa-gifts"></i>
+          </div>
+          <div class="detail-info">
+            <div class="detail-label">Quà tặng</div>
+            <div class="detail-value">SIM 4G + Bảo hiểm</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="etc-footer">
+        <div class="etc-price-block">
+          <div class="etc-price-row">
+            <span class="etc-price-old">16.900.000đ</span>
+            <span class="etc-discount">-18%</span>
+          </div>
+          <div class="etc-price-current">13.900.000đ</div>
+          <div class="etc-price-note">/ khách (đã bao gồm VAT)</div>
+        </div>
+        <div class="etc-actions">
+          <button class="etc-btn etc-btn-secondary"><i class="far fa-heart"></i></button>
+          <button class="etc-btn etc-btn-primary">Đặt tour</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="#" class="nav-item active">
+      <i class="fas fa-home"></i>
+      <span>Trang chủ</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-search"></i>
+      <span>Tìm kiếm</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-heart"></i>
+      <span>Yêu thích</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-ticket-alt"></i>
+      <span>Đơn hàng</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>Tài khoản</span>
