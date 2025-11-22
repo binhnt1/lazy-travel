@@ -17,11 +17,13 @@ data class Tour(
     @EncodeDefault val thumbnail: String = "",
     @EncodeDefault val thumbnailColor: String = "",
     @EncodeDefault val bgImage: String = "",
+    @EncodeDefault val images: List<String>? = null,  // Gallery images
 
     // Relations
     @EncodeDefault val tourProviderId: String = "",  // → TourProvider
     @EncodeDefault val cityId: String = "",          // → City (main destination)
     @EncodeDefault val placeId: String = "",         // → Place (main attraction)
+    @EncodeDefault val airlineId: String = "",       // → FlightProvider (optional for air tours)
 
     // Visited places (list of place names for display)
     @EncodeDefault val visitedPlaces: List<String>? = null,
@@ -64,6 +66,11 @@ data class Tour(
     // Timestamps
     @EncodeDefault val startDate: Long = 0,          // Tour start date
     @EncodeDefault val endDate: Long = 0,            // Tour end date
+
+    // Additional fields
+    @EncodeDefault val departureDates: List<Long>? = null,  // Available departure dates
+    @EncodeDefault val badges: List<String>? = null,        // ["HOT", "NEW", "SALE", "FEATURED"]
+    @EncodeDefault val bookedCount: Int = 0,                // Number of bookings
 ) : BaseModel() {
 
     // Expanded relations
@@ -75,6 +82,9 @@ data class Tour(
 
     @kotlinx.serialization.Transient
     var expandedPlace: Place? = null
+
+    @kotlinx.serialization.Transient
+    var expandedFlightProvider: FlightProvider? = null
 
     override fun serializeToJson(item: BaseModel): String {
         return json.encodeToString(serializer(), item as Tour)
@@ -100,6 +110,12 @@ data class Tour(
                 expandedPlace = json.decodeFromJsonElement(Place.serializer(), placeJson)
             } catch (_: Exception) {}
         }
+
+        expandData["airlineId"]?.let { airlineJson ->
+            try {
+                expandedFlightProvider = json.decodeFromJsonElement(FlightProvider.serializer(), airlineJson)
+            } catch (_: Exception) {}
+        }
     }
 
     override fun getSchema() = baseCollection(collectionName()) {
@@ -109,6 +125,7 @@ data class Tour(
         text("thumbnail") { required = false; max = 500 }
         text("thumbnailColor") { required = false; max = 20 }
         text("bgImage") { required = false; max = 500 }
+        json("images") { required = false }
 
         // Relations
         relation("tourProviderId") {
@@ -126,6 +143,12 @@ data class Tour(
         relation("placeId") {
             required = false
             collectionId = Place().collectionName()
+            cascadeDelete = false
+            maxSelect = 1
+        }
+        relation("airlineId") {
+            required = false
+            collectionId = FlightProvider().collectionName()
             cascadeDelete = false
             maxSelect = 1
         }
@@ -157,6 +180,10 @@ data class Tour(
 
         number("startDate") { required = false; onlyInt = true }
         number("endDate") { required = false; onlyInt = true }
+
+        json("departureDates") { required = false }
+        json("badges") { required = false }
+        number("bookedCount") { required = false; min = 0.0; onlyInt = true }
     }
 
     fun getDurationText(): String {
@@ -192,18 +219,21 @@ data class Tour(
     }
 
     override suspend fun getSeedData(): List<Tour> {
-        // Get providers, cities, places first
+        // Get providers, cities, places, airlines first
         val providerRepo = BaseRepository<TourProvider>()
         val cityRepo = BaseRepository<City>()
         val placeRepo = BaseRepository<Place>()
+        val airlineRepo = BaseRepository<FlightProvider>()
 
         val providers = providerRepo.getRecords<TourProvider>().getOrNull() ?: emptyList()
         val cities = cityRepo.getRecords<City>().getOrNull() ?: emptyList()
         val places = placeRepo.getRecords<Place>().getOrNull() ?: emptyList()
+        val airlines = airlineRepo.getRecords<FlightProvider>().getOrNull() ?: emptyList()
 
         val providerMap = providers.associateBy { it.slug }
         val cityMap = cities.associateBy { it.name }
         val placeMap = places.associateBy { it.name }
+        val airlineMap = airlines.associateBy { it.code }
 
         return listOf(
             Tour(
@@ -212,9 +242,15 @@ data class Tour(
                 emoji = "🏖️",
                 thumbnailColor = "#4ECDC4",
                 bgImage = "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800",
+                    "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800"
+                ),
                 tourProviderId = providerMap["vietravel"]?.id ?: "",
                 cityId = cityMap["Phu Quoc"]?.id ?: "",
                 placeId = placeMap["Bãi Sao"]?.id ?: "",
+                airlineId = airlineMap["VJ"]?.id ?: "",
                 visitedPlaces = listOf("Bãi Sao", "Vinpearl Land Phú Quốc", "Dinh Cậu", "Chợ đêm Phú Quốc"),
                 duration = 3,
                 durationNights = 2,
@@ -226,7 +262,7 @@ data class Tour(
                 rating = 4.8,
                 reviewCount = 234,
                 highlights = listOf("🏖️ Bãi biển đẹp", "🤿 Lặn biển ngắm san hô", "🍜 Ẩm thực hải sản"),
-                included = listOf("Xe đưa đón sân bay", "Khách sạn 3*", "Bữa sáng", "Hướng dẫn viên"),
+                included = listOf("Xe đưa đón sân bay", "Khách sạn 3*", "Bữa sáng", "Hướng dẫn viên", "Bay VietJet Air"),
                 excluded = listOf("Vé máy bay", "Chi phí cá nhân", "Tiền tip"),
                 tourType = "BEACH",
                 difficulty = "EASY",
@@ -234,7 +270,14 @@ data class Tour(
                 featured = true,
                 isActive = true,
                 startDate = 1734220800000, // 2024-12-15
-                endDate = 1734480000000    // 2024-12-18
+                endDate = 1734480000000,   // 2024-12-18
+                departureDates = listOf(
+                    1734220800000L, // 2024-12-15
+                    1734652800000L, // 2024-12-20
+                    1735084800000L  // 2024-12-25
+                ),
+                badges = listOf(BADGE_HOT, BADGE_SALE),
+                bookedCount = 2345
             ),
             Tour(
                 name = "Sapa - Fansipan 4N3Đ từ Hà Nội",
@@ -390,6 +433,12 @@ data class Tour(
     }
 
     companion object {
+        // Badge constants
+        const val BADGE_HOT = "HOT"
+        const val BADGE_NEW = "NEW"
+        const val BADGE_SALE = "SALE"
+        const val BADGE_FEATURED = "FEATURED"
+
         fun getSeedDataStatic(): List<Tour> {
             // Static seed data without relations (for testing)
             return listOf(

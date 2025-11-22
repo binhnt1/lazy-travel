@@ -26,7 +26,9 @@ import com.lazytravel.data.models.ReviewMedia
 import com.lazytravel.data.models.Stat
 import com.lazytravel.data.models.Tour
 import com.lazytravel.data.models.TourProvider
+import com.lazytravel.data.models.FlightProvider
 import com.lazytravel.data.models.InsuranceProvider
+import com.lazytravel.data.models.InsurancePackage
 import com.lazytravel.data.models.VisaProvider
 import com.lazytravel.data.models.UseCase
 import com.lazytravel.data.models.User
@@ -75,10 +77,12 @@ class MainActivity : ComponentActivity() {
             BlogPost().setup()
 
             // Tour and Provider models
+            FlightProvider().setup()     // Flight provider first
             TourProvider().setup()
             InsuranceProvider().setup()
             VisaProvider().setup()
-            Tour().setup()
+            InsurancePackage().setup()   // Package after provider
+            Tour().setup()               // Tour last (depends on providers)
 
             // Destination models
             Destination().setup()
