@@ -35,6 +35,11 @@ Pods/
 # macOS
 .DS_Store
 
+# Copilot MCP configuration (contains tokens)
+.copilot/
+
 # Kotlin
 *.kotlin_module
 *.kotlin_metadata
+/.kotlin/
+*.hprof

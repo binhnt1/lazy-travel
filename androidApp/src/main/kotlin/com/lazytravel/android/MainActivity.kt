@@ -3,148 +3,97 @@ package com.lazytravel.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
+import androidx.compose.material3.MaterialTheme
+import com.lazytravel.data.models.BlogCategory
+import com.lazytravel.data.models.BlogPost
+import com.lazytravel.data.models.Buddy
+import com.lazytravel.data.models.BuddyReview
+import com.lazytravel.data.models.City
+import com.lazytravel.data.models.Country
+import com.lazytravel.data.models.Destination
+import com.lazytravel.data.models.Feature
+import com.lazytravel.data.models.HowItWork
+import com.lazytravel.data.models.Place
+import com.lazytravel.data.models.Post
+import com.lazytravel.data.models.PostComment
+import com.lazytravel.data.models.PostLike
+import com.lazytravel.data.models.PostMedia
+import com.lazytravel.data.models.PostShare
+import com.lazytravel.data.models.Review
+import com.lazytravel.data.models.ReviewComment
+import com.lazytravel.data.models.ReviewLike
+import com.lazytravel.data.models.ReviewMedia
+import com.lazytravel.data.models.Stat
+import com.lazytravel.data.models.Tour
+import com.lazytravel.data.models.TourProvider
+import com.lazytravel.data.models.FlightProvider
+import com.lazytravel.data.models.InsuranceProvider
+import com.lazytravel.data.models.InsurancePackage
+import com.lazytravel.data.models.VisaProvider
+import com.lazytravel.data.models.UseCase
+import com.lazytravel.data.models.User
+import com.lazytravel.data.models.BuddyParticipant
 import com.lazytravel.data.remote.PocketBaseClient
-import com.lazytravel.data.remote.PocketBaseSetup
-import com.lazytravel.di.AppModule
-import com.lazytravel.domain.model.Destination
-import com.lazytravel.presentation.DestinationViewModel
+import com.lazytravel.ui.navigation.AppNavigation
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize PocketBase client
         PocketBaseClient.initialize()
+        GlobalScope.launch {
+            Country().setup()
+            City().setup()
+            Place().setup()
 
-        // Auto-create collections (optional, for development)
-        lifecycleScope.launch {
-            PocketBaseSetup.ensureCollectionsExist()
+            User().setup()
+            Stat().setup()
+            UseCase().setup()
+            Feature().setup()
+
+            Post().setup()
+            PostLike().setup()
+            PostMedia().setup()
+            PostShare().setup()
+            PostComment().setup()
+
+            // Review models
+            Review().setup()
+            ReviewMedia().setup()
+            ReviewLike().setup()
+            ReviewComment().setup()
+
+            // Travel Buddy models
+            Buddy().setup()
+            BuddyReview().setup()
+            BuddyParticipant().setup()
+
+            // Blog models
+            BlogCategory().setup()
+            BlogPost().setup()
+
+            // Tour and Provider models
+            FlightProvider().setup()     // Flight provider first
+            TourProvider().setup()
+            InsuranceProvider().setup()
+            VisaProvider().setup()
+            InsurancePackage().setup()   // Package after provider
+            Tour().setup()               // Tour last (depends on providers)
+
+            // Destination models
+            Destination().setup()
+
+            HowItWork().setup()
         }
-
-        val viewModel = AppModule.provideDestinationViewModel()
 
         setContent {
             MaterialTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    DestinationScreen(viewModel)
-                }
+                AppNavigation()
             }
         }
     }
-}
-
-@Composable
-fun DestinationScreen(viewModel: DestinationViewModel) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.loadDestinations()
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Lazy Travel",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        when (val state = uiState) {
-            is DestinationViewModel.UiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-
-            is DestinationViewModel.UiState.Success -> {
-                DestinationList(destinations = state.destinations)
-            }
-
-            is DestinationViewModel.UiState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Error: ${state.message}",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun DestinationList(destinations: List<Destination>) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(destinations) { destination ->
-            DestinationCard(destination)
-        }
-    }
-}
-
-@Composable
-fun DestinationCard(destination: Destination) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = destination.name,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = destination.description,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "⭐ ${destination.rating}",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = "${destination.price.toInt().formatPrice()} VNĐ",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-    }
-}
-
-fun Int.formatPrice(): String {
-    return "%,d".format(this).replace(',', '.')
 }

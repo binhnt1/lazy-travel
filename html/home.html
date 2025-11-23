@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lazy Travel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #F5F5F5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 428px;
+            margin: 0 auto;
+            background: #FAFAFA;
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        .header {
+            background: #FFFFFF;
+            padding: 20px 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .greeting {
+            font-size: 24px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #757575;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 12px;
+        }
+
+        .card {
+            background: #FFFFFF;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .continue-card {
+            background: #FFF9C4;
+            border-color: #F9A825;
+        }
+
+        .continue-card .card-title {
+            color: #F57F17;
+        }
+
+        .passport-card {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .passport-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 16px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            margin-top: 6px;
+            opacity: 0.9;
+        }
+
+        .gamification {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 16px;
+        }
+
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .level-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .level-points {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 6px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            width: 82%;
+            border-radius: 8px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+        }
+
+        .badges::-webkit-scrollbar {
+            display: none;
+        }
+
+        .badge {
+            min-width: 54px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 6px;
+            border-radius: 8px;
+        }
+
+        .badge-icon {
+            font-size: 20px;
+        }
+
+        .badge-name {
+            font-size: 9px;
+            color: #666;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .badge.locked {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px dashed rgba(255, 255, 255, 0.5);
+        }
+
+        .badge.locked .badge-icon {
+            opacity: 0.5;
+        }
+
+        .badge.locked .badge-name {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .trip-card {
+            background: #4ECDC4;
+            color: white;
+            border: none;
+        }
+
+        .trip-card.ongoing {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        .trip-card.upcoming {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        }
+
+        .trip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .trip-title {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .weather {
+            font-size: 24px;
+        }
+
+        .trip-info {
+            font-size: 14px;
+            margin-bottom: 8px;
+            opacity: 0.95;
+        }
+
+        .notifications {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .notification-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .notification-item {
+            font-size: 11px;
+            margin-bottom: 4px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .notification-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .memory-card {
+            background: #FFEBEE;
+            border-color: #EF9A9A;
+        }
+
+        .memory-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .memory-icon {
+            font-size: 22px;
+        }
+
+        .memory-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .memory-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #212121;
+            margin-top: 2px;
+        }
+
+        .memory-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .memory-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .memory-btn {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-album {
+            background: #FF6B35;
+        }
+
+        .btn-video {
+            background: #212121;
+        }
+
+        .invitation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #F5F5F5;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .invitation-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .invitation-from {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .invitation-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212121;
+            margin-top: 2px;
+        }
+
+        .invitation-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-accept {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-decline {
+            background: #E0E0E0;
+            color: #666;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .social-highlight {
+            background: #E3F2FD;
+            border: 1px solid #90CAF9;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .social-icon {
+            width: 42px;
+            height: 42px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .social-text {
+            flex: 1;
+        }
+
+        .social-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .social-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .social-arrow {
+            font-size: 20px;
+            color: #1976D2;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #212121;
+            margin-bottom: 10px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .activity-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .activity-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 12px;
+            color: #212121;
+            line-height: 1.4;
+        }
+
+        .activity-meta {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .events-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            
+        }
+
+        .events-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .events-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .event-card {
+            min-width: 240px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #E0E0E0;
+            cursor: pointer;
+        }
+
+        .event-image {
+            height: 110px;
+            background: #F5F5F5;
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .event-overlay {
+            color: white;
+        }
+
+        .event-date {
+            font-size: 9px;
+            opacity: 0.9;
+        }
+
+        .event-name {
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .event-info {
+            padding: 10px;
+            background: white;
+        }
+
+        .event-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .event-link {
+            font-size: 12px;
+            color: #1976D2;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .tab {
+            flex: 1;
+            background: #E0E0E0;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: #212121;
+            color: white;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 428px;
+            width: 100%;
+            background: #FFFFFF;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 12px 0;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: #9E9E9E;
+            font-size: 10px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .nav-item.active {
+            color: #FF6B35;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-add {
+            margin-top: -20px;
+        }
+
+        .add-button {
+            width: 48px;
+            height: 48px;
+            background: #FF6B35;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+            cursor: pointer;
+            border: 3px solid white;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            color: #9E9E9E;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        .pagination-container {
+            margin-top: 16px;
+        }
+
+        .pagination-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .pagination-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #E0E0E0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-dot.active {
+            width: 24px;
+            border-radius: 4px;
+            background: #FF6B35;
+        }
+
+        .destinations-page {
+            display: none;
+        }
+
+        .destinations-page.active {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .countdown-timer {
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.15) 100%);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .countdown-label {
+            font-size: 10px;
+            opacity: 0.9;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .countdown-numbers {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-value {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .countdown-unit {
+            font-size: 9px;
+            margin-top: 3px;
+            opacity: 0.9;
+        }
+
+        .countdown-separator {
+            font-size: 28px;
+            font-weight: 300;
+            line-height: 1;
+            margin: 0 2px;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 2px 4px rgba(255,82,82,0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 4px 8px rgba(255,82,82,0.6);
+            }
+        }
+
+        .notification-action-item {
+            transition: all 0.2s ease;
+        }
+
+        .notification-action-item:hover {
+            transform: translateX(4px);
+            background: #FAFAFA !important;
+        }
+
+        .notification-action-item:active {
+            transform: translateX(2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="greeting">Xin chào, Minh! 👋</div>
+            <div class="subtitle">Sẵn sàng cho chuyến phiêu lưu tiếp theo?</div>
+        </div>
+
+        <div class="content">
+            <!-- 🔔 NOTIFICATIONS SUMMARY - PHẦN MỚI -->
+            <div class="card" style="background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); border: 1px solid #FFB74D; border-left: 4px solid #FF6B35;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                    <div style="font-size: 20px;">⚠️</div>
+                    <div style="font-size: 15px; font-weight: 700; color: #E65100;">Bạn cần chú ý</div>
+                    <div style="margin-left: auto; background: #FF6B35; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">3</div>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Urgent Vote -->
+                    <div class="notification-action-item" style="background: white; padding: 10px; border-radius: 6px; border-left: 3px solid #FF5252; cursor: pointer;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="font-size: 16px;">🗳️</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 12px; font-weight: 600; color: #212121;">Vote "Chọn địa điểm" đang chờ</div>
+                                <div style="font-size: 10px; color: #666; margin-top: 2px;">🔥 Còn 1 ngày - GẤP!</div>
+                            </div>
+                            <div style="font-size: 18px; color: #666;">→</div>
+                        </div>
+                    </div>
+
+                    <!-- Invitations -->
+                    <div class="notification-action-item" style="background: white; padding: 10px; border-radius: 6px; border-left: 3px solid #FF9800; cursor: pointer;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="font-size: 16px;">✉️</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 12px; font-weight: 600; color: #212121;">2 lời mời chưa trả lời</div>
+                                <div style="font-size: 10px; color: #666; margin-top: 2px;">Từ Mai Phương, Hoàng Nam</div>
+                            </div>
+                            <div style="font-size: 18px; color: #666;">→</div>
+                        </div>
+                    </div>
+
+                    <!-- Checklist -->
+                    <div class="notification-action-item" style="background: white; padding: 10px; border-radius: 6px; border-left: 3px solid #4CAF50; cursor: pointer;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="font-size: 16px;">✅</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 12px; font-weight: 600; color: #212121;">Checklist chưa hoàn thành</div>
+                                <div style="font-size: 10px; color: #666; margin-top: 2px;">8/15 items (Đà Nẵng) • 12/20 items (Phú Quốc)</div>
+                            </div>
+                            <div style="font-size: 18px; color: #666;">→</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- KẾT THÚC NOTIFICATIONS SUMMARY -->
+
+            <!-- Continue Card -->
+            <div class="card continue-card">
+                <div class="card-title">⚡ Tiếp tục</div>
+                <div style="font-size: 14px; color: #666;">Kế hoạch "Khám phá Đà Lạt" chưa hoàn tất</div>
+            </div>
+
+            <!-- Passport Card -->
+            <div class="card passport-card">
+                <div class="card-title">🛂 Hộ Chiếu Du Lịch</div>
+                <div class="passport-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Quốc gia</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">38</div>
+                        <div class="stat-label">Thành phố</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">25</div>
+                        <div class="stat-label">Chuyến đi</div>
+                    </div>
+                </div>
+
+                <div class="gamification">
+                    <div class="level-info">
+                        <div>
+                            <div class="level-name">🏆 Gold Traveler</div>
+                            <div class="level-points">2,450 điểm</div>
+                        </div>
+                        <div style="font-size: 11px;">82% → Platinum</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="badges">
+                        <div class="badge">
+                            <div class="badge-icon">🏖️</div>
+                            <div class="badge-name">Beach</div>
+                        </div>
+                        <div class="badge">
+                            <div class="badge-icon">⛰️</div>
+                            <div class="badge-name">Mountain</div>
+                        </div>
+                        <div class="badge">
+                            <div class="badge-icon">🔥</div>
+                            <div class="badge-name">5 Years</div>
+                        </div>
+                        <div class="badge">
+                            <div class="badge-icon">📸</div>
+                            <div class="badge-name">Photo</div>
+                        </div>
+                        <div class="badge locked">
+                            <div class="badge-icon">🌍</div>
+                            <div class="badge-name">Locked</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Trip - Đang diễn ra -->
+            <div class="card trip-card ongoing">
+                <div class="trip-header">
+                    <div class="trip-title">🎯 Chuyến đi đang diễn ra</div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                        <div class="weather">☁️ 28°C</div>
+                        <div style="font-size: 9px; opacity: 0.85;">Chiều: ⛈️ Mưa</div>
+                    </div>
+                </div>
+                <div class="trip-info">📍 Đà Nẵng, Việt Nam</div>
+                <div class="trip-info">📅 7-10/10/2025</div>
+
+                <!-- Weather Forecast -->
+                <div style="background: rgba(255,255,255,0.15); border-radius: 6px; padding: 8px; margin: 8px 0; display: flex; gap: 12px; justify-content: space-around;">
+                    <div style="text-align: center; flex: 1;">
+                        <div style="font-size: 9px; opacity: 0.85; margin-bottom: 2px;">Hôm nay</div>
+                        <div style="font-size: 18px; margin-bottom: 2px;">☁️</div>
+                        <div style="font-size: 10px; font-weight: 600;">28°C</div>
+                    </div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="font-size: 9px; opacity: 0.85; margin-bottom: 2px;">Chiều</div>
+                        <div style="font-size: 18px; margin-bottom: 2px;">⛈️</div>
+                        <div style="font-size: 10px; font-weight: 600;">Mưa</div>
+                    </div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="font-size: 9px; opacity: 0.85; margin-bottom: 2px;">Ngày mai</div>
+                        <div style="font-size: 18px; margin-bottom: 2px;">☀️</div>
+                        <div style="font-size: 10px; font-weight: 600;">32°C</div>
+                    </div>
+                </div>
+
+                <!-- Flight Info -->
+                <div style="background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.15) 100%); border-radius: 8px; padding: 12px; margin: 10px 0;">
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                        <span style="font-size: 18px;">✈️</span>
+                        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">CHUYẾN BAY VỀ</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <div>
+                            <div style="font-size: 10px; opacity: 0.9; margin-bottom: 2px;">Từ</div>
+                            <div style="font-size: 16px; font-weight: 700;">DAD</div>
+                            <div style="font-size: 9px; opacity: 0.9;">Đà Nẵng</div>
+                        </div>
+                        <div style="flex: 1; padding: 0 12px;">
+                            <div style="border-top: 2px dashed rgba(255,255,255,0.5); position: relative;">
+                                <div style="position: absolute; top: -6px; left: 50%; transform: translateX(-50%); font-size: 11px;">✈️</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 10px; opacity: 0.9; margin-bottom: 2px;">Đến</div>
+                            <div style="font-size: 16px; font-weight: 700;">SGN</div>
+                            <div style="font-size: 9px; opacity: 0.9;">TP.HCM</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; opacity: 0.95;">
+                        <span>🗓️ 10/10/2025</span>
+                        <span>🕐 18:30 - 19:45</span>
+                        <span>VN1234</span>
+                    </div>
+                </div>
+
+                <div class="notifications">
+                    <div style="background: rgba(255, 193, 7, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 8px; border-left: 3px solid #FFC107;">
+                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                            <span style="font-size: 13px;">📌</span>
+                            <span style="font-size: 11px; font-weight: 700; color: white;">QUAN TRỌNG</span>
+                        </div>
+                        <div style="font-size: 12px; font-weight: 600;"><strong>Admin:</strong> Có mặt tại sân bay Đà Nẵng lúc 17h00!</div>
+                    </div>
+
+                    <div class="notification-title">💬 Thông báo khác</div>
+                    <div class="notification-item">
+                        <span>•</span>
+                        <span><strong>Tuấn:</strong> Check-in tại Cầu Vàng 🌉</span>
+                    </div>
+                    <div class="notification-item">
+                        <span>•</span>
+                        <span><strong>Mai:</strong> Ảnh nhóm tuyệt đẹp! 📸</span>
+                    </div>
+                    <div class="notification-item">
+                        <span>•</span>
+                        <span><strong>Lan Anh:</strong> Nhớ kiểm tra hành lý nhé!</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn">📸 Thêm ảnh</button>
+                    <button class="action-btn">💬 Chat nhóm</button>
+                    <button class="action-btn" style="flex: 1.5;">
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>✅ Checklist</span>
+                                <span style="font-size: 10px;">8/15</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.3); height: 3px; border-radius: 3px; width: 100%;">
+                                <div style="background: white; height: 100%; border-radius: 3px; width: 53%;"></div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Budget Section -->
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.3);">
+                    <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px; opacity: 0.95;">💰 Chi tiêu chuyến đi</div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <div style="flex: 1; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 6px;">
+                            <div style="font-size: 10px; opacity: 0.9; margin-bottom: 2px;">Tổng chi</div>
+                            <div style="font-size: 18px; font-weight: 700;">8.5M</div>
+                        </div>
+                        <div style="flex: 1; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 6px;">
+                            <div style="font-size: 10px; opacity: 0.9; margin-bottom: 2px;">Của bạn</div>
+                            <div style="font-size: 18px; font-weight: 700;">1.7M</div>
+                        </div>
+                        <div style="flex: 1; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 6px;">
+                            <div style="font-size: 10px; opacity: 0.9; margin-bottom: 2px;">Còn nợ</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #FFC107;">0đ</div>
+                        </div>
+                    </div>
+                    <button style="width: 100%; background: rgba(255,255,255,0.25); border: none; padding: 8px; border-radius: 6px; color: white; font-size: 12px; font-weight: 600; cursor: pointer;">Xem chi tiết →</button>
+                </div>
+            </div>
+
+            <!-- Upcoming Trip - Sắp tới -->
+            <div class="card trip-card upcoming">
+                <div class="trip-header">
+                    <div class="trip-title">🌅 Chuyến đi sắp tới</div>
+                    <div class="weather">⛅ 30°C</div>
+                </div>
+                <div class="trip-info">📍 Phú Quốc, Việt Nam</div>
+                <div class="trip-info">📅 15-20/11/2025</div>
+
+                <!-- Countdown with seconds -->
+                <div class="countdown-timer">
+                    <div class="countdown-label">THỜI GIAN CÒN LẠI</div>
+                    <div class="countdown-numbers">
+                        <div class="countdown-item">
+                            <div class="countdown-value" id="upcoming-days">36</div>
+                            <div class="countdown-unit">NGÀY</div>
+                        </div>
+                        <div class="countdown-separator">:</div>
+                        <div class="countdown-item">
+                            <div class="countdown-value" id="upcoming-hours">14</div>
+                            <div class="countdown-unit">GIỜ</div>
+                        </div>
+                        <div class="countdown-separator">:</div>
+                        <div class="countdown-item">
+                            <div class="countdown-value" id="upcoming-minutes">23</div>
+                            <div class="countdown-unit">PHÚT</div>
+                        </div>
+                        <div class="countdown-separator">:</div>
+                        <div class="countdown-item">
+                            <div class="countdown-value" id="upcoming-seconds">45</div>
+                            <div class="countdown-unit">GIÂY</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notifications">
+                    <div style="background: rgba(255, 193, 7, 0.3); border-radius: 8px; padding: 10px; margin-bottom: 8px; border-left: 3px solid #FFC107;">
+                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                            <span style="font-size: 13px;">📌</span>
+                            <span style="font-size: 11px; font-weight: 700; color: white;">QUAN TRỌNG</span>
+                        </div>
+                        <div style="font-size: 12px; font-weight: 600;"><strong>Admin:</strong> Tập trung 6h sáng tại sân bay Tân Sơn Nhất, cổng A!</div>
+                    </div>
+
+                    <div class="notification-title">💬 Thông báo khác</div>
+                    <div class="notification-item">
+                        <span>•</span>
+                        <span><strong>Lan Anh:</strong> Đã đặt khách sạn Sea Star Resort</span>
+                    </div>
+                    <div class="notification-item">
+                        <span>•</span>
+                        <span><strong>Tuấn:</strong> Nhớ mang kem chống nắng nhé!</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn">💬 Chat nhóm</button>
+                    <button class="action-btn" style="flex: 1.5;">
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>✅ Checklist</span>
+                                <span style="font-size: 10px;">12/20</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.3); height: 3px; border-radius: 3px; width: 100%;">
+                                <div style="background: white; height: 100%; border-radius: 3px; width: 60%;"></div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Budget Section - Upcoming -->
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.3);">
+                    <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px; opacity: 0.95;">💰 Chi tiêu dự kiến</div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <div style="flex: 1; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 6px;">
+                            <div style="font-size: 10px; opacity: 0.9; margin-bottom: 2px;">Dự tính</div>
+                            <div style="font-size: 18px; font-weight: 700;">12.5M</div>
+                        </div>
+                        <div style="flex: 1; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 6px;">
+                            <div style="font-size: 10px; opacity: 0.9; margin-bottom: 2px;">Đã đặt</div>
+                            <div style="font-size: 18px; font-weight: 700;">4.2M</div>
+                        </div>
+                        <div style="flex: 1; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 6px;">
+                            <div style="font-size: 10px; opacity: 0.9; margin-bottom: 2px;">Bạn đã trả</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #4CAF50;">2.1M</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 11px; opacity: 0.9; margin-bottom: 6px;">✓ Vé máy bay, khách sạn đêm đầu đã đặt</div>
+                    <button style="width: 100%; background: rgba(255,255,255,0.25); border: none; padding: 8px; border-radius: 6px; color: white; font-size: 12px; font-weight: 600; cursor: pointer;">Quản lý chi tiêu →</button>
+                </div>
+            </div>
+
+            <!-- Memory Card -->
+            <div class="card memory-card">
+                <div class="memory-header">
+                    <div class="memory-icon">🗓️</div>
+                    <div>
+                        <div class="memory-date">Ngày này năm xưa - 8/10/2023</div>
+                        <div class="memory-title">Chuyến đi Sapa đáng nhớ</div>
+                    </div>
+                </div>
+                <div class="memory-desc">
+                    2 năm trước hôm nay, bạn đã chinh phục đỉnh Fansipan cùng 4 người bạn...
+                </div>
+
+                <!-- Stats Grid -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; background: rgba(255,255,255,0.5); padding: 12px; border-radius: 8px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #FF6B35;">127</div>
+                        <div style="font-size: 10px; color: #999; margin-top: 2px;">📸 Ảnh</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #4ECDC4;">8</div>
+                        <div style="font-size: 10px; color: #999; margin-top: 2px;">📍 Địa điểm</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #E91E63;">43</div>
+                        <div style="font-size: 10px; color: #999; margin-top: 2px;">💬 Khoảnh khắc</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #9C27B0;">32</div>
+                        <div style="font-size: 10px; color: #999; margin-top: 2px;">📏 Km đi</div>
+                    </div>
+                </div>
+
+                <!-- Travel Companions with Avatar Grid -->
+                <div style="margin-bottom: 12px;">
+                    <div style="font-size: 12px; color: #999; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Đi cùng (4 người)</span>
+                        <span style="font-size: 11px;">⭐ 4.9/5 đánh giá chuyến đi</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; background: white; padding: 8px; border-radius: 8px; border: 1px solid #FFCDD2;">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #FF6B35 0%, #FF8C61 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700; box-shadow: 0 2px 4px rgba(255,107,53,0.3);">LA</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 600; color: #212121;">Lan Anh</div>
+                                <div style="font-size: 10px; color: #999;">📸 28 ảnh</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; background: white; padding: 8px; border-radius: 8px; border: 1px solid #B2EBF2;">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #4ECDC4 0%, #6FE3DB 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700; box-shadow: 0 2px 4px rgba(78,205,196,0.3);">TH</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 600; color: #212121;">Tuấn Hùng</div>
+                                <div style="font-size: 10px; color: #999;">📸 35 ảnh</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; background: white; padding: 8px; border-radius: 8px; border: 1px solid #F8BBD0;">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #E91E63 0%, #F06292 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700; box-shadow: 0 2px 4px rgba(233,30,99,0.3);">MP</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 600; color: #212121;">Mai Phương</div>
+                                <div style="font-size: 10px; color: #999;">📸 41 ảnh</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; background: white; padding: 8px; border-radius: 8px; border: 1px solid #BBDEFB;">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700; box-shadow: 0 2px 4px rgba(33,150,243,0.3);">HN</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 600; color: #212121;">Hoàng Nam</div>
+                                <div style="font-size: 10px; color: #999;">📸 23 ảnh</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="memory-actions">
+                    <button class="memory-btn btn-album">📸 Xem Album</button>
+                    <button class="memory-btn btn-video">🎬 Tạo Video</button>
+                </div>
+            </div>
+
+            <!-- Active Voting -->
+            <div class="card" style="background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); border: 1px solid #FFB74D;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div class="card-title" style="color: #E65100; margin-bottom: 0;">🗳️ Vote Chuyến Đi</div>
+                    <div style="background: #FF6B35; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;">Bạn chưa vote</div>
+                </div>
+                
+                <div style="background: white; border-radius: 8px; padding: 14px; border-left: 4px solid #FF9800; position: relative;">
+                    <!-- Urgency Badge -->
+                    <div style="position: absolute; top: -8px; right: 10px; background: #FF5252; color: white; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; box-shadow: 0 2px 4px rgba(255,82,82,0.4); animation: pulse 2s infinite;">
+                        🔥 GẤP - Còn 1 ngày!
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; margin-top: 4px;">
+                        <div>
+                            <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Từ Lan Anh • 3/5 người đã vote</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121;">Chọn địa điểm đi chơi</div>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable destination options -->
+                    <div class="events-scroll" style="display: flex; gap: 8px; padding-bottom: 4px; margin-bottom: 10px; ">
+                        <div style="min-width: 150px; background: #FFF3E0; padding: 10px; border-radius: 6px; border: 2px solid #FFB74D; flex-shrink: 0;">
+                            <div style="font-size: 13px; font-weight: 600; color: #212121; margin-bottom: 4px;">🏖️ Nha Trang</div>
+                            <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Biển xanh, cát trắng</div>
+                            <div style="font-size: 10px; font-weight: 600; color: #FF9800; margin-bottom: 6px;">2 votes (40%)</div>
+                            <div style="background: #FFB74D; height: 3px; border-radius: 3px; width: 40%; margin-bottom: 8px;"></div>
+                            <!-- Voters - Avatar only -->
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                <div style="width: 22px; height: 22px; border-radius: 50%; background: #FF6B35; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" title="Lan Anh">LA</div>
+                                <div style="width: 22px; height: 22px; border-radius: 50%; background: #4ECDC4; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" title="Tuấn Hùng">TH</div>
+                            </div>
+                        </div>
+
+                        <div style="min-width: 150px; background: #F5F5F5; padding: 10px; border-radius: 6px; border: 2px solid #E0E0E0; flex-shrink: 0;">
+                            <div style="font-size: 13px; font-weight: 600; color: #212121; margin-bottom: 4px;">🌊 Vũng Tàu</div>
+                            <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Gần Sài Gòn</div>
+                            <div style="font-size: 10px; font-weight: 600; color: #666; margin-bottom: 6px;">1 vote (20%)</div>
+                            <div style="background: #BDBDBD; height: 3px; border-radius: 3px; width: 20%; margin-bottom: 8px;"></div>
+                            <!-- Voters - Avatar only -->
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                <div style="width: 22px; height: 22px; border-radius: 50%; background: #E91E63; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" title="Mai Phương">MP</div>
+                            </div>
+                        </div>
+
+                        <div style="min-width: 150px; background: #F5F5F5; padding: 10px; border-radius: 6px; border: 2px solid #E0E0E0; flex-shrink: 0;">
+                            <div style="font-size: 13px; font-weight: 600; color: #212121; margin-bottom: 4px;">🏝️ Phú Quốc</div>
+                            <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Đảo ngọc thiên đường</div>
+                            <div style="font-size: 10px; font-weight: 600; color: #666; margin-bottom: 6px;">0 vote (0%)</div>
+                            <div style="background: #E0E0E0; height: 3px; border-radius: 3px; width: 0%; margin-bottom: 8px;"></div>
+                            <!-- No voters -->
+                            <div style="font-size: 9px; color: #999; font-style: italic;">Chưa có ai vote</div>
+                        </div>
+
+                        <div style="min-width: 150px; background: #F5F5F5; padding: 10px; border-radius: 6px; border: 2px solid #E0E0E0; flex-shrink: 0;">
+                            <div style="font-size: 13px; font-weight: 600; color: #212121; margin-bottom: 4px;">🌅 Đà Nẵng</div>
+                            <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Thành phố đáng sống</div>
+                            <div style="font-size: 10px; font-weight: 600; color: #666; margin-bottom: 6px;">0 vote (0%)</div>
+                            <div style="background: #E0E0E0; height: 3px; border-radius: 3px; width: 0%; margin-bottom: 8px;"></div>
+                            <!-- No voters -->
+                            <div style="font-size: 9px; color: #999; font-style: italic;">Chưa có ai vote</div>
+                        </div>
+
+                        <div style="min-width: 150px; background: #F5F5F5; padding: 10px; border-radius: 6px; border: 2px solid #E0E0E0; flex-shrink: 0;">
+                            <div style="font-size: 13px; font-weight: 600; color: #212121; margin-bottom: 4px;">🌸 Hà Giang</div>
+                            <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Hoa tam giác mạch</div>
+                            <div style="font-size: 10px; font-weight: 600; color: #666; margin-bottom: 6px;">0 vote (0%)</div>
+                            <div style="background: #E0E0E0; height: 3px; border-radius: 3px; width: 0%; margin-bottom: 8px;"></div>
+                            <!-- No voters -->
+                            <div style="font-size: 9px; color: #999; font-style: italic;">Chưa có ai vote</div>
+                        </div>
+                    </div>
+
+                    <button style="width: 100%; background: #FF9800; border: none; padding: 8px; border-radius: 6px; color: white; font-size: 13px; font-weight: 600; cursor: pointer;">Vote ngay →</button>
+                </div>
+            </div>
+
+            <!-- Vote Plan -->
+            <div class="card" style="background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); border: 1px solid #81C784;">
+                <div class="card-title" style="color: #2E7D32;">🗳️ Vote Kế Hoạch</div>
+                
+                <div style="background: white; border-radius: 8px; padding: 14px; border-left: 4px solid #4CAF50;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                        <div>
+                            <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Trekking Tà Xùa • Từ Tuấn • 4/6 người</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121;">Vote địa điểm tham quan</div>
+                        </div>
+                        <div style="background: #C8E6C9; padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; color: #2E7D32;">Còn 5 ngày</div>
+                    </div>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 10px;">Thời gian: 20-22/11 • 💬 8 comments</div>
+
+                    <!-- Vertical list of options -->
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+                        <div style="background: #E8F5E9; padding: 10px 12px; border-radius: 6px; border: 2px solid #4CAF50;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-size: 13px; font-weight: 600; color: #212121;">🏔️ Đỉnh Tà Xùa (2865m)</span>
+                                <span style="font-size: 10px; font-weight: 600; color: #4CAF50;">3 votes (75%)</span>
+                            </div>
+                            <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Ngắm bình minh trên "săn mây"</div>
+                            <div style="background: #4CAF50; height: 3px; border-radius: 3px; width: 75%; margin-bottom: 8px;"></div>
+                            <!-- Voters - Avatar only -->
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                <div style="width: 22px; height: 22px; border-radius: 50%; background: #4ECDC4; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" title="Tuấn Hùng">TH</div>
+                                <div style="width: 22px; height: 22px; border-radius: 50%; background: #FF6B35; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" title="Lan Anh">LA</div>
+                                <div style="width: 22px; height: 22px; border-radius: 50%; background: #2196F3; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" title="Hoàng Nam">HN</div>
+                            </div>
+                        </div>
+
+                        <div style="background: #F5F5F5; padding: 10px 12px; border-radius: 6px; border: 2px solid #E0E0E0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-size: 13px; font-weight: 600; color: #212121;">🌾 Bản Cống (1700m)</span>
+                                <span style="font-size: 10px; font-weight: 600; color: #666;">1 vote (25%)</span>
+                            </div>
+                            <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Làng người H'Mông cổ xưa</div>
+                            <div style="background: #BDBDBD; height: 3px; border-radius: 3px; width: 25%; margin-bottom: 8px;"></div>
+                            <!-- Voters - Avatar only -->
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                <div style="width: 22px; height: 22px; border-radius: 50%; background: #E91E63; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" title="Mai Phương">MP</div>
+                            </div>
+                        </div>
+
+                        <div style="background: #F5F5F5; padding: 10px 12px; border-radius: 6px; border: 2px solid #E0E0E0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-size: 13px; font-weight: 600; color: #212121;">🌄 Hòn Bồ (2000m)</span>
+                                <span style="font-size: 10px; font-weight: 600; color: #666;">0 vote (0%)</span>
+                            </div>
+                            <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Thác nước tự nhiên đẹp</div>
+                            <div style="background: #E0E0E0; height: 3px; border-radius: 3px; width: 0%; margin-bottom: 8px;"></div>
+                            <!-- No voters -->
+                            <div style="font-size: 9px; color: #999; font-style: italic;">Chưa có ai vote</div>
+                        </div>
+                    </div>
+
+                    <button style="width: 100%; background: #4CAF50; border: none; padding: 8px; border-radius: 6px; color: white; font-size: 13px; font-weight: 600; cursor: pointer;">Xem chi tiết & Vote →</button>
+                </div>
+            </div>
+
+            <!-- Social & Invitations -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div class="card-title" style="margin-bottom: 0;">👥 Cộng đồng & Lời mời</div>
+                    <div style="background: #FF6B35; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;">2 lời mời</div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 14px; font-weight: 600; color: #212121; margin-bottom: 10px;">✉️ Lời mời mới (2)</div>
+                    <div class="invitation-item">
+                        <div>
+                            <div class="invitation-from">Từ Mai Phương</div>
+                            <div class="invitation-title">Chuyến đi Đà Lạt 4N3Đ</div>
+                        </div>
+                        <div class="invitation-actions">
+                            <button class="btn-accept">✓</button>
+                            <button class="btn-decline">✕</button>
+                        </div>
+                    </div>
+                    <div class="invitation-item">
+                        <div>
+                            <div class="invitation-from">Từ Hoàng Nam</div>
+                            <div class="invitation-title">Vote kế hoạch Sa Pa 2N3Đ</div>
+                        </div>
+                        <div class="invitation-actions">
+                            <button class="btn-accept">✓</button>
+                            <button class="btn-decline">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="social-highlight">
+                    <div class="social-icon">🤝</div>
+                    <div class="social-text">
+                        <div class="social-title">Tìm bạn đồng hành</div>
+                        <div class="social-desc">3 người cùng quan tâm đến Phú Quốc</div>
+                    </div>
+                    <div class="social-arrow">→</div>
+                </div>
+
+                <div class="activity-title">Hoạt động gần đây</div>
+                <div class="activity-item">
+                    <div class="activity-avatar" style="background: #FF6B35;">LA</div>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Lan Anh</strong> đã review <strong>Khách sạn Sunrise Nha Trang</strong></div>
+                        <div class="activity-meta">⭐⭐⭐⭐⭐ · 2 giờ trước</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-avatar" style="background: #4ECDC4;">TH</div>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Tuấn Hùng</strong> đã chia sẻ lịch trình <strong>"Khám phá Đà Lạt 3N2Đ"</strong></div>
+                        <div class="activity-meta">💬 12 bình luận · 5 giờ trước</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-avatar" style="background: #E91E63;">MP</div>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Mai Phương</strong> đang tìm bạn đồng hành đi <strong>Sapa tháng 11</strong></div>
+                        <div class="activity-meta">👥 4/6 người · 1 ngày trước</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events -->
+            <div class="card">
+                <div class="card-title">🔥 Theo dòng Sự kiện</div>
+                <div class="events-scroll">
+                    <div class="event-card">
+                        <div class="event-image" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), #E91E63;">
+                            <div class="event-overlay">
+                                <div class="event-date">THÁNG 10-11</div>
+                                <div class="event-name">Hoa tam giác mạch Hà Giang</div>
+                            </div>
+                        </div>
+                        <div class="event-info">
+                            <div class="event-desc">Mùa hoa đẹp nhất trong năm</div>
+                            <div class="event-link">Khám phá ngay →</div>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-image" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), #FF9800;">
+                            <div class="event-overlay">
+                                <div class="event-date">15-20/11/2025</div>
+                                <div class="event-name">Lễ hội Ánh sáng Đà Nẵng</div>
+                            </div>
+                        </div>
+                        <div class="event-info">
+                            <div class="event-desc">Show ánh sáng bên sông Hàn</div>
+                            <div class="event-link">Tìm hiểu thêm →</div>
+                        </div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-image" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), #4CAF50;">
+                            <div class="event-overlay">
+                                <div class="event-date">THÁNG 10-12</div>
+                                <div class="event-name">Mùa thu Nhật Bản</div>
+                            </div>
+                        </div>
+                        <div class="event-info">
+                            <div class="event-desc">Lá đỏ phủ khắp xứ sở hoa anh đào</div>
+                            <div class="event-link">Xem tour →</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Itineraries -->
+            <div class="card">
+                <div class="card-title">📋 Lịch trình tham khảo</div>
+                <div style="font-size: 13px; color: #666; margin-bottom: 12px;">Lịch trình thực tế từ cộng đồng du lịch</div>
+                <div class="events-scroll">
+                    <div style="min-width: 280px; border-radius: 8px; overflow: hidden; border: 1px solid #E0E0E0; cursor: pointer; background: white;">
+                        <div style="height: 140px; background: linear-gradient(135deg, #FF5722 0%, #D84315 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 16px; color: white;">
+                            <div>
+                                <div style="background: rgba(255,255,255,0.3); display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; margin-bottom: 8px;">NEW</div>
+                                <div style="font-size: 18px; font-weight: 700;">Cố đô Huế</div>
+                            </div>
+                            <div style="font-size: 42px; text-align: right;">🛕</div>
+                        </div>
+                        <div style="padding: 14px;">
+                            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; background: #E91E63; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: white;">HT</div>
+                                <span style="font-size: 11px; color: #999;">@huetravel_official</span>
+                            </div>
+                            <div style="font-size: 13px; color: #666; margin-bottom: 6px;">⭐ 4.7 (89 reviews) • 3N2Đ</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 16px; font-weight: 700; color: #FF6B35;">4.5tr</span>
+                                <span style="font-size: 11px; color: #999;">/người</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="min-width: 280px; border-radius: 8px; overflow: hidden; border: 1px solid #E0E0E0; cursor: pointer; background: white;">
+                        <div style="height: 140px; background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 16px; color: white;">
+                            <div>
+                                <div style="background: rgba(255,255,255,0.3); display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; margin-bottom: 8px;">HOT</div>
+                                <div style="font-size: 18px; font-weight: 700;">Hội An</div>
+                            </div>
+                            <div style="font-size: 42px; text-align: right;">🏮</div>
+                        </div>
+                        <div style="padding: 14px;">
+                            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; background: #673AB7; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: white;">HA</div>
+                                <span style="font-size: 11px; color: #999;">@hoian_explorer</span>
+                            </div>
+                            <div style="font-size: 13px; color: #666; margin-bottom: 6px;">⭐ 4.9 (145 reviews) • 2N1Đ</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 16px; font-weight: 700; color: #FF6B35;">3.2tr</span>
+                                <span style="font-size: 11px; color: #999;">/người</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tour Packages -->
+            <div class="card" style="background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%); border-radius: 8px; color: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">🎁 Tour Đặc Biệt</div>
+                        <div style="font-size: 13px; opacity: 0.9;">Được tuyển chọn & đảm bảo chất lượng</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;">HOT</div>
+                </div>
+
+                <div class="events-scroll" style="display: flex; gap: 12px; padding-bottom: 4px;">
+                    <div style="min-width: 240px; background: white; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                        <div style="position: relative;">
+                            <div style="height: 120px; background: linear-gradient(135deg, #FA709A 0%, #FEE140 100%); display: flex; align-items: center; justify-content: center; font-size: 52px;">
+                                🏝️
+                            </div>
+                            <div style="position: absolute; top: 8px; right: 8px; background: #FF6B35; color: white; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;">-25%</div>
+                        </div>
+                        <div style="padding: 14px;">
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; margin-bottom: 6px;">Tour Phú Quốc 4N3Đ</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">✈️ Máy bay • 🏨 Resort 4⭐ • 🍽️ Buffet sáng</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid #F0F0F0;">
+                                <div>
+                                    <div style="font-size: 11px; color: #999; text-decoration: line-through;">8.5tr</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #FF6B35;">6.5tr</div>
+                                </div>
+                                <button style="background: #FF6B35; border: none; padding: 8px 16px; border-radius: 8px; color: white; font-size: 12px; font-weight: 600; cursor: pointer;">Đặt ngay</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="min-width: 240px; background: white; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                        <div style="position: relative;">
+                            <div style="height: 120px; background: linear-gradient(135deg, #30CFD0 0%, #330867 100%); display: flex; align-items: center; justify-content: center; font-size: 52px;">
+                                ⛰️
+                            </div>
+                            <div style="position: absolute; top: 8px; right: 8px; background: #4CAF50; color: white; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;">BEST</div>
+                        </div>
+                        <div style="padding: 14px;">
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; margin-bottom: 6px;">Trekking Fansipan</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">🚐 Xe riêng • 🏕️ Homestay • 🥾 Hướng dẫn viên</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid #F0F0F0;">
+                                <div>
+                                    <div style="font-size: 11px; color: #999;">Từ</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #FF6B35;">3.2tr</div>
+                                </div>
+                                <button style="background: #FF6B35; border: none; padding: 8px 16px; border-radius: 8px; color: white; font-size: 12px; font-weight: 600; cursor: pointer;">Đặt ngay</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="min-width: 240px; background: white; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                        <div style="position: relative;">
+                            <div style="height: 120px; background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%); display: flex; align-items: center; justify-content: center; font-size: 52px;">
+                                🛕
+                            </div>
+                            <div style="position: absolute; top: 8px; right: 8px; background: #E91E63; color: white; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;">NEW</div>
+                        </div>
+                        <div style="padding: 14px;">
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; margin-bottom: 6px;">Khám phá Huế</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">🚗 Xe máy • 🏨 Hotel 3⭐ • 🍜 Đặc sản Huế</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid #F0F0F0;">
+                                <div>
+                                    <div style="font-size: 11px; color: #999;">Từ</div>
+                                    <div style="font-size: 18px; font-weight: 700; color: #FF6B35;">4.8tr</div>
+                                </div>
+                                <button style="background: #FF6B35; border: none; padding: 8px 16px; border-radius: 8px; color: white; font-size: 12px; font-weight: 600; cursor: pointer;">Đặt ngay</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hot Destinations -->
+            
+
+            <!-- Hot Destinations với Pagination -->
+            <div class="card">
+                <div class="card-title">🔥 Điểm Đến Hot</div>
+                <div style="font-size: 13px; color: #666; margin-bottom: 12px;">Top địa điểm được yêu thích nhất tháng này</div>
+
+                <div class="pagination-container">
+                    <!-- Page 1 -->
+                    <div class="destinations-page active" id="page-1">
+                        <div style="background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(255,107,53,0.05) 100%); border: 1px solid #FFE0B2; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🏖️</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Nha Trang</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Biển xanh, cát trắng</div>
+                            <div style="background: #FF6B35; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">1,234 đang quan tâm</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(78,205,196,0.1) 0%, rgba(78,205,196,0.05) 100%); border: 1px solid #B2DFDB; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">⛰️</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Đà Lạt</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Thành phố ngàn hoa</div>
+                            <div style="background: #4ECDC4; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">987 đang quan tâm</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(233,30,99,0.1) 0%, rgba(233,30,99,0.05) 100%); border: 1px solid #F8BBD0; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🌸</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Hà Giang</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Hoa tam giác mạch</div>
+                            <div style="background: #E91E63; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">856 đang quan tâm</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(103,58,183,0.1) 0%, rgba(103,58,183,0.05) 100%); border: 1px solid #D1C4E9; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🛕</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Hội An</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Phố cổ lãng mạn</div>
+                            <div style="background: #673AB7; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">743 đang quan tâm</div>
+                        </div>
+                    </div>
+
+                    <!-- Page 2 -->
+                    <div class="destinations-page" id="page-2">
+                        <div style="background: linear-gradient(135deg, rgba(3,169,244,0.1) 0%, rgba(3,169,244,0.05) 100%); border: 1px solid #B3E5FC; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🌊</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Phú Quốc</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Đảo ngọc thiên đường</div>
+                            <div style="background: #03A9F4; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">652 đang quan tâm</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(76,175,80,0.1) 0%, rgba(76,175,80,0.05) 100%); border: 1px solid #C8E6C9; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🏔️</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Sapa</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Mây trời nơi cao nguyên</div>
+                            <div style="background: #4CAF50; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">589 đang quan tâm</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(255,152,0,0.1) 0%, rgba(255,152,0,0.05) 100%); border: 1px solid #FFE0B2; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🌅</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Đà Nẵng</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Thành phố đáng sống</div>
+                            <div style="background: #FF9800; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">512 đang quan tâm</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(156,39,176,0.1) 0%, rgba(156,39,176,0.05) 100%); border: 1px solid #E1BEE7; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🏰</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Huế</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Cố đô ngàn năm</div>
+                            <div style="background: #9C27B0; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">487 đang quan tâm</div>
+                        </div>
+                    </div>
+
+                    <!-- Page 3 -->
+                    <div class="destinations-page" id="page-3">
+                        <div style="background: linear-gradient(135deg, rgba(244,67,54,0.1) 0%, rgba(244,67,54,0.05) 100%); border: 1px solid #FFCDD2; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🌴</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Vũng Tàu</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Biển gần Sài Gòn</div>
+                            <div style="background: #F44336; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">423 đang quan tâm</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(0,150,136,0.1) 0%, rgba(0,150,136,0.05) 100%); border: 1px solid #B2DFDB; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🏞️</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Ninh Bình</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Vịnh Hạ Long trên cạn</div>
+                            <div style="background: #009688; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">398 đang quan tâm</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(255,193,7,0.1) 0%, rgba(255,193,7,0.05) 100%); border: 1px solid #FFF9C4; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">⛵</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Hạ Long</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Kỳ quan thiên nhiên</div>
+                            <div style="background: #FFC107; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">367 đang quan tâm</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(121,85,72,0.1) 0%, rgba(121,85,72,0.05) 100%); border: 1px solid #D7CCC8; border-radius: 8px; padding: 16px; cursor: pointer;">
+                            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">🌾</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #212121; text-align: center; margin-bottom: 4px;">Mù Cang Chải</div>
+                            <div style="font-size: 11px; color: #666; text-align: center; margin-bottom: 8px;">Ruộng bậc thang vàng</div>
+                            <div style="background: #795548; color: white; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center;">321 đang quan tâm</div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination Dots -->
+                    <div class="pagination-dots">
+                        <div class="pagination-dot active" onclick="changePage(1)"></div>
+                        <div class="pagination-dot" onclick="changePage(2)"></div>
+                        <div class="pagination-dot" onclick="changePage(3)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <div class="nav-icon">🏠</div>
+            <div>Trang chủ</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">🗺️</div>
+            <div>Chuyến đi</div>
+        </div>
+        <div class="nav-add">
+            <div class="add-button">+</div>
+            <div class="nav-label">Thêm</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">🎯</div>
+            <div>Khám phá</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">👤</div>
+            <div>Cá nhân</div>
+        </div>
+    </div>
+
+    <script>
+        // Pagination functionality
+        let currentPage = 1;
+        
+        function changePage(pageNum) {
+            // Hide all pages
+            document.querySelectorAll('.destinations-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active from all dots
+            document.querySelectorAll('.pagination-dot').forEach(dot => {
+                dot.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById('page-' + pageNum).classList.add('active');
+            document.querySelectorAll('.pagination-dot')[pageNum - 1].classList.add('active');
+            
+            currentPage = pageNum;
+        }
+
+        // Countdown timer for current trip (ends 10/10/2025 at 18:00)
+        function updateCurrentTripCountdown() {
+            const endDate = new Date('2025-10-10T18:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = endDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+            document.getElementById('current-days').textContent = days;
+            document.getElementById('current-hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('current-minutes').textContent = minutes.toString().padStart(2, '0');
+        }
+
+        // Countdown timer for upcoming trip with seconds (starts 15/11/2025 at 06:00)
+        function updateUpcomingTripCountdown() {
+            const startDate = new Date('2025-11-15T06:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = startDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('upcoming-days').textContent = days;
+            document.getElementById('upcoming-hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('upcoming-minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('upcoming-seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        // Update countdowns every second
+        setInterval(() => {
+            updateCurrentTripCountdown();
+            updateUpcomingTripCountdown();
+        }, 1000);
+
+        // Initial update
+        updateCurrentTripCountdown();
+        updateUpcomingTripCountdown();
+    </script>
+</body>
+
+</html>
