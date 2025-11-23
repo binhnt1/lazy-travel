@@ -37,11 +37,10 @@ import com.lazytravel.core.i18n.localizedString
 import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.utils.parseHexColor
-import org.jetbrains.compose.resources.painterResource
-import lazytravel.shared.generated.resources.Res
-import lazytravel.shared.generated.resources.ic_check_circle
-import lazytravel.shared.generated.resources.ic_heart
-import lazytravel.shared.generated.resources.ic_heart_filled
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -115,7 +114,7 @@ fun TourNormalCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            painter = painterResource(if (isFavorite) Res.drawable.ic_heart_filled else Res.drawable.ic_heart),
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             contentDescription = "Favorite",
                             tint = Color(0xFFE53935),
                             modifier = Modifier.size(12.dp)
@@ -176,7 +175,7 @@ fun TourNormalCard(
 
                         if (provider.isVerified) {
                             Icon(
-                                painter = painterResource(Res.drawable.ic_check_circle),
+                                imageVector = Icons.Filled.CheckCircle,
                                 contentDescription = "Verified",
                                 tint = AppColors.Primary,
                                 modifier = Modifier.size(10.dp)
