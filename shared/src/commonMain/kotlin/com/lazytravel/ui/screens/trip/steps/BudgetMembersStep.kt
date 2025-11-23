@@ -71,7 +71,7 @@ fun BudgetMembersStep(
             }
         }
 
-        Divider()
+        HorizontalDivider()
 
         // Budget Range
         Column {
@@ -91,7 +91,7 @@ fun BudgetMembersStep(
             }
         }
 
-        Divider()
+        HorizontalDivider()
 
         // Max Participants
         Column {
@@ -110,7 +110,7 @@ fun BudgetMembersStep(
             }
         }
 
-        Divider()
+        HorizontalDivider()
 
         // Age Range
         Column {
@@ -127,8 +127,8 @@ fun BudgetMembersStep(
             Spacer(modifier = Modifier.height(12.dp))
 
             AgeRangeSelector(
-                selectedRange = ageRange,
-                onRangeSelect = onAgeRangeChange
+                ageRange = ageRange,
+                onAgeRangeChange = onAgeRangeChange
             )
 
             if (validationErrors.containsKey("ageRange")) {
@@ -141,7 +141,7 @@ fun BudgetMembersStep(
             }
         }
 
-        Divider()
+        HorizontalDivider()
 
         // Requirements
         Column {

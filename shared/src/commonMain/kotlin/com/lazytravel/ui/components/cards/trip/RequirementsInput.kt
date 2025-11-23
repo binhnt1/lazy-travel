@@ -99,7 +99,7 @@ fun RequirementsInput(
                 requirements.forEach { requirement ->
                     InputChip(
                         selected = true,
-                        onClick = { },
+                        onClick = { onRemoveRequirement(requirement) },
                         label = { Text(requirement) },
                         trailingIcon = {
                             Icon(
@@ -111,8 +111,7 @@ fun RequirementsInput(
                         colors = InputChipDefaults.inputChipColors(
                             selectedContainerColor = Color(0xFFFFEEE6),
                             selectedLabelColor = Color(0xFFFF6B35)
-                        ),
-                        onClick = { onRemoveRequirement(requirement) }
+                        )
                     )
                 }
             }

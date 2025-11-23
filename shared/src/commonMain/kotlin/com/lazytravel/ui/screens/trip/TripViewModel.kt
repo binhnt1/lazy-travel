@@ -4,6 +4,7 @@ import com.lazytravel.data.base.BaseRepository
 import com.lazytravel.data.models.Trip
 import com.lazytravel.data.models.TripDestination
 import com.lazytravel.data.models.enums.TripStatus
+import com.lazytravel.ui.utils.getCurrentTimeMillis
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,6 +32,9 @@ class TripViewModel {
 
     private val _coverImage = MutableStateFlow("")
     val coverImage: StateFlow<String> = _coverImage.asStateFlow()
+
+    private val _imageUrl = MutableStateFlow("")
+    val imageUrl: StateFlow<String> = _imageUrl.asStateFlow()
 
     private val _startDate = MutableStateFlow(0L)
     val startDate: StateFlow<Long> = _startDate.asStateFlow()
@@ -84,6 +88,9 @@ class TripViewModel {
     private val _validation = MutableStateFlow(TripFormValidation(0, false))
     val validation: StateFlow<TripFormValidation> = _validation.asStateFlow()
 
+    private val _validationErrors = MutableStateFlow<Map<String, String>>(emptyMap())
+    val validationErrors: StateFlow<Map<String, String>> = _validationErrors.asStateFlow()
+
     // ===== STEP 1: BASIC INFO SETTERS =====
     fun setTripTitle(value: String) {
         _tripTitle.value = value
@@ -101,6 +108,10 @@ class TripViewModel {
 
     fun setCoverImage(value: String) {
         _coverImage.value = value
+    }
+
+    fun setImageUrl(value: String) {
+        _imageUrl.value = value
     }
 
     fun setStartDate(value: Long) {
@@ -224,6 +235,23 @@ class TripViewModel {
         validateCurrentStep()
     }
 
+    // ===== UPDATE METHODS (Aliases for set methods) =====
+    fun updateTripTitle(value: String) = setTripTitle(value)
+    fun updateEmoji(value: String) = setEmoji(value)
+    fun updateDescription(value: String) = setDescription(value)
+    fun updateImageUrl(value: String) = setImageUrl(value)
+    fun updateStartDate(value: Long) = setStartDate(value)
+    fun updateDuration(value: Int) = setDuration(value)
+    fun updateRegion(value: String) = setRegion(value)
+    fun updateTags(tags: List<String>) { _tags.value = tags }
+    fun updateBudgetRange(min: Double, max: Double) = setBudgetRange(min, max)
+    fun updateMaxParticipants(value: Int) = setMaxParticipants(value)
+    fun updateAgeRange(value: String) = setAgeRange(value)
+    fun updateAllowMultipleVotes(value: Boolean) = setAllowMultipleVotes(value)
+    fun updateVotingEndsAt(value: Long) = setVotingEndsAt(value)
+    fun updatePublishStatus(value: String) = setPublishStatus(value)
+    fun updateAcceptTerms(value: Boolean) = setAcceptTerms(value)
+
     // ===== NAVIGATION =====
     fun nextStep() {
         if (_currentStep.value < 3 && validateCurrentStep()) {
@@ -254,6 +282,7 @@ class TripViewModel {
             else -> false
         }
 
+        _validationErrors.value = errors
         _validation.value = TripFormValidation(
             step = _currentStep.value,
             isValid = isValid,
@@ -276,7 +305,7 @@ class TripViewModel {
             isValid = false
         }
 
-        if (_startDate.value <= System.currentTimeMillis()) {
+        if (_startDate.value <= getCurrentTimeMillis()) {
             errors["startDate"] = "Ngày khởi hành phải trong tương lai"
             isValid = false
         }

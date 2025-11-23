@@ -58,7 +58,6 @@ fun BuddyHotCard(
                             .align(Alignment.TopStart)
                             .padding(10.dp)
                             .background(Color(0xFFFF6B35), RoundedCornerShape(4.dp))
-                            .shadow(2.dp, RoundedCornerShape(4.dp))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(

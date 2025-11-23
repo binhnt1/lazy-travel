@@ -1,78 +1,71 @@
 package com.lazytravel.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.lazytravel.data.repositories.BuddyRepository
-import com.lazytravel.data.repositories.BuddyStats
+import androidx.compose.ui.zIndex
 import com.lazytravel.ui.components.sections.buddies.BuddyFilterSection
 import com.lazytravel.ui.components.sections.buddies.BuddyHeaderSection
 import com.lazytravel.ui.components.sections.buddies.BuddyHotSection
 import com.lazytravel.ui.components.sections.buddies.BuddyNormalSection
 import com.lazytravel.ui.components.sections.buddies.BuddyLuxurySection
 import com.lazytravel.ui.components.sections.buddies.BuddyStatsSection
-import kotlinx.coroutines.launch
 
 @Composable
 fun BuddyScreen(
     onNavigateToDetail: (String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    val repository = remember { BuddyRepository() }
-    var stats by remember { mutableStateOf(BuddyStats(0, 0, 0)) }
-    var isLoading by remember { mutableStateOf(true) }
+    // Measure header height dynamically
+    var headerHeight by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
 
-    // Load stats only
-    LaunchedEffect(Unit) {
-        scope.launch {
-            try {
-                val result = repository.getBuddyStats()
-                result.fold(
-                    onSuccess = { fetchedStats ->
-                        stats = fetchedStats
-                        isLoading = false
-                    },
-                    onFailure = { error ->
-                        isLoading = false
-                    }
-                )
-            } catch (_: Exception) {
-                isLoading = false
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Scrollable content with top padding for sticky header
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                top = headerHeight,
+                bottom = 80.dp
+            )
+        ) {
+            // Stats Section - manages its own loading state
+            item {
+                BuddyStatsSection()
+            }
+
+            // Filter Section
+            item {
+                BuddyFilterSection()
+            }
+
+            // Content Sections - each manages its own loading state
+            item {
+                BuddyHotSection(onNavigateToDetail = onNavigateToDetail)
+                BuddyLuxurySection(onNavigateToDetail = onNavigateToDetail)
+                BuddyNormalSection(onNavigateToDetail = onNavigateToDetail)
             }
         }
-    }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 80.dp)
-    ) {
-        // Header Section
-        item {
+        // Sticky Header on top
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .zIndex(100f)
+                .onGloballyPositioned { coordinates ->
+                    headerHeight = with(density) { coordinates.size.height.toDp() }
+                }
+        ) {
             BuddyHeaderSection(onNavigateBack = onNavigateBack)
-        }
-
-        // Stats Section
-        item {
-            BuddyStatsSection(
-                openTrips = stats.openTrips,
-                thisWeekTrips = stats.thisWeekTrips,
-                matchedCount = stats.matchedCount
-            )
-        }
-
-        // Filter Section
-        item {
-            BuddyFilterSection()
-        }
-
-        // Hot Section
-        item {
-            BuddyHotSection(onNavigateToDetail = onNavigateToDetail)
-            BuddyLuxurySection(onNavigateToDetail = onNavigateToDetail)
-            BuddyNormalSection(onNavigateToDetail = onNavigateToDetail)
         }
     }
 }

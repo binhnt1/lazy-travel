@@ -9,8 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import java.text.SimpleDateFormat
-import java.util.*
+import com.lazytravel.ui.utils.formatDateFromTimestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,8 +93,7 @@ fun VotingSettingsCard(
                         )
                         Text(
                             text = if (votingEndsAt > 0) {
-                                SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("vi"))
-                                    .format(Date(votingEndsAt))
+                                formatDateFromTimestamp(votingEndsAt)
                             } else {
                                 "Chọn thời hạn"
                             },

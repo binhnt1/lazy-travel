@@ -8,8 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lazytravel.ui.screens.trip.DestinationInput
-import java.text.SimpleDateFormat
-import java.util.*
+import com.lazytravel.ui.utils.formatDateFromTimestamp
 
 @Composable
 fun TripPreviewCard(
@@ -173,12 +172,10 @@ private fun PreviewItem(
 
 private fun formatDate(timestamp: Long): String {
     if (timestamp == 0L) return "Chưa chọn"
-    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale("vi"))
-    return sdf.format(Date(timestamp))
+    return formatDateFromTimestamp(timestamp)
 }
 
 private fun formatDateTime(timestamp: Long): String {
     if (timestamp == 0L) return "Chưa chọn"
-    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("vi"))
-    return sdf.format(Date(timestamp))
+    return formatDateFromTimestamp(timestamp)
 }

@@ -2,14 +2,14 @@ package com.lazytravel.ui.screens.trip
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import com.lazytravel.data.models.enums.TripStatus
 import com.lazytravel.ui.components.cards.trip.CreateTripBottomBar
 import com.lazytravel.ui.components.cards.trip.StepIndicator
 import com.lazytravel.ui.screens.trip.steps.BasicInfoStep
@@ -85,7 +85,7 @@ fun CreateTripScreen(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -130,7 +130,7 @@ fun CreateTripScreen(
             // Step Indicator
             StepIndicator(currentStep = currentStep)
 
-            Divider()
+            HorizontalDivider()
 
             // Loading overlay
             if (uiState is TripUiState.Loading) {
@@ -181,7 +181,17 @@ fun CreateTripScreen(
 
                     2 -> DestinationsStep(
                         destinations = destinations,
-                        onAddDestination = viewModel::addDestination,
+                        onAddDestination = {
+                            // Add empty destination for user to fill in
+                            viewModel.addDestination(
+                                DestinationInput(
+                                    name = "",
+                                    description = "",
+                                    imageUrl = "",
+                                    orderIndex = destinations.size
+                                )
+                            )
+                        },
                         onUpdateDestination = viewModel::updateDestination,
                         onDeleteDestination = viewModel::removeDestination,
                         allowMultipleVotes = allowMultipleVotes,

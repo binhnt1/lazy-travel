@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -260,6 +262,8 @@ private fun SortFilterBar(
     selectedSort: String,
     onSortChange: (String) -> Unit
 ) {
+    var showSortMenu by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -280,26 +284,92 @@ private fun SortFilterBar(
                 color = AppColors.TextSecondary
             )
 
-            Text(
-                text = when (selectedSort) {
-                    "recent" -> LocalizationManager.getString("buddy_sort_recent")
-                    "matched" -> LocalizationManager.getString("buddy_sort_matched")
-                    "popular" -> LocalizationManager.getString("buddy_sort_popular")
-                    else -> LocalizationManager.getString("buddy_sort_recent")
-                },
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = AppColors.TextPrimary,
-                modifier = Modifier
-                    .border(1.dp, AppColors.Border, RoundedCornerShape(6.dp))
-                    .background(Color.White, RoundedCornerShape(6.dp))
-                    .padding(horizontal = 10.dp, vertical = 6.dp)
-                    .clickable {
-                        val sorts = listOf("recent", "matched", "popular")
-                        val nextSort = sorts[(sorts.indexOf(selectedSort) + 1) % sorts.size]
-                        onSortChange(nextSort)
-                    }
-            )
+            // Sort dropdown button
+            Box {
+                Row(
+                    modifier = Modifier
+                        .border(1.dp, AppColors.Border, RoundedCornerShape(6.dp))
+                        .background(Color.White, RoundedCornerShape(6.dp))
+                        .clickable { showSortMenu = true }
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = when (selectedSort) {
+                            "recent" -> LocalizationManager.getString("buddy_sort_recent")
+                            "matched" -> LocalizationManager.getString("buddy_sort_matched")
+                            "popular" -> LocalizationManager.getString("buddy_sort_popular")
+                            else -> LocalizationManager.getString("buddy_sort_recent")
+                        },
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = AppColors.TextPrimary
+                    )
+
+                    // Dropdown arrow icon
+                    Text(
+                        text = if (showSortMenu) "▲" else "▼",
+                        fontSize = 10.sp,
+                        color = AppColors.TextSecondary
+                    )
+                }
+
+                // Dropdown menu
+                DropdownMenu(
+                    expanded = showSortMenu,
+                    onDismissRequest = { showSortMenu = false },
+                    modifier = Modifier.background(Color.White)
+                ) {
+                    // Recent option
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = LocalizationManager.getString("buddy_sort_recent"),
+                                fontSize = 13.sp,
+                                color = if (selectedSort == "recent") AppColors.Primary else AppColors.TextPrimary,
+                                fontWeight = if (selectedSort == "recent") FontWeight.Bold else FontWeight.Normal
+                            )
+                        },
+                        onClick = {
+                            onSortChange("recent")
+                            showSortMenu = false
+                        }
+                    )
+
+                    // Matched option
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = LocalizationManager.getString("buddy_sort_matched"),
+                                fontSize = 13.sp,
+                                color = if (selectedSort == "matched") AppColors.Primary else AppColors.TextPrimary,
+                                fontWeight = if (selectedSort == "matched") FontWeight.Bold else FontWeight.Normal
+                            )
+                        },
+                        onClick = {
+                            onSortChange("matched")
+                            showSortMenu = false
+                        }
+                    )
+
+                    // Popular option
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = LocalizationManager.getString("buddy_sort_popular"),
+                                fontSize = 13.sp,
+                                color = if (selectedSort == "popular") AppColors.Primary else AppColors.TextPrimary,
+                                fontWeight = if (selectedSort == "popular") FontWeight.Bold else FontWeight.Normal
+                            )
+                        },
+                        onClick = {
+                            onSortChange("popular")
+                            showSortMenu = false
+                        }
+                    )
+                }
+            }
         }
 
         Text(

@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lazytravel.ui.components.atoms.trip.EmojiPicker
-import com.lazytravel.ui.components.atoms.trip.RegionChip
+import com.lazytravel.ui.components.atoms.trip.RegionSelector
 import com.lazytravel.ui.components.atoms.trip.TagSelector
 import com.lazytravel.ui.components.cards.trip.DateDurationPicker
 import com.lazytravel.ui.components.cards.trip.TripImagePicker
@@ -101,10 +101,15 @@ fun BasicInfoStep(
         // Image Picker
         TripImagePicker(
             imageUrl = imageUrl,
-            onImageUrlChange = onImageUrlChange
+            onImageSelect = {
+                // TODO: Implement image picker
+            },
+            onImageRemove = {
+                onImageUrlChange("")
+            }
         )
 
-        Divider()
+        HorizontalDivider()
 
         // Date & Duration
         DateDurationPicker(
@@ -122,7 +127,7 @@ fun BasicInfoStep(
             )
         }
 
-        Divider()
+        HorizontalDivider()
 
         // Region
         Column {
@@ -132,7 +137,7 @@ fun BasicInfoStep(
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.height(8.dp))
-            RegionChip(
+            RegionSelector(
                 selected = region,
                 onSelect = onRegionChange
             )
@@ -146,7 +151,7 @@ fun BasicInfoStep(
             }
         }
 
-        Divider()
+        HorizontalDivider()
 
         // Tags
         Column {
@@ -163,7 +168,14 @@ fun BasicInfoStep(
             Spacer(modifier = Modifier.height(8.dp))
             TagSelector(
                 selectedTags = tags,
-                onTagsChange = onTagsChange
+                onToggleTag = { tag ->
+                    val newTags = if (tags.contains(tag)) {
+                        tags - tag
+                    } else {
+                        if (tags.size < 5) tags + tag else tags
+                    }
+                    onTagsChange(newTags)
+                }
             )
         }
 

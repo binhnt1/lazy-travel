@@ -5,6 +5,7 @@ import com.lazytravel.data.base.BaseRepository
 import com.lazytravel.data.base.baseCollection
 import com.lazytravel.data.base.collectionName
 import com.lazytravel.data.models.enums.TripStatus
+import com.lazytravel.ui.utils.getCurrentTimeMillis
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -80,7 +81,7 @@ data class Trip(
     val isVotingActive: Boolean
         get() = status == TripStatus.VOTING.name &&
                 votingEndsAt > 0 &&
-                System.currentTimeMillis() < votingEndsAt
+                getCurrentTimeMillis() < votingEndsAt
 
     val isConvertedToBuddy: Boolean
         get() = status == TripStatus.CONVERTED_TO_BUDDY.name && convertedBuddyId.isNotEmpty()
