@@ -13,6 +13,9 @@ import kotlinx.serialization.json.jsonArray
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class Buddy(
+    // Link back to Trip (if converted from Trip)
+    @EncodeDefault val tripId: String = "",              // relation to Trip (optional) - link back to original Trip proposal
+
     // Core trip information
     @EncodeDefault val userId: String = "",              // relation to User (trip organizer)
     @EncodeDefault val destination: String = "",         // e.g., "Phú Quốc", "Sapa", "Hội An - Huế" (manual entry)
@@ -431,6 +434,13 @@ data class Buddy(
     }
 
     override fun getSchema() = baseCollection(collectionName()) {
+        // Link back to Trip (if converted from Trip)
+        relation("tripId") {
+            required = false
+            collectionId = "trips"
+            cascadeDelete = false
+        }
+
         // Core trip information
         relation("userId") {
             required = true
