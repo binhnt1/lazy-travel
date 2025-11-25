@@ -82,7 +82,7 @@ fun PreviewPublishStep(
             onEditDestinations = onEditDestinations
         )
 
-        Divider()
+        HorizontalDivider()
 
         // Publish Status
         Column {
@@ -110,7 +110,7 @@ fun PreviewPublishStep(
 
         // Terms & Conditions (only show when publishing)
         if (publishStatus == TripStatus.INVITING.name) {
-            Divider()
+            HorizontalDivider()
 
             Card(
                 modifier = Modifier.fillMaxWidth(),

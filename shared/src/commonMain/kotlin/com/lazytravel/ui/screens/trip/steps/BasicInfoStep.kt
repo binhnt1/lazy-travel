@@ -104,7 +104,7 @@ fun BasicInfoStep(
             onImageUrlChange = onImageUrlChange
         )
 
-        Divider()
+        HorizontalDivider()
 
         // Date & Duration
         DateDurationPicker(
@@ -122,7 +122,7 @@ fun BasicInfoStep(
             )
         }
 
-        Divider()
+        HorizontalDivider()
 
         // Region
         Column {
@@ -146,7 +146,7 @@ fun BasicInfoStep(
             }
         }
 
-        Divider()
+        HorizontalDivider()
 
         // Tags
         Column {

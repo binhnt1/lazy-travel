@@ -39,7 +39,7 @@ fun VotingSettingsCard(
                 style = MaterialTheme.typography.titleMedium
             )
 
-            Divider()
+            HorizontalDivider()
 
             // Allow Multiple Votes
             Row(
@@ -68,7 +68,7 @@ fun VotingSettingsCard(
                 )
             }
 
-            Divider()
+            HorizontalDivider()
 
             // Voting Deadline
             Column {

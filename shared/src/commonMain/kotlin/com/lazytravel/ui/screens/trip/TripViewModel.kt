@@ -84,6 +84,9 @@ class TripViewModel {
     private val _validation = MutableStateFlow(TripFormValidation(0, false))
     val validation: StateFlow<TripFormValidation> = _validation.asStateFlow()
 
+    private val _validationErrors = MutableStateFlow<Map<String, String>>(emptyMap())
+    val validationErrors: StateFlow<Map<String, String>> = _validationErrors.asStateFlow()
+
     // ===== STEP 1: BASIC INFO SETTERS =====
     fun setTripTitle(value: String) {
         _tripTitle.value = value
@@ -259,6 +262,7 @@ class TripViewModel {
             isValid = isValid,
             errors = errors
         )
+        _validationErrors.value = errors
 
         return isValid
     }
@@ -443,4 +447,26 @@ class TripViewModel {
         _publishStatus.value = TripStatus.DRAFT.name
         _acceptTerms.value = false
     }
+
+    // ===== ALIAS FUNCTIONS FOR CreateTripScreen COMPATIBILITY =====
+    // Expose imageUrl as alias for coverImage
+    val imageUrl: StateFlow<String> = coverImage
+
+    fun updateTripTitle(value: String) = setTripTitle(value)
+    fun updateEmoji(value: String) = setEmoji(value)
+    fun updateDescription(value: String) = setDescription(value)
+    fun updateImageUrl(value: String) = setCoverImage(value)
+    fun updateStartDate(value: Long) = setStartDate(value)
+    fun updateDuration(value: Int) = setDuration(value)
+    fun updateRegion(value: String) = setRegion(value)
+    fun updateTags(tags: List<String>) {
+        _tags.value = tags
+    }
+    fun updateBudgetRange(min: Double, max: Double) = setBudgetRange(min, max)
+    fun updateMaxParticipants(value: Int) = setMaxParticipants(value)
+    fun updateAgeRange(value: String) = setAgeRange(value)
+    fun updateAllowMultipleVotes(value: Boolean) = setAllowMultipleVotes(value)
+    fun updateVotingEndsAt(value: Long) = setVotingEndsAt(value)
+    fun updatePublishStatus(value: String) = setPublishStatus(value)
+    fun updateAcceptTerms(value: Boolean) = setAcceptTerms(value)
 }

@@ -130,7 +130,7 @@ fun CreateTripScreen(
             // Step Indicator
             StepIndicator(currentStep = currentStep)
 
-            Divider()
+            HorizontalDivider()
 
             // Loading overlay
             if (uiState is TripUiState.Loading) {

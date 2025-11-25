@@ -117,7 +117,7 @@ fun DestinationsStep(
         }
 
         item {
-            Divider()
+            HorizontalDivider()
         }
 
         // Voting Settings
