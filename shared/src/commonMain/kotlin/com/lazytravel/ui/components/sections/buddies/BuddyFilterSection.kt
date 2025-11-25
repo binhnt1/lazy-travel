@@ -31,30 +31,33 @@ import com.lazytravel.core.i18n.LocalizationManager
 import com.lazytravel.ui.theme.AppColors
 
 @Composable
-fun BuddyFilterSection() {
-    var selectedTab by remember { mutableStateOf("all") }
-    var selectedFilters by remember { mutableStateOf(setOf<String>()) }
-    var selectedSort by remember { mutableStateOf("recent") }
-
+fun BuddyFilterSection(
+    selectedTab: String,
+    onTabChange: (String) -> Unit,
+    selectedFilters: Set<String>,
+    onFiltersChange: (Set<String>) -> Unit,
+    selectedSort: String,
+    onSortChange: (String) -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         // Filter Tabs
         FilterTabsRow(
             selectedTab = selectedTab,
-            onTabChange = { selectedTab = it }
+            onTabChange = onTabChange
         )
 
         // Quick Filters Grid Section
         QuickFiltersSection(
             selectedFilters = selectedFilters,
-            onFiltersChange = { selectedFilters = it }
+            onFiltersChange = onFiltersChange
         )
 
         // Sort & Filter Bar
         SortFilterBar(
             selectedSort = selectedSort,
-            onSortChange = { selectedSort = it }
+            onSortChange = onSortChange
         )
     }
 }
