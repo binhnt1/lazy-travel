@@ -181,7 +181,17 @@ fun CreateTripScreen(
 
                     2 -> DestinationsStep(
                         destinations = destinations,
-                        onAddDestination = viewModel::addDestination,
+                        onAddDestination = {
+                            // Create empty destination
+                            viewModel.addDestination(
+                                DestinationInput(
+                                    id = "",
+                                    name = "",
+                                    description = "",
+                                    orderIndex = destinations.size
+                                )
+                            )
+                        },
                         onUpdateDestination = viewModel::updateDestination,
                         onDeleteDestination = viewModel::removeDestination,
                         allowMultipleVotes = allowMultipleVotes,

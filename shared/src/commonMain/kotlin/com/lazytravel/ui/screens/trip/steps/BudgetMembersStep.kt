@@ -127,8 +127,8 @@ fun BudgetMembersStep(
             Spacer(modifier = Modifier.height(12.dp))
 
             AgeRangeSelector(
-                selectedRange = ageRange,
-                onRangeSelect = onAgeRangeChange
+                ageRange = ageRange,
+                onAgeRangeChange = onAgeRangeChange
             )
 
             if (validationErrors.containsKey("ageRange")) {
