@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -33,10 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lazytravel.ui.theme.AppColors
-import org.jetbrains.compose.resources.painterResource
-import lazytravel.shared.generated.resources.Res
-import lazytravel.shared.generated.resources.ic_search
-import lazytravel.shared.generated.resources.ic_filter
 
 @Composable
 fun TourHeaderSection(
@@ -151,7 +150,7 @@ fun TourHeaderSection(
             ) {
                 // Search icon
                 Icon(
-                    painter = painterResource(Res.drawable.ic_search),
+                    imageVector = Icons.Default.Search,
                     contentDescription = "Search",
                     tint = Color(0xFF888888),
                     modifier = Modifier.size(16.dp)
@@ -188,7 +187,7 @@ fun TourHeaderSection(
                     modifier = Modifier.size(20.dp)
                 ) {
                     Icon(
-                        painter = painterResource(Res.drawable.ic_filter),
+                        imageVector = Icons.Default.FilterList,
                         contentDescription = "Filter",
                         tint = Color(0xFF888888),
                         modifier = Modifier.size(16.dp)

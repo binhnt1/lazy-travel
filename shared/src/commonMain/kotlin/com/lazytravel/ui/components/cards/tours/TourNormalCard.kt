@@ -15,6 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -37,11 +41,6 @@ import com.lazytravel.core.i18n.localizedString
 import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.utils.parseHexColor
-import org.jetbrains.compose.resources.painterResource
-import lazytravel.shared.generated.resources.Res
-import lazytravel.shared.generated.resources.ic_check_circle
-import lazytravel.shared.generated.resources.ic_heart
-import lazytravel.shared.generated.resources.ic_heart_filled
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -115,7 +114,7 @@ fun TourNormalCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            painter = painterResource(if (isFavorite) Res.drawable.ic_heart_filled else Res.drawable.ic_heart),
+                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Favorite",
                             tint = Color(0xFFE53935),
                             modifier = Modifier.size(12.dp)
@@ -176,7 +175,7 @@ fun TourNormalCard(
 
                         if (provider.isVerified) {
                             Icon(
-                                painter = painterResource(Res.drawable.ic_check_circle),
+                                imageVector = Icons.Default.CheckCircle,
                                 contentDescription = "Verified",
                                 tint = AppColors.Primary,
                                 modifier = Modifier.size(10.dp)
