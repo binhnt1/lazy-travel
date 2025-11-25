@@ -1,12 +1,9 @@
 package com.lazytravel.ui.components.sections.buddies
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -15,35 +12,33 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lazytravel.core.i18n.LocalizationManager
 import com.lazytravel.core.i18n.localizedString
+import com.lazytravel.ui.theme.AppColors
 
 @Composable
 fun BuddyHeaderSection(
     onNavigateBack: () -> Unit,
-    onSearchClick: () -> Unit = {},
-    onNotificationClick: () -> Unit = {},
-    onFilterClick: () -> Unit = {}
+    searchQuery: String = "",
+    onSearchChange: (String) -> Unit = {},
+    filterMinCost: String = "",
+    onMinCostChange: (String) -> Unit = {},
+    filterMaxCost: String = "",
+    onMaxCostChange: (String) -> Unit = {},
+    filterMonth: String = "",
+    onMonthChange: (String) -> Unit = {},
+    filterYear: String = "",
+    onYearChange: (String) -> Unit = {}
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
-                    )
-                )
-            )
+            .background(Color.White)
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         // Main Header Row
@@ -56,227 +51,368 @@ fun BuddyHeaderSection(
             IconButton(
                 onClick = onNavigateBack,
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(36.dp)
                     .background(
-                        Color.White.copy(alpha = 0.2f),
-                        CircleShape
+                        Color.White,
+                        RoundedCornerShape(8.dp)
+                    )
+                    .then(
+                        Modifier.background(
+                            Color(0xFFE0E0E0).copy(alpha = 0.3f),
+                            RoundedCornerShape(8.dp)
+                        )
                     )
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+                    tint = Color(0xFF212121),
+                    modifier = Modifier.size(20.dp)
                 )
             }
 
-            // Title Section with Subtitle
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = localizedString("buddy_find_title"),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = localizedString("buddy_find_subtitle"),
-                        fontSize = 12.sp,
-                        color = Color.White.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center
-                    )
-                }
+            // Title
+            Text(
+                text = localizedString("buddy_screen_title"),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF212121),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f)
+            )
 
-            // Action Buttons
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            // Create Trip Button
+            Button(
+                onClick = { /* TODO */ },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFF6B35)
+                ),
+                shape = RoundedCornerShape(8.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                modifier = Modifier.height(36.dp)
             ) {
-                // Notification Button
-                IconButton(
-                    onClick = onNotificationClick,
-                    modifier = Modifier
-                        .size(44.dp)
-                        .background(
-                            Color.White.copy(alpha = 0.2f),
-                            CircleShape
-                        )
-                ) {
-                    Box {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications",
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        // Notification badge
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .background(Color.Red, CircleShape)
-                                .align(Alignment.TopEnd)
-                        )
-                    }
-                }
-
-                // Menu/More Button
-                IconButton(
-                    onClick = { isExpanded = !isExpanded },
-                    modifier = Modifier
-                        .size(44.dp)
-                        .background(
-                            Color.White.copy(alpha = 0.2f),
-                            CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                        contentDescription = "More options",
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+                Text(
+                    text = localizedString("buddy_create_trip"),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
             }
         }
 
         // Search Bar
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         SearchBarComponent(
-            onSearchClick = onSearchClick,
-            onFilterClick = onFilterClick
+            searchQuery = searchQuery,
+            onSearchChange = onSearchChange,
+            filterMinCost = filterMinCost,
+            onMinCostChange = onMinCostChange,
+            filterMaxCost = filterMaxCost,
+            onMaxCostChange = onMaxCostChange,
+            filterMonth = filterMonth,
+            onMonthChange = onMonthChange,
+            filterYear = filterYear,
+            onYearChange = onYearChange
         )
-
-        // Expandable Quick Stats
-        AnimatedVisibility(
-            visible = isExpanded,
-            modifier = Modifier.animateContentSize(
-                animationSpec = tween(300)
-            )
-        ) {
-            QuickStatsRow()
-        }
     }
 }
 
 @Composable
 private fun SearchBarComponent(
-    onSearchClick: () -> Unit,
-    onFilterClick: () -> Unit
+    searchQuery: String,
+    onSearchChange: (String) -> Unit,
+    filterMinCost: String,
+    onMinCostChange: (String) -> Unit,
+    filterMaxCost: String,
+    onMaxCostChange: (String) -> Unit,
+    filterMonth: String,
+    onMonthChange: (String) -> Unit,
+    filterYear: String,
+    onYearChange: (String) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                Color.White.copy(alpha = 0.15f),
-                RoundedCornerShape(24.dp)
-            )
-            .clickable { onSearchClick() }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Default.Search,
-            contentDescription = "Search",
-            tint = Color.White.copy(alpha = 0.8f),
-            modifier = Modifier.size(20.dp)
-        )
+    var showAdvancedFilter by remember { mutableStateOf(false) }
 
-        Text(
-            text = localizedString("buddy_search_placeholder"),
-            color = Color.White.copy(alpha = 0.8f),
-            fontSize = 14.sp,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 12.dp)
-        )
-
-        IconButton(
-            onClick = onFilterClick,
-            modifier = Modifier
-                .size(32.dp)
-                .background(
-                    Color.White.copy(alpha = 0.2f),
-                    CircleShape
-                )
-        ) {
-            Icon(
-                imageVector = Icons.Default.FilterList,
-                contentDescription = "Filter",
-                tint = Color.White,
-                modifier = Modifier.size(16.dp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun QuickStatsRow() {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = onSearchChange,
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            QuickStatItem(
-                icon = Icons.Default.People,
-                value = "2.5K+",
-                label = localizedString("buddy_active_users"),
-                color = Color.White
-            )
+            placeholder = {
+                Text(
+                    text = LocalizationManager.getString("buddy_search_placeholder"),
+                    fontSize = 14.sp,
+                    color = AppColors.TextSecondary
+                )
+            },
+            leadingIcon = {
+                Text(
+                    text = "🔍",
+                    fontSize = 18.sp
+                )
+            },
+            trailingIcon = {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Advanced Filter Icon
+                    Text(
+                        text = "⚙️",
+                        fontSize = 18.sp,
+                        modifier = Modifier.clickable { showAdvancedFilter = !showAdvancedFilter }
+                    )
 
-            QuickStatItem(
-                icon = Icons.Default.LocationOn,
-                value = "50+",
-                label = localizedString("buddy_destinations"),
-                color = Color.White
+                    // Clear search icon
+                    if (searchQuery.isNotEmpty()) {
+                        Text(
+                            text = "✕",
+                            fontSize = 16.sp,
+                            color = AppColors.TextSecondary,
+                            modifier = Modifier.clickable { onSearchChange("") }
+                        )
+                    }
+                }
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(8.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = AppColors.Primary,
+                unfocusedBorderColor = AppColors.Border,
+                cursorColor = AppColors.Primary
             )
+        )
 
-            QuickStatItem(
-                icon = Icons.Default.Star,
-                value = "4.8",
-                label = localizedString("buddy_rating"),
-                color = Color.White
+        // Advanced Filter Dropdown
+        if (showAdvancedFilter) {
+            Spacer(modifier = Modifier.height(8.dp))
+            AdvancedFilterDropdown(
+                filterMinCost = filterMinCost,
+                onMinCostChange = onMinCostChange,
+                filterMaxCost = filterMaxCost,
+                onMaxCostChange = onMaxCostChange,
+                filterMonth = filterMonth,
+                onMonthChange = onMonthChange,
+                filterYear = filterYear,
+                onYearChange = onYearChange,
+                onDismiss = { showAdvancedFilter = false }
             )
         }
     }
 }
 
 @Composable
-private fun QuickStatItem(
-    icon: ImageVector,
-    value: String,
-    label: String,
-    color: Color
+private fun AdvancedFilterDropdown(
+    filterMinCost: String,
+    onMinCostChange: (String) -> Unit,
+    filterMaxCost: String,
+    onMaxCostChange: (String) -> Unit,
+    filterMonth: String,
+    onMonthChange: (String) -> Unit,
+    filterYear: String,
+    onYearChange: (String) -> Unit,
+    onDismiss: () -> Unit
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 8.dp)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = color.copy(alpha = 0.8f),
-            modifier = Modifier.size(20.dp)
-        )
+    // Store temporary filter values
+    var tempMinCost by remember { mutableStateOf(filterMinCost) }
+    var tempMaxCost by remember { mutableStateOf(filterMaxCost) }
+    var tempMonth by remember { mutableStateOf(filterMonth) }
+    var tempYear by remember { mutableStateOf(filterYear) }
 
+    // ✅ FIX: Sync temp values when props change
+    LaunchedEffect(filterMinCost, filterMaxCost, filterMonth, filterYear) {
+        tempMinCost = filterMinCost
+        tempMaxCost = filterMaxCost
+        tempMonth = filterMonth
+        tempYear = filterYear
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, AppColors.Border, RoundedCornerShape(8.dp))
+            .background(Color.White, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // Header
         Text(
-            text = value,
+            text = LocalizationManager.getString("buddy_advanced_filter_title"),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = color
+            color = AppColors.TextPrimary
         )
 
-        Text(
-            text = label,
-            fontSize = 10.sp,
-            color = color.copy(alpha = 0.8f),
-            textAlign = TextAlign.Center
-        )
+        // Cost Filter
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = LocalizationManager.getString("buddy_filter_cost"),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = AppColors.TextPrimary
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Min Cost
+                OutlinedTextField(
+                    value = tempMinCost,
+                    onValueChange = { tempMinCost = it },
+                    modifier = Modifier.weight(1f),
+                    placeholder = {
+                        Text(
+                            text = LocalizationManager.getString("buddy_filter_min_cost"),
+                            fontSize = 13.sp,
+                            color = AppColors.TextSecondary
+                        )
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(6.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = AppColors.Primary,
+                        unfocusedBorderColor = AppColors.Border,
+                        cursorColor = AppColors.Primary
+                    )
+                )
+
+                // Max Cost
+                OutlinedTextField(
+                    value = tempMaxCost,
+                    onValueChange = { tempMaxCost = it },
+                    modifier = Modifier.weight(1f),
+                    placeholder = {
+                        Text(
+                            text = LocalizationManager.getString("buddy_filter_max_cost"),
+                            fontSize = 13.sp,
+                            color = AppColors.TextSecondary
+                        )
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(6.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = AppColors.Primary,
+                        unfocusedBorderColor = AppColors.Border,
+                        cursorColor = AppColors.Primary
+                    )
+                )
+            }
+        }
+
+        // Month/Year Filter
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = "Tháng/Năm khởi hành",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = AppColors.TextPrimary
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Month
+                OutlinedTextField(
+                    value = tempMonth,
+                    onValueChange = { tempMonth = it },
+                    modifier = Modifier.weight(1f),
+                    placeholder = {
+                        Text(
+                            text = "Tháng (1-12)",
+                            fontSize = 13.sp,
+                            color = AppColors.TextSecondary
+                        )
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(6.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = AppColors.Primary,
+                        unfocusedBorderColor = AppColors.Border,
+                        cursorColor = AppColors.Primary
+                    )
+                )
+
+                // Year
+                OutlinedTextField(
+                    value = tempYear,
+                    onValueChange = { tempYear = it },
+                    modifier = Modifier.weight(1f),
+                    placeholder = {
+                        Text(
+                            text = "Năm (2025, 2026...)",
+                            fontSize = 13.sp,
+                            color = AppColors.TextSecondary
+                        )
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(6.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = AppColors.Primary,
+                        unfocusedBorderColor = AppColors.Border,
+                        cursorColor = AppColors.Primary
+                    )
+                )
+            }
+        }
+
+        // Action Buttons
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Clear Button
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .border(1.dp, AppColors.Border, RoundedCornerShape(6.dp))
+                    .background(Color.White, RoundedCornerShape(6.dp))
+                    .clickable {
+                        tempMinCost = ""
+                        tempMaxCost = ""
+                        tempMonth = ""
+                        tempYear = ""
+                        onMinCostChange("")
+                        onMaxCostChange("")
+                        onMonthChange("")
+                        onYearChange("")
+                        onDismiss()
+                    }
+                    .padding(vertical = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = LocalizationManager.getString("buddy_filter_clear"),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = AppColors.TextSecondary
+                )
+            }
+
+            // Apply Button
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .background(AppColors.Primary, RoundedCornerShape(6.dp))
+                    .clickable {
+                        onMinCostChange(tempMinCost)
+                        onMaxCostChange(tempMaxCost)
+                        onMonthChange(tempMonth)
+                        onYearChange(tempYear)
+                        onDismiss()
+                    }
+                    .padding(vertical = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = LocalizationManager.getString("buddy_filter_apply"),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        }
     }
 }
+
