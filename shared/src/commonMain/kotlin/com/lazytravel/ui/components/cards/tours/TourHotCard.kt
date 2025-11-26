@@ -79,9 +79,9 @@ fun TourHotCard(
                     .height(140.dp)
             ) {
                 // Background image
-                if (tour.bgImage.isNotEmpty()) {
+                val bgImage = tour.images?.firstOrNull() ?: ""; if (bgImage.isNotEmpty()) {
                     AsyncImage(
-                        model = tour.bgImage,
+                        model = bgImage,
                         contentDescription = tour.name,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop

@@ -16,8 +16,8 @@ data class Tour(
     @EncodeDefault val emoji: String = "",
     @EncodeDefault val thumbnail: String = "",
     @EncodeDefault val thumbnailColor: String = "",
-    @EncodeDefault val bgImage: String = "",
     @EncodeDefault val images: List<String>? = null,  // Gallery images
+    @EncodeDefault val tags: List<String>? = null,     // Tour tags for filtering
 
     // Relations
     @EncodeDefault val tourProviderId: String = "",  // → TourProvider
@@ -50,27 +50,14 @@ data class Tour(
     @EncodeDefault val included: List<String>? = null,
     @EncodeDefault val excluded: List<String>? = null,
 
-    // Tour type: BUDGET, LUXURY, ADVENTURE, CULTURAL, BEACH, MOUNTAIN, TREKKING
-    @EncodeDefault val tourType: String = "",
-
-    // Difficulty: EASY, MODERATE, CHALLENGING
-    @EncodeDefault val difficulty: String = "",
-
     // Languages supported: vi, en, ja, ko, zh
     @EncodeDefault val languages: List<String>? = null,
 
-    // Status
-    @EncodeDefault val featured: Boolean = false,
-    @EncodeDefault val isActive: Boolean = true,
-
     // Timestamps
     @EncodeDefault val startDate: Long = 0,          // Tour start date
-    @EncodeDefault val endDate: Long = 0,            // Tour end date
 
     // Additional fields
-    @EncodeDefault val departureDates: List<Long>? = null,  // Available departure dates
-    @EncodeDefault val badges: List<String>? = null,        // ["HOT", "NEW", "SALE", "FEATURED"]
-    @EncodeDefault val bookedCount: Int = 0,                // Number of bookings
+    @EncodeDefault val bookedCount: Int = 0,         // Number of bookings
 ) : BaseModel() {
 
     // Expanded relations
@@ -124,8 +111,8 @@ data class Tour(
         text("emoji") { required = false; max = 10 }
         text("thumbnail") { required = false; max = 500 }
         text("thumbnailColor") { required = false; max = 20 }
-        text("bgImage") { required = false; max = 500 }
         json("images") { required = false }
+        json("tags") { required = false }
 
         // Relations
         relation("tourProviderId") {
@@ -171,18 +158,10 @@ data class Tour(
         json("included") { required = false }
         json("excluded") { required = false }
 
-        text("tourType") { required = false; max = 50 }
-        text("difficulty") { required = false; max = 20 }
         json("languages") { required = false }
 
-        bool("featured") { required = false }
-        bool("isActive") { required = false }
-
         number("startDate") { required = false; onlyInt = true }
-        number("endDate") { required = false; onlyInt = true }
 
-        json("departureDates") { required = false }
-        json("badges") { required = false }
         number("bookedCount") { required = false; min = 0.0; onlyInt = true }
     }
 
@@ -231,25 +210,40 @@ data class Tour(
         val airlines = airlineRepo.getRecords<FlightProvider>().getOrNull() ?: emptyList()
 
         val providerMap = providers.associateBy { it.slug }
-        val cityMap = cities.associateBy { it.name }
-        val placeMap = places.associateBy { it.name }
+        val cityMap = cities.associateBy { it.slug }
+        val placeMap = places.associateBy { it.slug }
         val airlineMap = airlines.associateBy { it.code }
 
+        // All possible tags for tours
+        val allTags = listOf(
+            listOf("🔥 HOT", "Best Seller", "Top Rated"),
+            listOf("✨ LUXURY", "5 sao", "Cao cấp"),
+            listOf("Biển", "Resort", "Nghỉ dưỡng"),
+            listOf("Núi", "Trekking", "Phiêu lưu"),
+            listOf("Văn hóa", "Lịch sử", "Di sản"),
+            listOf("Ẩm thực", "Food tour", "Khám phá"),
+            listOf("Gia đình", "Trẻ em", "Family"),
+            listOf("Budget", "Tiết kiệm", "Phượt"),
+            listOf("Nhiếp ảnh", "Check-in", "Sống ảo"),
+            listOf("Thành phố", "City tour", "Shopping")
+        )
+
         return listOf(
+            // HOT Tour 1
             Tour(
                 name = "Phú Quốc 3N2Đ - Khám phá đảo ngọc",
                 description = "Trải nghiệm thiên đường biển đảo với những bãi biển tuyệt đẹp và hoạt động vui chơi phong phú",
                 emoji = "🏖️",
                 thumbnailColor = "#4ECDC4",
-                bgImage = "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop",
                 images = listOf(
                     "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
                     "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800",
                     "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800"
                 ),
+                tags = listOf("🔥 HOT", "Biển", "Nghỉ dưỡng", "Resort", "Gia đình"),
                 tourProviderId = providerMap["vietravel"]?.id ?: "",
-                cityId = cityMap["Phu Quoc"]?.id ?: "",
-                placeId = placeMap["Bãi Sao"]?.id ?: "",
+                cityId = cityMap["phu-quoc"]?.id ?: "",
+                placeId = placeMap["bai-sao"]?.id ?: "",
                 airlineId = airlineMap["VJ"]?.id ?: "",
                 visitedPlaces = listOf("Bãi Sao", "Vinpearl Land Phú Quốc", "Dinh Cậu", "Chợ đêm Phú Quốc"),
                 duration = 3,
@@ -264,30 +258,25 @@ data class Tour(
                 highlights = listOf("🏖️ Bãi biển đẹp", "🤿 Lặn biển ngắm san hô", "🍜 Ẩm thực hải sản"),
                 included = listOf("Xe đưa đón sân bay", "Khách sạn 3*", "Bữa sáng", "Hướng dẫn viên", "Bay VietJet Air"),
                 excluded = listOf("Vé máy bay", "Chi phí cá nhân", "Tiền tip"),
-                tourType = "BEACH",
-                difficulty = "EASY",
                 languages = listOf("vi", "en"),
-                featured = true,
-                isActive = true,
                 startDate = 1734220800000, // 2024-12-15
-                endDate = 1734480000000,   // 2024-12-18
-                departureDates = listOf(
-                    1734220800000L, // 2024-12-15
-                    1734652800000L, // 2024-12-20
-                    1735084800000L  // 2024-12-25
-                ),
-                badges = listOf(BADGE_HOT, BADGE_SALE),
                 bookedCount = 2345
             ),
+
+            // HOT Tour 2
             Tour(
                 name = "Sapa - Fansipan 4N3Đ từ Hà Nội",
                 description = "Chinh phục nóc nhà Đông Dương, khám phá văn hóa người dân tộc và ngắm nhìn cảnh sắc thiên nhiên hùng vĩ",
-                emoji = "🌸",
+                emoji = "🏔️",
                 thumbnailColor = "#667EEA",
-                bgImage = "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800",
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800"
+                ),
+                tags = listOf("🔥 HOT", "Núi", "Trekking", "Văn hóa", "Nhiếp ảnh"),
                 tourProviderId = providerMap["saigon-tourist"]?.id ?: "",
-                cityId = cityMap["Hanoi"]?.id ?: "",
-                placeId = placeMap["Hồ Hoàn Kiếm"]?.id ?: "",
+                cityId = cityMap["sapa"]?.id ?: "",
+                placeId = placeMap["dinh-fansipan"]?.id ?: "",
                 visitedPlaces = listOf("Đỉnh Fansipan", "Bản Cát Cát", "Thác Bạc", "Cầu Kính Rồng Mây"),
                 duration = 4,
                 durationNights = 3,
@@ -301,53 +290,57 @@ data class Tour(
                 highlights = listOf("🏔️ Đỉnh Fansipan 3143m", "🏞️ Ruộng bậc thang", "🛖 Văn hóa H'Mông"),
                 included = listOf("Xe limousine VIP", "Khách sạn 4*", "Bữa sáng & tối", "Cáp treo Fansipan"),
                 excluded = listOf("Vé máy bay", "Chi phí cá nhân"),
-                tourType = "ADVENTURE",
-                difficulty = "MODERATE",
                 languages = listOf("vi", "en"),
-                featured = true,
-                isActive = true,
                 startDate = 1734652800000, // 2024-12-20
-                endDate = 1734998400000    // 2024-12-24
+                bookedCount = 1823
             ),
+
+            // LUXURY Tour 1
             Tour(
-                name = "Hội An - Đà Nẵng 5N4Đ",
-                description = "Tour khám phá di sản miền Trung với phố cổ Hội An, bãi biển Đà Nẵng và cố đô Huế",
+                name = "Hội An - Đà Nẵng 5N4Đ Premium",
+                description = "Tour khám phá di sản miền Trung với phố cổ Hội An, bãi biển Đà Nẵng và cố đô Huế - Dịch vụ cao cấp",
                 emoji = "🏛️",
                 thumbnailColor = "#FF6B35",
-                bgImage = "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800",
+                    "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800"
+                ),
+                tags = listOf("✨ LUXURY", "Văn hóa", "5 sao", "Biển", "Nhiếp ảnh"),
                 tourProviderId = providerMap["vietravel"]?.id ?: "",
-                cityId = cityMap["Hoi An"]?.id ?: "",
-                placeId = placeMap["Phố Cổ Hội An"]?.id ?: "",
+                cityId = cityMap["da-nang"]?.id ?: "",
+                placeId = placeMap["pho-co-hoi-an"]?.id ?: "",
                 visitedPlaces = listOf("Phố Cổ Hội An", "Cầu Rồng", "Bà Nà Hills", "Chùa Linh Ứng", "Bãi Biển Mỹ Khê"),
                 duration = 5,
                 durationNights = 4,
                 minGroupSize = 2,
                 maxGroupSize = 12,
-                currentPrice = 4500000.0,
-                originalPrice = 5625000.0,
-                discount = 20,
-                rating = 4.7,
-                reviewCount = 189,
-                highlights = listOf("🏰 Phố cổ Hội An", "🌉 Cầu Vàng Bà Nà", "🏖️ Biển Mỹ Khê"),
-                included = listOf("Khách sạn 3*", "Bữa sáng & tối", "Vé Bà Nà Hills", "Hướng dẫn viên"),
+                currentPrice = 7500000.0,
+                originalPrice = 10000000.0,
+                discount = 25,
+                rating = 4.9,
+                reviewCount = 289,
+                highlights = listOf("🏰 Phố cổ Hội An", "🌉 Cầu Vàng Bà Nà", "🏖️ Biển Mỹ Khê", "🏨 Khách sạn 5*"),
+                included = listOf("Khách sạn 5*", "Bữa sáng & tối", "Vé Bà Nà Hills", "Hướng dẫn viên", "Xe VIP"),
                 excluded = listOf("Vé máy bay", "Chi phí cá nhân", "Tiền tip"),
-                tourType = "CULTURAL",
-                difficulty = "EASY",
                 languages = listOf("vi", "en", "ja"),
-                featured = true,
-                isActive = true,
                 startDate = 1734825600000, // 2024-12-22
-                endDate = 1735171200000    // 2024-12-26
+                bookedCount = 945
             ),
+
+            // Budget Tour 1
             Tour(
                 name = "Trekking Tà Xùa 2N1Đ - Săn mây",
-                description = "Trải nghiệm trekking đầy thử thách, ngắm biển mây tuyệt đẹp tại Tà Xùa",
+                description = "Trải nghiệm trekking đầy thử thách, ngắm biển mây tuyệt đẹp tại Tà Xùa - Tour tiết kiệm",
                 emoji = "⛰️",
                 thumbnailColor = "#11998e",
-                bgImage = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
+                    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"
+                ),
+                tags = listOf("Budget", "Núi", "Trekking", "Phiêu lưu", "Phượt"),
                 tourProviderId = providerMap["vietravel-adventures"]?.id ?: "",
-                cityId = cityMap["Hanoi"]?.id ?: "",
-                placeId = placeMap["Hồ Hoàn Kiếm"]?.id ?: "",
+                cityId = cityMap["hanoi"]?.id ?: "",
+                placeId = placeMap["ho-hoan-kiem"]?.id ?: "",
                 visitedPlaces = listOf("Đỉnh Tà Xùa", "Sống lưng khủng long", "Bản Háng Đồng"),
                 duration = 2,
                 durationNights = 1,
@@ -361,23 +354,25 @@ data class Tour(
                 highlights = listOf("🗻 Đỉnh Tà Xùa 2865m", "☁️ Săn mây lúc bình minh", "🚶 Trekking 6km"),
                 included = listOf("Xe đưa đón", "Homestay", "Bữa tối & sáng", "Hướng dẫn viên chuyên nghiệp"),
                 excluded = listOf("Chi phí cá nhân", "Trang phục trekking"),
-                tourType = "TREKKING",
-                difficulty = "CHALLENGING",
                 languages = listOf("vi"),
-                featured = true,
-                isActive = true,
                 startDate = 1734393600000, // 2024-12-17
-                endDate = 1734480000000    // 2024-12-18
+                bookedCount = 678
             ),
+
+            // Normal Tour 1
             Tour(
                 name = "Đà Lạt 3N2Đ - Thành phố ngàn hoa",
                 description = "Khám phá thành phố sương mù với khí hậu mát mẻ, những vườn hoa rực rỡ và cà phê thơm ngon",
                 emoji = "🌺",
                 thumbnailColor = "#FA709A",
-                bgImage = "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800",
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800"
+                ),
+                tags = listOf("Núi", "Nhiếp ảnh", "Check-in", "Gia đình"),
                 tourProviderId = providerMap["saigon-tourist"]?.id ?: "",
-                cityId = cityMap["Da Lat"]?.id ?: "",
-                placeId = placeMap["Hồ Xuân Hương"]?.id ?: "",
+                cityId = cityMap["da-lat"]?.id ?: "",
+                placeId = placeMap["ho-xuan-huong"]?.id ?: "",
                 visitedPlaces = listOf("Hồ Xuân Hương", "Crazy House", "Thung Lũng Tình Yêu", "Đồi chè Cầu Đất"),
                 duration = 3,
                 durationNights = 2,
@@ -391,23 +386,25 @@ data class Tour(
                 highlights = listOf("🌸 Vườn hoa Đà Lạt", "☕ Cà phê view đẹp", "🚡 Cáp treo Robin Hill"),
                 included = listOf("Khách sạn 4*", "Bữa sáng & tối", "Xe đưa đón sân bay"),
                 excluded = listOf("Vé máy bay", "Chi phí cá nhân", "Tiền tip"),
-                tourType = "LUXURY",
-                difficulty = "EASY",
                 languages = listOf("vi", "en"),
-                featured = false,
-                isActive = true,
                 startDate = 1734566400000, // 2024-12-19
-                endDate = 1734825600000    // 2024-12-22
+                bookedCount = 523
             ),
+
+            // Normal Tour 2
             Tour(
                 name = "Ninh Bình 2N1Đ - Vịnh Hạ Long cạn",
                 description = "Khám phá Tràng An, Tam Cốc - Bích Động với cảnh quan thiên nhiên kỳ vĩ",
                 emoji = "🚣",
                 thumbnailColor = "#38B2AC",
-                bgImage = "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800",
+                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800"
+                ),
+                tags = listOf("Văn hóa", "Nhiếp ảnh", "Gia đình", "Budget"),
                 tourProviderId = providerMap["fiditour"]?.id ?: "",
-                cityId = cityMap["Hanoi"]?.id ?: "",
-                placeId = placeMap["Hồ Hoàn Kiếm"]?.id ?: "",
+                cityId = cityMap["hanoi"]?.id ?: "",
+                placeId = placeMap["ho-hoan-kiem"]?.id ?: "",
                 visitedPlaces = listOf("Tràng An", "Tam Cốc", "Hang Múa", "Chùa Bái Đính"),
                 duration = 2,
                 durationNights = 1,
@@ -421,24 +418,14 @@ data class Tour(
                 highlights = listOf("🏞️ Tràng An di sản", "🚣 Đò Tam Cốc", "🏯 Chùa Bái Đính"),
                 included = listOf("Xe đưa đón", "Khách sạn 3*", "Bữa trưa & tối", "Vé tham quan"),
                 excluded = listOf("Chi phí cá nhân", "Đồ uống"),
-                tourType = "CULTURAL",
-                difficulty = "EASY",
                 languages = listOf("vi", "en"),
-                featured = false,
-                isActive = true,
                 startDate = 1734307200000, // 2024-12-16
-                endDate = 1734393600000    // 2024-12-17
+                bookedCount = 892
             )
         )
     }
 
     companion object {
-        // Badge constants
-        const val BADGE_HOT = "HOT"
-        const val BADGE_NEW = "NEW"
-        const val BADGE_SALE = "SALE"
-        const val BADGE_FEATURED = "FEATURED"
-
         fun getSeedDataStatic(): List<Tour> {
             // Static seed data without relations (for testing)
             return listOf(
@@ -454,9 +441,7 @@ data class Tour(
                     discount = 25,
                     rating = 4.8,
                     reviewCount = 234,
-                    tourType = "BEACH",
-                    difficulty = "EASY",
-                    featured = true
+                    tags = listOf("🔥 HOT", "Biển", "Resort")
                 )
             )
         }
