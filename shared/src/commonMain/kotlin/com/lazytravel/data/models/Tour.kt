@@ -4,6 +4,7 @@ import com.lazytravel.data.base.BaseModel
 import com.lazytravel.data.base.BaseRepository
 import com.lazytravel.data.base.baseCollection
 import com.lazytravel.data.base.collectionName
+import kotlinx.datetime.Clock
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -441,7 +442,7 @@ data class Tour(
                 included = listOf("Khách sạn", "Bữa ăn", "Hướng dẫn viên", "Vé tham quan"),
                 excluded = listOf("Vé máy bay", "Chi phí cá nhân"),
                 languages = if (tourTags.any { it.contains("LUXURY") }) listOf("vi", "en", "ja") else listOf("vi", "en"),
-                startDate = System.currentTimeMillis() + ((7..60).random() * 24 * 60 * 60 * 1000L),
+                startDate = Clock.System.now().toEpochMilliseconds() + ((7..60).random() * 24 * 60 * 60 * 1000L),
                 bookedCount = (100..3000).random()
             ))
         }
