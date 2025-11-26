@@ -47,9 +47,9 @@ fun TourHotSection(
             tourRepo.getRecords<Tour>(
                 page = 1,
                 perPage = 10,
-                sort = "-created",
-                expand = "tourProviderId,cityId,placeId,airlineId",
-                filter = "tags:each ~ 'HOT'",
+                sort = "-startDate",
+                expand = "userId,cityId,cityId.countryId,placeId,tourProviderId,tourreviews_via_tour",
+                filter = "tags ~ '🔥 HOT'",
             ).fold(
                 onSuccess = { fetchedTours ->
                     fetchedTours.forEach { tour ->

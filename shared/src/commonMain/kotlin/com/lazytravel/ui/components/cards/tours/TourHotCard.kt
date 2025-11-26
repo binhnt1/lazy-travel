@@ -48,7 +48,6 @@ import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.utils.parseHexColor
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Flight
@@ -429,50 +428,106 @@ fun TourHotCard(
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                // Tour features - parsed from included list
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                    modifier = Modifier.padding(bottom = 10.dp)
-                ) {
-                    // Airline from expanded relation
-                    tour.expandedFlightProvider?.let { airline ->
-                        FeatureTag(
-                            icon = Icons.Filled.Flight,
-                            text = "Bay ${airline.name}"
+                // Highlights section - Display all highlights using HighlightItem
+                if (!tour.highlights.isNullOrEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    ) {
+                        Text(
+                            text = "✨ Điểm nổi bật",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFE65100),
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(bottom = 4.dp)
                         )
-                    }
-
-                    // Parse hotel stars from included list
-                    tour.included?.find { it.contains("Khách sạn", ignoreCase = true) }?.let { hotelStr ->
-                        val stars = Regex("(\\d+)\\s*\\*").find(hotelStr)?.groupValues?.get(1)
-                        if (stars != null) {
-                            FeatureTag(
-                                icon = null,
-                                text = "$stars sao",
-                                emoji = "🏨"
-                            )
+                        
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            tour.highlights.take(4).forEach { highlight ->
+                                HighlightItem(
+                                    text = highlight
+                                )
+                            }
                         }
                     }
+                }
 
-                    // Parse meals from included list
-                    tour.included?.find { it.contains("bữa ăn", ignoreCase = true) }?.let { mealStr ->
-                        val mealsCount = Regex("(\\d+)\\s*bữa").find(mealStr)?.groupValues?.get(1)
-                        if (mealsCount != null) {
-                            FeatureTag(
-                                icon = null,
-                                text = "$mealsCount bữa ăn",
-                                emoji = "🍽️"
-                            )
+                // Included services section - Display all included using IncludedItem
+                if (!tour.included.isNullOrEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    ) {
+                        Text(
+                            text = "🎁 Đã bao gồm",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1565C0),
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            tour.included.take(6).forEach { item ->
+                                IncludedItem(
+                                    text = item
+                                )
+                            }
                         }
                     }
+                }
 
-                    // Parse transport from included list
-                    tour.included?.find { it.contains("xe", ignoreCase = true) || it.contains("đưa đón", ignoreCase = true) }?.let {
+                // Tour features - Quick summary features
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp)
+                        .background(
+                            color = Color(0xFF1E88E5), // Vibrant blue background
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = "🚀 Thông tin nhanh",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White, // White text for contrast
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(bottom = 6.dp)
+                    )
+                    
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        // Airline from expanded relation
+                        tour.expandedFlightProvider?.let { airline ->
+                            FeatureTag(
+                                icon = Icons.Filled.Flight,
+                                text = "Bay ${airline.name}"
+                            )
+                        }
+
+                        // Duration
                         FeatureTag(
-                            icon = null,
-                            text = "Xe đưa đón",
-                            emoji = "🚌"
+                            icon = Icons.Filled.Schedule,
+                            text = tour.getDurationText()
+                        )
+
+                        // Group size
+                        FeatureTag(
+                            icon = Icons.Filled.People,
+                            text = tour.getGroupSizeText()
                         )
                     }
                 }
@@ -689,7 +744,7 @@ private fun FeatureTag(
 ) {
     Surface(
         shape = RoundedCornerShape(4.dp),
-        color = Color(0xFFF5F5F5)
+        color = Color.White.copy(alpha = 0.9f) // Semi-transparent white background
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -705,15 +760,70 @@ private fun FeatureTag(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = Color(0xFF888888),
+                    tint = Color(0xFF1565C0), // Blue icon color
                     modifier = Modifier.size(10.dp)
                 )
             }
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelSmall,
-                color = Color(0xFF555555),
+                color = Color(0xFF0D47A1), // Dark blue text
+                fontWeight = FontWeight.Medium,
                 fontSize = 10.sp
+            )
+        }
+    }
+}
+
+@Composable
+private fun HighlightItem(
+    text: String
+) {
+    Surface(
+        shape = RoundedCornerShape(6.dp),
+        color = Color(0xFFFFF3E0), // Light orange background
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFF9800)) // Orange border
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFFE65100), // Dark orange text
+                fontSize = 11.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
+private fun IncludedItem(
+    text: String
+) {
+    Surface(
+        shape = RoundedCornerShape(6.dp),
+        color = Color(0xFFE3F2FD), // Light blue background
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF2196F3)) // Blue border
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF0D47A1), // Dark blue text
+                fontSize = 11.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

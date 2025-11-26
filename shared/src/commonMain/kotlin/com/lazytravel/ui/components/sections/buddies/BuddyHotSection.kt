@@ -45,7 +45,7 @@ fun BuddyHotSection(
         scope.launch {
             buddyRepo.getRecords<Buddy>(
                 page = 1,
-                perPage = 10,
+                perPage = 5,
                 sort = "-startDate",
                 expand = "userId,cityId,cityId.countryId,placeId,buddyreviews_via_buddy",
                 filter = "tags ~ '🔥 HOT' || status='AVAILABLE' || status='URGENT'",

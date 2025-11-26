@@ -12,32 +12,47 @@ object SchemaMigration {
     private val collectionIdCache = mutableMapOf<String, String>()
 
     suspend fun migrate(vararg schemas: CollectionSchema): Boolean {
+        println("🔄 Starting schema migration for ${schemas.size} collections...")
         var successCount = 0
         var failCount = 0
 
         schemas.forEach { schema ->
+            println("📝 Migrating collection: ${schema.name}")
             try {
                 val result = migrateCollection(schema)
-                if (result) successCount++ else failCount++
+                if (result) {
+                    successCount++
+                    println("✅ Successfully migrated collection: ${schema.name}")
+                } else {
+                    failCount++
+                    println("❌ Failed to migrate collection: ${schema.name}")
+                }
             } catch (e: Exception) {
-                println("Error migrating collection ${schema.name}: ${e.message}")
+                println("❌ Error migrating collection ${schema.name}: ${e.message}")
                 e.printStackTrace()
                 failCount++
             }
         }
+        
+        println("📊 Schema migration completed: $successCount success, $failCount failed")
         return failCount == 0
     }
 
     private suspend fun migrateCollection(schema: CollectionSchema): Boolean {
         return try {
+            println("   🔍 Checking if collection '${schema.name}' exists...")
             val exists = PocketBaseApi.collectionExists(schema.name)
+            println("   Collection exists: $exists")
 
             if (exists) {
+                println("   🔄 Updating schema for existing collection '${schema.name}'...")
                 updateCollectionSchema(schema)
             } else {
+                println("   🆕 Creating new collection '${schema.name}' with schema...")
                 createCollectionWithSchema(schema)
             }
         } catch (e: Exception) {
+            println("   ❌ Exception in migrateCollection for '${schema.name}': ${e.message}")
             e.printStackTrace()
             false
         }
@@ -46,9 +61,15 @@ object SchemaMigration {
     private suspend fun createCollectionWithSchema(schema: CollectionSchema): Boolean {
         val client = PocketBaseClient.getClient()
 
+        println("   🔗 Resolving relation collection IDs for '${schema.name}'...")
         resolveRelationCollectionIds(schema)
+        
+        println("   📋 Building schema JSON for '${schema.name}'...")
         val schemaJson = buildSchemaJson(schema)
+        println("   Schema JSON: ${schemaJson.toString().take(200)}${if (schemaJson.toString().length > 200) "..." else ""}")
+        
         try {
+            println("   📤 Sending POST request to create collection '${schema.name}'...")
             val response: HttpResponse = client.post("/api/collections") {
                 contentType(ContentType.Application.Json)
                 PocketBaseClient.adminToken?.let { header("Authorization", it) }
@@ -59,24 +80,25 @@ object SchemaMigration {
             val success = response.status.isSuccess()
 
             if (!success) {
-                println("❌ Failed to create ${schema.name}: ${response.status}")
-                println("❌ Response: $responseBody")
+                println("   ❌ Failed to create ${schema.name}: ${response.status}")
+                println("   ❌ Response body: $responseBody")
             } else {
-                println("✅ Created ${schema.name}")
+                println("   ✅ Successfully created collection: ${schema.name}")
                 try {
                     val jsonResponse = Json.parseToJsonElement(responseBody).jsonObject
                     val collectionId = jsonResponse["id"]?.jsonPrimitive?.content
                     if (collectionId != null) {
                         collectionIdCache[schema.name] = collectionId
+                        println("   📝 Cached collection ID: $collectionId")
                     }
                 } catch (e: Exception) {
-                    println("⚠️ Could not cache collection ID for ${schema.name}")
+                    println("   ⚠️ Could not cache collection ID for ${schema.name}: ${e.message}")
                 }
             }
 
             return success
         } catch (e: Exception) {
-            println("❌ Exception creating ${schema.name}: ${e.message}")
+            println("   ❌ Exception creating ${schema.name}: ${e.message}")
             e.printStackTrace()
             return false
         }

@@ -403,6 +403,61 @@ object PocketBaseApi {
             Result.failure(e)
         }
     }
+
+    /**
+     * Debug function to test connection and authentication
+     */
+    suspend fun debugConnection(): Boolean {
+        println("🔍 Starting PocketBase connection debug...")
+        
+        return try {
+            // Test 1: Basic connectivity
+            println("1️⃣ Testing basic connectivity to ${PocketBaseConfig.BASE_URL}...")
+            val client = PocketBaseClient.getClient()
+            val healthResponse: HttpResponse = client.get("/api/health")
+            val healthSuccess = healthResponse.status.isSuccess()
+            println("   Health check: ${if (healthSuccess) "✅ PASS" else "❌ FAIL"} (${healthResponse.status})")
+            
+            // Test 2: Admin authentication
+            println("2️⃣ Testing admin authentication...")
+            val authResult = adminAuth(
+                PocketBaseConfig.Admin.EMAIL,
+                PocketBaseConfig.Admin.PASSWORD
+            )
+            authResult.fold(
+                onSuccess = {
+                    println("   ✅ Admin auth successful")
+                    println("   Token: ${it.token.take(20)}...")
+                },
+                onFailure = { error ->
+                    println("   ❌ Admin auth failed: ${error.message}")
+                    return false
+                }
+            )
+            
+            // Test 3: List collections
+            println("3️⃣ Testing collection list access...")
+            val listResponse: HttpResponse = client.get("/api/collections") {
+                PocketBaseClient.adminToken?.let { header("Authorization", it) }
+            }
+            val listSuccess = listResponse.status.isSuccess()
+            if (listSuccess) {
+                val responseBody = listResponse.bodyAsText()
+                println("   ✅ Collection list access successful")
+                println("   Response preview: ${responseBody.take(100)}...")
+            } else {
+                println("   ❌ Collection list access failed: ${listResponse.status}")
+                return false
+            }
+            
+            println("🎉 All connection tests passed!")
+            true
+        } catch (e: Exception) {
+            println("💥 Connection debug failed: ${e.message}")
+            e.printStackTrace()
+            false
+        }
+    }
 }
 
 // Response models

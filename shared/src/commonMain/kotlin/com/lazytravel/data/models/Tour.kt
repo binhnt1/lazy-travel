@@ -4,7 +4,7 @@ import com.lazytravel.data.base.BaseModel
 import com.lazytravel.data.base.BaseRepository
 import com.lazytravel.data.base.baseCollection
 import com.lazytravel.data.base.collectionName
-import kotlinx.datetime.Clock
+import com.lazytravel.helpers.getTimestampForDate
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -284,21 +284,49 @@ data class Tour(
     }
 
     override suspend fun getSeedData(): List<Tour> {
+        println("🌱 Starting Tour.getSeedData()...")
+        
         // Try to get providers, cities, places, airlines from DB (optional)
         val providerRepo = BaseRepository<TourProvider>()
         val cityRepo = BaseRepository<City>()
         val placeRepo = BaseRepository<Place>()
         val airlineRepo = BaseRepository<FlightProvider>()
 
+        println("🔍 Fetching dependencies for Tour seed data...")
+        
         val providers = providerRepo.getRecords<TourProvider>().getOrNull() ?: emptyList()
+        println("   Found ${providers.size} tour providers")
+        if (providers.isNotEmpty()) {
+            println("   Provider names: ${providers.take(3).map { it.name }}${if (providers.size > 3) "..." else ""}")
+        }
+        
         val cities = cityRepo.getRecords<City>().getOrNull() ?: emptyList()
+        println("   Found ${cities.size} cities")
+        if (cities.isNotEmpty()) {
+            println("   City names: ${cities.take(3).map { it.name }}${if (cities.size > 3) "..." else ""}")
+        }
+        
         val places = placeRepo.getRecords<Place>().getOrNull() ?: emptyList()
+        println("   Found ${places.size} places")
+        if (places.isNotEmpty()) {
+            println("   Place names: ${places.take(3).map { it.name }}${if (places.size > 3) "..." else ""}")
+        }
+        
         val airlines = airlineRepo.getRecords<FlightProvider>().getOrNull() ?: emptyList()
+        println("   Found ${airlines.size} flight providers")
+        if (airlines.isNotEmpty()) {
+            println("   Airline names: ${airlines.take(3).map { it.name }}${if (airlines.size > 3) "..." else ""}")
+        }
 
         // If no required entities exist, return empty list
         if (providers.isEmpty() || cities.isEmpty()) {
+            println("❌ Cannot seed Tour data - missing required dependencies:")
+            if (providers.isEmpty()) println("   - No TourProvider records found")
+            if (cities.isEmpty()) println("   - No City records found")
             return emptyList()
         }
+
+        println("✅ All required dependencies available for Tour seeding")
 
         // Helper function to find provider by slug
         fun findProvider(slug: String): String {
@@ -419,6 +447,16 @@ data class Tour(
             }
             val originalPrice = (basePrice * 1.2).toLong().toDouble()
 
+            val monthIndex = i % 4
+            val month = when (monthIndex) {
+                0 -> 12
+                1 -> 1
+                2 -> 2
+                else -> 3
+            }
+            val year = if (month == 12) 2025 else 2026
+            val startDay = 5 + (i % 20)
+            val startDateTs = getTimestampForDate(year, month, startDay, 9, 0, 0)
             tours.add(Tour(
                 name = "$tourType $destinationName ${duration.first}N${duration.second}Đ",
                 description = "Khám phá $destinationName với tour ${duration.first} ngày ${duration.second} đêm. ${highlights.joinToString(", ")}. Trải nghiệm khó quên cùng dịch vụ chuyên nghiệp.",
@@ -442,31 +480,14 @@ data class Tour(
                 included = listOf("Khách sạn", "Bữa ăn", "Hướng dẫn viên", "Vé tham quan"),
                 excluded = listOf("Vé máy bay", "Chi phí cá nhân"),
                 languages = if (tourTags.any { it.contains("LUXURY") }) listOf("vi", "en", "ja") else listOf("vi", "en"),
-                startDate = Clock.System.now().toEpochMilliseconds() + ((7..60).random() * 24 * 60 * 60 * 1000L),
+                startDate = startDateTs,
                 bookedCount = (100..3000).random()
             ))
         }
 
+        println("🎯 Generated ${tours.size} tour records")
+        println("   Sample tour names: ${tours.take(3).map { it.name }}${if (tours.size > 3) "..." else ""}")
+        
         return tours
-    }
-
-    companion object {
-        fun getSeedDataStatic(): List<Tour> {
-            // Static seed data without relations (for testing)
-            return listOf(
-                Tour(
-                    name = "Phú Quốc 3N2Đ - Khám phá đảo ngọc",
-                    description = "Trải nghiệm thiên đường biển đảo",
-                    emoji = "🏖️",
-                    thumbnailColor = "#4ECDC4",
-                    duration = 3,
-                    durationNights = 2,
-                    currentPrice = 3750000.0,
-                    originalPrice = 5000000.0,
-                    reviewCount = 234,
-                    tags = listOf("🔥 HOT", "Biển", "Resort")
-                )
-            )
-        }
     }
 }

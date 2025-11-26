@@ -249,5 +249,37 @@ fun formatTimeAgo(timestamp: Long): String {
     return calculateTimeAgo(timestamp)
 }
 
+fun getTimestampForDate(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int): Long {
+    // Tính số ngày kể từ Unix epoch (01/01/1970)
+    // Sử dụng Gregorian calendar
+
+    // Số ngày trong mỗi tháng (không phải năm nhuận)
+    val daysInMonth = intArrayOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+
+    // Kiểm tra năm nhuận
+    val isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
+    if (isLeapYear) {
+        daysInMonth[1] = 29
+    }
+
+    // Tính số ngày từ 01/01/1970 đến 01/01/year
+    var totalDays = 0L
+    for (y in 1970 until year) {
+        totalDays += if ((y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) 366 else 365
+    }
+
+    // Tính số ngày từ 01/01/year đến 01/month/day
+    for (m in 1 until month) {
+        totalDays += daysInMonth[m - 1]
+    }
+    totalDays += day - 1
+
+    // Tính total seconds
+    val totalSeconds = totalDays * 86400L + hour * 3600L + minute * 60L + second
+
+    // Convert to milliseconds
+    return totalSeconds * 1000
+}
+
 
 

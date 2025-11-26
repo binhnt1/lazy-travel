@@ -78,24 +78,24 @@ fun TourScreen(
                         onTourClick = { onNavigateToDetail("placeholder") },
                         onViewAllClick = { }
                     )
-                    TourLuxurySection(
-                        onTourClick = { onNavigateToDetail("placeholder") },
-                        onViewAllClick = { }
-                    )
+//                    TourLuxurySection(
+//                        onTourClick = { onNavigateToDetail("placeholder") },
+//                        onViewAllClick = { }
+//                    )
                 }
 
-                TourNormalSection(
-                    filterTab = selectedTab,
-                    filterInterests = selectedFilters,
-                    sortBy = selectedSort,
-                    searchQuery = searchQuery,
-                    filterMinCost = filterMinCost,
-                    filterMaxCost = filterMaxCost,
-                    filterMonth = filterMonth,
-                    filterYear = filterYear,
-                    onNavigateToDetail = onNavigateToDetail,
-                    onSortChange = { selectedSort = it }
-                )
+//                TourNormalSection(
+//                    filterTab = selectedTab,
+//                    filterInterests = selectedFilters,
+//                    sortBy = selectedSort,
+//                    searchQuery = searchQuery,
+//                    filterMinCost = filterMinCost,
+//                    filterMaxCost = filterMaxCost,
+//                    filterMonth = filterMonth,
+//                    filterYear = filterYear,
+//                    onNavigateToDetail = onNavigateToDetail,
+//                    onSortChange = { selectedSort = it }
+//                )
             }
         }
 
