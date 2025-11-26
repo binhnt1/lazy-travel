@@ -37,7 +37,7 @@ fun TourLuxurySection(
                 perPage = 10,
                 sort = "-created",
                 expand = "tourProviderId,cityId,placeId,airlineId",
-                filter = "tags ~ 'LUXURY'",
+                filter = "tags:each ~ 'LUXURY'",
             ).fold(
                 onSuccess = { fetchedTours ->
                     fetchedTours.forEach { tour ->
