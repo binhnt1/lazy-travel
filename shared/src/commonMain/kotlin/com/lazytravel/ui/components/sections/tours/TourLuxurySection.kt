@@ -35,9 +35,9 @@ fun TourLuxurySection(
             tourRepo.getRecords<Tour>(
                 page = 1,
                 perPage = 10,
-                sort = "-created",
-                expand = "tourProviderId,cityId,placeId,airlineId",
-                filter = "tags:each ~ 'LUXURY'",
+                sort = "-startDate",
+                expand = "userId,cityId,cityId.countryId,placeId,airlineId,tourProviderId,tourreviews_via_tour",
+                filter = "tags ~ '✨ LUXURY'",
             ).fold(
                 onSuccess = { fetchedTours ->
                     fetchedTours.forEach { tour ->

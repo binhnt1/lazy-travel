@@ -1,6 +1,7 @@
 package com.lazytravel.ui.components.cards.tours
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,6 +63,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.ExpandLess
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -73,6 +77,8 @@ fun TourHotCard(
     modifier: Modifier = Modifier
 ) {
     var showImageViewer by remember { mutableStateOf(false) }
+    var showHighlights by remember { mutableStateOf(false) }
+    var showIncluded by remember { mutableStateOf(false) }
     Card(
         onClick = onClick,
         modifier = modifier.width(280.dp),
@@ -275,7 +281,7 @@ fun TourHotCard(
                         .align(Alignment.TopEnd)
                         .padding(8.dp)
                         .size(28.dp),
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(4.dp),
                     color = Color.White.copy(alpha = 0.95f),
                     border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0E0E0))
                 ) {
@@ -405,12 +411,24 @@ fun TourHotCard(
                         )
 
                         if (provider.isVerified) {
-                            Icon(
-                                imageVector = Icons.Filled.CheckCircle,
-                                contentDescription = "Verified",
-                                tint = AppColors.Primary,
-                                modifier = Modifier.size(10.dp)
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp) // Increased size for better visibility
+                                    .background(
+                                        color = Color(0xFF2E7D32), // Darker green for more prominence
+                                        shape = CircleShape
+                                    )
+                                    .border(1.5.dp, Color.White, CircleShape) // Thicker white border
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Verified",
+                                    tint = Color.White,
+                                    modifier = Modifier
+                                        .size(12.dp)
+                                        .align(Alignment.Center)
+                                )
+                            }
                         }
                     }
                 }
@@ -428,59 +446,83 @@ fun TourHotCard(
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                // Highlights section - Display all highlights using HighlightItem
-                if (!tour.highlights.isNullOrEmpty()) {
-                    Column(
+                // Collapsible Highlights and Included sections
+                if (!tour.highlights.isNullOrEmpty() || !tour.included.isNullOrEmpty()) {
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp)
+                            .padding(bottom = 8.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFF9F9F9)
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0E0E0))
                     ) {
-                        Text(
-                            text = "✨ Điểm nổi bật",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFE65100),
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
                         ) {
-                            tour.highlights.take(4).forEach { highlight ->
-                                HighlightItem(
-                                    text = highlight
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { showHighlights = !showHighlights }
+                                    .padding(bottom = if (showHighlights) 6.dp else 0.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "✨ Điểm nổi bật",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFE65100),
+                                    fontSize = 12.sp
+                                )
+                                Icon(
+                                    imageVector = if (showHighlights) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                                    contentDescription = if (showHighlights) "Hide highlights" else "Show highlights",
+                                    tint = Color(0xFFE65100),
+                                    modifier = Modifier.size(16.dp)
                                 )
                             }
-                        }
-                    }
-                }
 
-                // Included services section - Display all included using IncludedItem
-                if (!tour.included.isNullOrEmpty()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    ) {
-                        Text(
-                            text = "🎁 Đã bao gồm",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1565C0),
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            tour.included.take(6).forEach { item ->
-                                IncludedItem(
-                                    text = item
-                                )
+                            // Highlights section header and content
+                            if (showHighlights) {
+                                if (!tour.highlights.isNullOrEmpty()) {   
+                                    HorizontalDivider(
+                                        thickness = 1.dp,
+                                        color = Color(0xFFE0E0E0),
+                                        modifier = Modifier.padding(vertical = 12.dp)
+                                    )
+                                    FlowRow(
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        tour.highlights.take(4).forEach { highlight ->
+                                            HighlightItem(
+                                                text = highlight
+                                            )
+                                        }
+                                    }
+                                }
+                                if (!tour.included.isNullOrEmpty()) {
+                                    HorizontalDivider(
+                                        thickness = 1.dp,
+                                        color = Color(0xFFE0E0E0),
+                                        modifier = Modifier.padding(vertical = 12.dp)
+                                    )
+                                    FlowRow(
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        tour.included.take(6).forEach { item ->
+                                            IncludedItem(
+                                                text = item
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
                             }
                         }
                     }
@@ -493,19 +535,10 @@ fun TourHotCard(
                         .padding(bottom = 10.dp)
                         .background(
                             color = Color(0xFF1E88E5), // Vibrant blue background
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RoundedCornerShape(4.dp)
                         )
                         .padding(12.dp)
                 ) {
-                    Text(
-                        text = "🚀 Thông tin nhanh",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White, // White text for contrast
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
-                    
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp)

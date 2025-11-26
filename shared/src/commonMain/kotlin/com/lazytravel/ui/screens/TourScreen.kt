@@ -78,10 +78,10 @@ fun TourScreen(
                         onTourClick = { onNavigateToDetail("placeholder") },
                         onViewAllClick = { }
                     )
-//                    TourLuxurySection(
-//                        onTourClick = { onNavigateToDetail("placeholder") },
-//                        onViewAllClick = { }
-//                    )
+                    TourLuxurySection(
+                        onTourClick = { onNavigateToDetail("placeholder") },
+                        onViewAllClick = { }
+                    )
                 }
 
 //                TourNormalSection(

@@ -414,7 +414,7 @@ data class Tour(
         val colors = listOf("#4ECDC4", "#667EEA", "#FF6B35", "#11998e", "#FA709A", "#38B2AC", "#FF8C42", "#764BA2")
 
         val providerSlugs = listOf("vietravel", "saigon-tourist", "fiditour", "vietravel-adventures")
-        val airlineCodes = listOf("VJ", "VN", "QH", "")
+        val airlineCodes = listOf("VJ", "VN", "QH", "AK", "")
 
         val tours = mutableListOf<Tour>()
 

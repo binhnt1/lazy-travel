@@ -16,7 +16,7 @@ import com.lazytravel.ui.components.sections.HowItWorkSection
 import com.lazytravel.ui.components.sections.ReviewsSection
 import com.lazytravel.ui.components.sections.StatsBarSection
 import com.lazytravel.ui.components.sections.StatsSection
-import com.lazytravel.ui.components.sections.TourSection
+import com.lazytravel.ui.components.sections.tours.TourHotSection
 import com.lazytravel.ui.components.sections.UseCasesSection
 import com.lazytravel.ui.theme.AppColors
 
@@ -65,8 +65,8 @@ fun HomeNoAuthScreen(
             onViewAllClick = onNavigateToPlaces
         )
 
-        TourSection(
-            onTourClick = { tour ->
+        TourHotSection(
+            onTourClick = { tourId ->
                 onNavigateToSignIn()
             },
             onViewAllClick = onNavigateToTours
