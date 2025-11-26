@@ -21,8 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lazytravel.data.models.InsurancePackage
-import java.text.NumberFormat
-import java.util.Locale
 
 @Composable
 fun InsurancePackageCard(
@@ -129,8 +127,9 @@ private fun formatCoverage(coverage: Double): String {
             "${millions.toInt()} triệu đ"
         }
         else -> {
-            val formatter = NumberFormat.getInstance(Locale("vi", "VN"))
-            "${formatter.format(coverage)}đ"
+            // Simple formatting without Java NumberFormat
+            val formatted = coverage.toString().reversed().chunked(3).joinToString(".").reversed()
+            "${formatted}đ"
         }
     }
 }

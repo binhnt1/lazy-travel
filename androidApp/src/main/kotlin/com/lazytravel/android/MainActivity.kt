@@ -10,10 +10,8 @@ import com.lazytravel.data.models.Buddy
 import com.lazytravel.data.models.BuddyReview
 import com.lazytravel.data.models.City
 import com.lazytravel.data.models.Country
-import com.lazytravel.data.models.Destination
-import com.lazytravel.data.models.Feature
-import com.lazytravel.data.models.HowItWork
 import com.lazytravel.data.models.Place
+import com.lazytravel.data.models.HowItWork
 import com.lazytravel.data.models.Post
 import com.lazytravel.data.models.PostComment
 import com.lazytravel.data.models.PostLike
@@ -33,6 +31,7 @@ import com.lazytravel.data.models.VisaProvider
 import com.lazytravel.data.models.UseCase
 import com.lazytravel.data.models.User
 import com.lazytravel.data.models.BuddyParticipant
+import com.lazytravel.data.models.Feature
 import com.lazytravel.data.remote.PocketBaseClient
 import com.lazytravel.ui.navigation.AppNavigation
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -48,7 +47,7 @@ class MainActivity : ComponentActivity() {
         GlobalScope.launch {
             Country().setup()
             City().setup()
-            Place().setup()
+            Place().setup(true)
 
             User().setup()
             Stat().setup()
@@ -68,7 +67,7 @@ class MainActivity : ComponentActivity() {
             ReviewComment().setup()
 
             // Travel Buddy models
-            Buddy().setup()
+            Buddy().setup(true)
             BuddyReview().setup()
             BuddyParticipant().setup()
 
@@ -83,9 +82,6 @@ class MainActivity : ComponentActivity() {
             VisaProvider().setup()
             InsurancePackage().setup()   // Package after provider
             Tour().setup()               // Tour last (depends on providers)
-
-            // Destination models
-            Destination().setup()
 
             HowItWork().setup()
         }

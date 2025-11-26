@@ -32,6 +32,7 @@ fun CreateTripBottomBar(
         ) {
             // Back button (hidden on first step)
             if (currentStep > 0) {
+                @Suppress("DEPRECATION")
                 OutlinedButton(
                     onClick = onBack,
                     modifier = Modifier.weight(1f),

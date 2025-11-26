@@ -5,6 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
@@ -74,7 +77,7 @@ fun BuddyHeaderSection(
             // Title
             Text(
                 text = localizedString("buddy_screen_title"),
-                fontSize = 18.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF212121),
                 textAlign = TextAlign.Center,
@@ -93,7 +96,7 @@ fun BuddyHeaderSection(
             ) {
                 Text(
                     text = localizedString("buddy_create_trip"),
-                    fontSize = 12.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
                 )
@@ -143,41 +146,38 @@ private fun SearchBarComponent(
             placeholder = {
                 Text(
                     text = LocalizationManager.getString("buddy_search_placeholder"),
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     color = AppColors.TextSecondary
                 )
             },
             leadingIcon = {
                 Text(
                     text = "🔍",
-                    fontSize = 18.sp
+                    fontSize = 20.sp
                 )
             },
             trailingIcon = {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Advanced Filter Icon
-                    Text(
-                        text = "⚙️",
-                        fontSize = 18.sp,
-                        modifier = Modifier.clickable { showAdvancedFilter = !showAdvancedFilter }
-                    )
-
-                    // Clear search icon
-                    if (searchQuery.isNotEmpty()) {
-                        Text(
-                            text = "✕",
-                            fontSize = 16.sp,
-                            color = AppColors.TextSecondary,
-                            modifier = Modifier.clickable { onSearchChange("") }
-                        )
-                    }
-                }
+                // Advanced Filter Icon - using a filter icon instead of arrow
+                Icon(
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = "Filter",
+                    tint = AppColors.Primary,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { showAdvancedFilter = !showAdvancedFilter }
+                )
             },
             singleLine = true,
-            shape = RoundedCornerShape(8.dp),
+            shape = if (showAdvancedFilter) {
+                RoundedCornerShape(
+                    topStart = 8.dp,
+                    topEnd = 8.dp,
+                    bottomStart = 0.dp,
+                    bottomEnd = 0.dp
+                )
+            } else {
+                RoundedCornerShape(8.dp)
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = AppColors.Primary,
                 unfocusedBorderColor = AppColors.Border,
@@ -187,7 +187,6 @@ private fun SearchBarComponent(
 
         // Advanced Filter Dropdown
         if (showAdvancedFilter) {
-            Spacer(modifier = Modifier.height(8.dp))
             AdvancedFilterDropdown(
                 filterMinCost = filterMinCost,
                 onMinCostChange = onMinCostChange,
@@ -232,15 +231,28 @@ private fun AdvancedFilterDropdown(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, AppColors.Border, RoundedCornerShape(8.dp))
-            .background(Color.White, RoundedCornerShape(8.dp))
+            .background(Color.White)
+            .border(
+                width = 1.dp,
+                color = AppColors.Border,
+                shape = RoundedCornerShape(
+                    bottomStart = 8.dp,
+                    bottomEnd = 8.dp
+                )
+            )
+            .clip(
+                RoundedCornerShape(
+                    bottomStart = 8.dp,
+                    bottomEnd = 8.dp
+                )
+            )
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // Header
         Text(
             text = LocalizationManager.getString("buddy_advanced_filter_title"),
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = AppColors.TextPrimary
         )
@@ -249,7 +261,7 @@ private fun AdvancedFilterDropdown(
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 text = LocalizationManager.getString("buddy_filter_cost"),
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = AppColors.TextPrimary
             )
@@ -258,46 +270,69 @@ private fun AdvancedFilterDropdown(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // Min Cost
-                OutlinedTextField(
+                BasicTextField(
                     value = tempMinCost,
                     onValueChange = { tempMinCost = it },
-                    modifier = Modifier.weight(1f),
-                    placeholder = {
-                        Text(
-                            text = LocalizationManager.getString("buddy_filter_min_cost"),
-                            fontSize = 13.sp,
-                            color = AppColors.TextSecondary
-                        )
-                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(45.dp)
+                        .border(1.dp, AppColors.Border, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 12.dp),
                     singleLine = true,
-                    shape = RoundedCornerShape(6.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = AppColors.Primary,
-                        unfocusedBorderColor = AppColors.Border,
-                        cursorColor = AppColors.Primary
-                    )
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 15.sp,
+                        color = AppColors.TextPrimary
+                    ),
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (tempMinCost.isEmpty()) {
+                                Text(
+                                    text = LocalizationManager.getString("buddy_filter_min_cost"),
+                                    fontSize = 15.sp,
+                                    color = AppColors.TextSecondary
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
                 )
 
                 // Max Cost
-                OutlinedTextField(
-                    value = tempMaxCost,
-                    onValueChange = { tempMaxCost = it },
-                    modifier = Modifier.weight(1f),
-                    placeholder = {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(45.dp)
+                        .border(
+                            width = 1.dp,
+                            color = AppColors.Border,
+                            shape = RoundedCornerShape(6.dp)
+                        )
+                        .background(Color.White, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 12.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    BasicTextField(
+                        value = tempMaxCost,
+                        onValueChange = { tempMaxCost = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = LocalTextStyle.current.copy(
+                            fontSize = 15.sp,
+                            color = AppColors.TextPrimary
+                        ),
+                        cursorBrush = SolidColor(AppColors.Primary),
+                        singleLine = true
+                    )
+                    if (tempMaxCost.isEmpty()) {
                         Text(
                             text = LocalizationManager.getString("buddy_filter_max_cost"),
-                            fontSize = 13.sp,
+                            fontSize = 15.sp,
                             color = AppColors.TextSecondary
                         )
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(6.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = AppColors.Primary,
-                        unfocusedBorderColor = AppColors.Border,
-                        cursorColor = AppColors.Primary
-                    )
-                )
+                    }
+                }
             }
         }
 
@@ -305,7 +340,7 @@ private fun AdvancedFilterDropdown(
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 text = "Tháng/Năm khởi hành",
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = AppColors.TextPrimary
             )
@@ -314,46 +349,72 @@ private fun AdvancedFilterDropdown(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // Month
-                OutlinedTextField(
-                    value = tempMonth,
-                    onValueChange = { tempMonth = it },
-                    modifier = Modifier.weight(1f),
-                    placeholder = {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(45.dp)
+                        .border(
+                            width = 1.dp,
+                            color = AppColors.Border,
+                            shape = RoundedCornerShape(6.dp)
+                        )
+                        .background(Color.White, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 12.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    BasicTextField(
+                        value = tempMonth,
+                        onValueChange = { tempMonth = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = LocalTextStyle.current.copy(
+                            fontSize = 15.sp,
+                            color = AppColors.TextPrimary
+                        ),
+                        cursorBrush = SolidColor(AppColors.Primary),
+                        singleLine = true
+                    )
+                    if (tempMonth.isEmpty()) {
                         Text(
                             text = "Tháng (1-12)",
-                            fontSize = 13.sp,
+                            fontSize = 15.sp,
                             color = AppColors.TextSecondary
                         )
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(6.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = AppColors.Primary,
-                        unfocusedBorderColor = AppColors.Border,
-                        cursorColor = AppColors.Primary
-                    )
-                )
+                    }
+                }
 
                 // Year
-                OutlinedTextField(
-                    value = tempYear,
-                    onValueChange = { tempYear = it },
-                    modifier = Modifier.weight(1f),
-                    placeholder = {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(45.dp)
+                        .border(
+                            width = 1.dp,
+                            color = AppColors.Border,
+                            shape = RoundedCornerShape(6.dp)
+                        )
+                        .background(Color.White, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 12.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    BasicTextField(
+                        value = tempYear,
+                        onValueChange = { tempYear = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = LocalTextStyle.current.copy(
+                            fontSize = 15.sp,
+                            color = AppColors.TextPrimary
+                        ),
+                        cursorBrush = SolidColor(AppColors.Primary),
+                        singleLine = true
+                    )
+                    if (tempYear.isEmpty()) {
                         Text(
                             text = "Năm (2025, 2026...)",
-                            fontSize = 13.sp,
+                            fontSize = 15.sp,
                             color = AppColors.TextSecondary
                         )
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(6.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = AppColors.Primary,
-                        unfocusedBorderColor = AppColors.Border,
-                        cursorColor = AppColors.Primary
-                    )
-                )
+                    }
+                }
             }
         }
 
@@ -384,7 +445,7 @@ private fun AdvancedFilterDropdown(
             ) {
                 Text(
                     text = LocalizationManager.getString("buddy_filter_clear"),
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = AppColors.TextSecondary
                 )
@@ -407,7 +468,7 @@ private fun AdvancedFilterDropdown(
             ) {
                 Text(
                     text = LocalizationManager.getString("buddy_filter_apply"),
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
                 )
@@ -415,4 +476,3 @@ private fun AdvancedFilterDropdown(
         }
     }
 }
-

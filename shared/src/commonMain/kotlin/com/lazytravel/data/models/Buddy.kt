@@ -12,6 +12,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.serializer
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
@@ -41,7 +42,7 @@ data class Buddy(
     // Description & details
     @EncodeDefault val description: String = "",         // detailed trip description
     @EncodeDefault val emoji: String = "",               // banner emoji (🏖️, ⛰️, 🛕) - only if placeId is empty
-    @EncodeDefault val coverImage: String = "",          // trip cover image URL - only if placeId is empty
+    @EncodeDefault val images: List<String> = emptyList(), // trip cover images - only if placeId is empty
 
     // Trip metadata
     @EncodeDefault val tags: List<String> = emptyList(), // list of tag names (Phượt, Luxury, Backpacker...)
@@ -86,6 +87,31 @@ data class Buddy(
     // Get verified status from expanded user
     val verified: Boolean
         get() = expandedUser?.verified ?: false
+
+    // Get all images for this Buddy, combining Buddy images and Place images
+    val allImages: List<String>
+        get() {
+            val allImageList = mutableListOf<String>()
+            
+            // Add Buddy images first
+            if (images.isNotEmpty()) {
+                allImageList.addAll(images)
+            }
+            
+            // Add Place images as well
+            expandedPlace?.let { place ->
+                if (place.images.isNotEmpty()) {
+                    allImageList.addAll(place.images)
+                }
+            }
+            
+            // Return combined list with all images
+            return allImageList
+        }
+
+    // Get limited images for card display (6 images max)
+    val cardImages: List<String>
+        get() = allImages.take(6)
 
     override fun serializeToJson(item: BaseModel): String {
         val buddy = item as Buddy
@@ -218,7 +244,7 @@ data class Buddy(
             val name: String,
             val emoji: String,
             val interests: List<String>,
-            val coverImage: String,
+            val images: List<String>,
             val cityName: String  // Link to city by name
         )
 
@@ -227,35 +253,51 @@ data class Buddy(
                 "Sapa - Hà Giang",
                 "⛰️",
                 listOf("Núi", "Trekking", "Homestay", "Ruộng bậc thang"),
-                "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                listOf(
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800&h=600&fit=crop"
+                ),
                 "Hanoi"  // Will use Hanoi's cityId as it's in the north
             ),
             ManualDestination(
                 "Côn Đảo",
                 "🏝️",
                 listOf("Biển", "Lịch sử", "Lặn biển", "Thiên nhiên"),
-                "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop",
+                listOf(
+                    "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop"
+                ),
                 "Ho Chi Minh City"
             ),
             ManualDestination(
                 "Ninh Bình",
                 "🚣",
                 listOf("Thuyền", "Hang động", "Ruộng lúa", "Di sản"),
-                "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop",
+                listOf(
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1555880679-c2d074c4f026?w=800&h=600&fit=crop"
+                ),
                 "Hanoi"
             ),
             ManualDestination(
                 "Mộc Châu - Yên Bái",
                 "🌄",
                 listOf("Cao nguyên", "Trà", "Sữa bò", "Phượt"),
-                "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800&h=600&fit=crop",
+                listOf(
+                    "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop"
+                ),
                 "Hanoi"
             ),
             ManualDestination(
                 "Cần Thơ - Miệt Vườn",
                 "🛶",
                 listOf("Chợ nổi", "Sông nước", "Vườn trái cây", "Ẩm thực"),
-                "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop",
+                listOf(
+                    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop"
+                ),
                 "Ho Chi Minh City"
             )
         )
@@ -324,7 +366,7 @@ data class Buddy(
                     ageRange = "20-35",
                     description = desc,
                     emoji = "",
-                    coverImage = "",
+                    images = emptyList(),
                     tags = listOf("🔥 HOT") + tags,
                     interests = emptyList(),
                     status = BuddyStatus.URGENT.name,
@@ -353,7 +395,7 @@ data class Buddy(
                     ageRange = "20-35",
                     description = desc,
                     emoji = manual.emoji,
-                    coverImage = manual.coverImage,
+                    images = manual.images,
                     tags = listOf("🔥 HOT") + tags,
                     interests = manual.interests,
                     status = BuddyStatus.URGENT.name,
@@ -423,7 +465,7 @@ data class Buddy(
                     ageRange = "25-45",
                     description = desc,
                     emoji = "",
-                    coverImage = "",
+                    images = emptyList(),
                     tags = listOf("✨ LUXURY") + tags,
                     interests = emptyList(),
                     status = BuddyStatus.AVAILABLE.name,
@@ -452,7 +494,7 @@ data class Buddy(
                     ageRange = "25-45",
                     description = desc,
                     emoji = manual.emoji,
-                    coverImage = manual.coverImage,
+                    images = manual.images,
                     tags = listOf("✨ LUXURY") + tags,
                     interests = manual.interests,
                     status = BuddyStatus.AVAILABLE.name,
@@ -526,7 +568,7 @@ data class Buddy(
                     },
                     description = desc,
                     emoji = "",
-                    coverImage = "",
+                    images = emptyList(),
                     tags = tags,
                     interests = emptyList(),
                     status = status,
@@ -564,7 +606,7 @@ data class Buddy(
                     },
                     description = desc,
                     emoji = manual.emoji,
-                    coverImage = manual.coverImage,
+                    images = manual.images,
                     tags = tags,
                     interests = manual.interests,
                     status = status,
@@ -624,7 +666,7 @@ data class Buddy(
         // Description & details
         text("description") { required = false; max = 2000 }
         text("emoji") { required = false; max = 10 }
-        text("coverImage") { required = false; max = 500 }
+        json("images") { required = false }
 
         // Trip metadata
         json("tags") { required = false }

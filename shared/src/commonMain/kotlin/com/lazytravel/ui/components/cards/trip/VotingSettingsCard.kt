@@ -9,8 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.datetime.*
+import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,8 +94,13 @@ fun VotingSettingsCard(
                         )
                         Text(
                             text = if (votingEndsAt > 0) {
-                                SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("vi"))
-                                    .format(Date(votingEndsAt))
+                                @OptIn(ExperimentalTime::class)
+                                val formatted = run {
+                                    val instant = Instant.fromEpochMilliseconds(votingEndsAt)
+                                    val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+                                    "${dateTime.dayOfMonth.toString().padStart(2, '0')}/${dateTime.monthNumber.toString().padStart(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padStart(2, '0')}:${dateTime.minute.toString().padStart(2, '0')}"
+                                }
+                                formatted
                             } else {
                                 "Chọn thời hạn"
                             },

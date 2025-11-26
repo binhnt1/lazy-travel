@@ -4,21 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,6 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import com.lazytravel.core.i18n.LocalizationManager
 import com.lazytravel.ui.theme.AppColors
 
@@ -35,9 +27,7 @@ fun BuddyFilterSection(
     selectedTab: String,
     onTabChange: (String) -> Unit,
     selectedFilters: Set<String>,
-    onFiltersChange: (Set<String>) -> Unit,
-    selectedSort: String,
-    onSortChange: (String) -> Unit
+    onFiltersChange: (Set<String>) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -52,12 +42,6 @@ fun BuddyFilterSection(
         QuickFiltersSection(
             selectedFilters = selectedFilters,
             onFiltersChange = onFiltersChange
-        )
-
-        // Sort & Filter Bar
-        SortFilterBar(
-            selectedSort = selectedSort,
-            onSortChange = onSortChange
         )
     }
 }
@@ -123,7 +107,7 @@ private fun FilterTab(
             )
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        fontSize = 13.sp,
+        fontSize = 15.sp,
         fontWeight = FontWeight.SemiBold,
         color = if (isSelected) Color.White else AppColors.TextSecondary
     )
@@ -155,7 +139,7 @@ private fun QuickFiltersSection(
     ) {
         Text(
             text = LocalizationManager.getString("buddy_filter_interests"),
-            fontSize = 15.sp,
+            fontSize = 17.sp,
             fontWeight = FontWeight.Bold,
             color = AppColors.TextPrimary,
             modifier = Modifier.padding(bottom = 10.dp)
@@ -244,12 +228,12 @@ private fun QuickFilterItem(
     ) {
         Text(
             text = emoji,
-            fontSize = 20.sp,
+            fontSize = 24.sp,
             modifier = Modifier.padding(bottom = 4.dp)
         )
         Text(
             text = LocalizationManager.getString("buddy_filter_$filterId"),
-            fontSize = 10.sp,
+            fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
             color = if (isSelected) AppColors.Primary else AppColors.TextSecondary,
             textAlign = TextAlign.Center,
@@ -259,30 +243,31 @@ private fun QuickFilterItem(
 }
 
 @Composable
-private fun SortFilterBar(
+fun BottomSortBar(
     selectedSort: String,
     onSortChange: (String) -> Unit
 ) {
+    var showSortDropdown by remember { mutableStateOf(false) }
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(16.dp, 0.dp, 16.dp, 16.dp)
+            .padding(16.dp)
             .border(1.dp, AppColors.Border, RoundedCornerShape(8.dp))
             .padding(12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = LocalizationManager.getString("buddy_sort_by"),
-                fontSize = 12.sp,
-                color = AppColors.TextSecondary
-            )
+        Text(
+            text = LocalizationManager.getString("buddy_sort_by"),
+            fontSize = 14.sp,
+            color = AppColors.TextSecondary
+        )
 
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Box {
             Text(
                 text = when (selectedSort) {
                     "recent" -> LocalizationManager.getString("buddy_sort_recent")
@@ -290,26 +275,76 @@ private fun SortFilterBar(
                     "popular" -> LocalizationManager.getString("buddy_sort_popular")
                     else -> LocalizationManager.getString("buddy_sort_recent")
                 },
-                fontSize = 12.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = AppColors.TextPrimary,
                 modifier = Modifier
                     .border(1.dp, AppColors.Border, RoundedCornerShape(6.dp))
                     .background(Color.White, RoundedCornerShape(6.dp))
                     .padding(horizontal = 10.dp, vertical = 6.dp)
-                    .clickable {
-                        val sorts = listOf("recent", "matched", "popular")
-                        val nextSort = sorts[(sorts.indexOf(selectedSort) + 1) % sorts.size]
-                        onSortChange(nextSort)
-                    }
+                    .clickable { showSortDropdown = !showSortDropdown }
             )
+            
+            // Dropdown menu
+            if (showSortDropdown) {
+                Popup(
+                    onDismissRequest = { showSortDropdown = false },
+                    properties = PopupProperties(focusable = true)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .border(1.dp, AppColors.Border, RoundedCornerShape(6.dp))
+                            .background(Color.White, RoundedCornerShape(6.dp))
+                            .padding(2.dp)
+                            .widthIn(min = 120.dp)
+                    ) {
+                        SortOption(
+                            text = LocalizationManager.getString("buddy_sort_recent"),
+                            isSelected = selectedSort == "recent",
+                            onClick = {
+                                onSortChange("recent")
+                                showSortDropdown = false
+                            }
+                        )
+                        
+                        SortOption(
+                            text = LocalizationManager.getString("buddy_sort_matched"),
+                            isSelected = selectedSort == "matched",
+                            onClick = {
+                                onSortChange("matched")
+                                showSortDropdown = false
+                            }
+                        )
+                        
+                        SortOption(
+                            text = LocalizationManager.getString("buddy_sort_popular"),
+                            isSelected = selectedSort == "popular",
+                            onClick = {
+                                onSortChange("popular")
+                                showSortDropdown = false
+                            }
+                        )
+                    }
+                }
+            }
         }
-
-        Text(
-            text = "Kết quả: 45",
-            fontSize = 12.sp,
-            color = AppColors.TextSecondary
-        )
     }
 }
 
+@Composable
+private fun SortOption(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Text(
+        text = text,
+        fontSize = 13.sp,
+        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+        color = if (isSelected) AppColors.Primary else AppColors.TextPrimary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+    )
+}

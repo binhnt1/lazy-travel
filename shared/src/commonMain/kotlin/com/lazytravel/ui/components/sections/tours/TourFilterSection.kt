@@ -1,179 +1,360 @@
 package com.lazytravel.ui.components.sections.tours
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
+import com.lazytravel.core.i18n.LocalizationManager
 import com.lazytravel.ui.theme.AppColors
 
 @Composable
 fun TourFilterSection(
-    onFilterChanged: (Map<String, Any>) -> Unit = {},
-    modifier: Modifier = Modifier
+    selectedTab: String,
+    onTabChange: (String) -> Unit,
+    selectedFilters: Set<String>,
+    onFiltersChange: (Set<String>) -> Unit
 ) {
-    var selectedDuration by remember { mutableStateOf<String?>(null) }
-    var selectedPriceRange by remember { mutableStateOf<String?>(null) }
-    var selectedType by remember { mutableStateOf<String?>(null) }
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0E0E0)),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp
-        )
+    Column(
+        modifier = Modifier.fillMaxWidth()
     ) {
+        // Filter Tabs
+        FilterTabsRow(
+            selectedTab = selectedTab,
+            onTabChange = onTabChange
+        )
+
+        // Quick Filters Grid Section
+        QuickFiltersSection(
+            selectedFilters = selectedFilters,
+            onFiltersChange = onFiltersChange
+        )
+    }
+}
+
+@Composable
+private fun FilterTabsRow(
+    selectedTab: String,
+    onTabChange: (String) -> Unit
+) {
+    val tabs = listOf(
+        "all" to LocalizationManager.getString("tour_filter_all"),
+        "domestic" to LocalizationManager.getString("tour_filter_domestic"),
+        "international" to LocalizationManager.getString("tour_filter_international"),
+        "weekend" to LocalizationManager.getString("tour_filter_weekend"),
+        "long_trip" to LocalizationManager.getString("tour_filter_long_trip")
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .clip(RoundedCornerShape(bottomStart = 0.dp, bottomEnd = 0.dp)),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        tabs.forEachIndexed { _, pair ->
+            val (tabId, tabLabel) = pair
+            FilterTab(
+                label = tabLabel,
+                isSelected = selectedTab == tabId,
+                onClick = { onTabChange(tabId) }
+            )
+        }
+    }
+
+    // Bottom border for filter tabs
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(AppColors.Border)
+    )
+}
+
+@Composable
+private fun FilterTab(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Text(
+        text = label,
+        modifier = Modifier
+            .border(
+                1.dp,
+                if (isSelected) AppColors.Primary else AppColors.Border,
+                RoundedCornerShape(8.dp)
+            )
+            .background(
+                if (isSelected) AppColors.Primary else Color.White,
+                RoundedCornerShape(8.dp)
+            )
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        fontSize = 15.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = if (isSelected) Color.White else AppColors.TextSecondary
+    )
+}
+
+@Composable
+private fun QuickFiltersSection(
+    selectedFilters: Set<String>,
+    onFiltersChange: (Set<String>) -> Unit
+) {
+    val filters = listOf(
+        "beach" to "🏖️",
+        "mountain" to "⛰️",
+        "city" to "🏙️",
+        "adventure" to "🎯",
+        "cultural" to "🏛️",
+        "food" to "🍜",
+        "shopping" to "🛍️",
+        "relaxation" to "🧘"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(16.dp)
+            .border(1.dp, AppColors.Border, RoundedCornerShape(8.dp))
+            .padding(12.dp)
+    ) {
+        Text(
+            text = LocalizationManager.getString("tour_filter_interests"),
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Bold,
+            color = AppColors.TextPrimary,
+            modifier = Modifier.padding(bottom = 10.dp)
+        )
+
+        // Grid layout with 4 columns
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Section title
-            Text(
-                text = "🔍 Bộ lọc",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF222222)
-            )
-
-            // Duration filter
-            Text(
-                text = "Thời lượng",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF666666)
-            )
-
+            // First row: 4 items
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf("3N2Đ", "4N3Đ", "5N4Đ", "7N6Đ", "10N+").forEach { duration ->
-                    FilterChip(
-                        selected = selectedDuration == duration,
+                filters.take(4).forEachIndexed { _, pair ->
+                    val (filterId, emoji) = pair
+                    QuickFilterItem(
+                        filterId = filterId,
+                        emoji = emoji,
+                        isSelected = selectedFilters.contains(filterId),
                         onClick = {
-                            selectedDuration = if (selectedDuration == duration) null else duration
-                            onFilterChanged(
-                                mapOf(
-                                    "duration" to (selectedDuration ?: ""),
-                                    "priceRange" to (selectedPriceRange ?: ""),
-                                    "type" to (selectedType ?: "")
-                                )
-                            )
+                            val newFilters = selectedFilters.toMutableSet()
+                            if (newFilters.contains(filterId)) {
+                                newFilters.remove(filterId)
+                            } else {
+                                newFilters.add(filterId)
+                            }
+                            onFiltersChange(newFilters)
                         },
-                        label = { Text(duration, fontSize = 12.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = AppColors.Primary,
-                            selectedLabelColor = Color.White,
-                            containerColor = Color(0xFFF5F5F5),
-                            labelColor = Color(0xFF666666)
-                        )
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
 
-            // Price range filter
-            Text(
-                text = "Khoảng giá",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF666666)
-            )
-
+            // Second row: 4 items
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf("< 5tr", "5-10tr", "10-20tr", "20-50tr", "> 50tr").forEach { range ->
-                    FilterChip(
-                        selected = selectedPriceRange == range,
+                filters.drop(4).take(4).forEachIndexed { _, pair ->
+                    val (filterId, emoji) = pair
+                    QuickFilterItem(
+                        filterId = filterId,
+                        emoji = emoji,
+                        isSelected = selectedFilters.contains(filterId),
                         onClick = {
-                            selectedPriceRange = if (selectedPriceRange == range) null else range
-                            onFilterChanged(
-                                mapOf(
-                                    "duration" to (selectedDuration ?: ""),
-                                    "priceRange" to (selectedPriceRange ?: ""),
-                                    "type" to (selectedType ?: "")
-                                )
-                            )
+                            val newFilters = selectedFilters.toMutableSet()
+                            if (newFilters.contains(filterId)) {
+                                newFilters.remove(filterId)
+                            } else {
+                                newFilters.add(filterId)
+                            }
+                            onFiltersChange(newFilters)
                         },
-                        label = { Text(range, fontSize = 12.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = AppColors.Primary,
-                            selectedLabelColor = Color.White,
-                            containerColor = Color(0xFFF5F5F5),
-                            labelColor = Color(0xFF666666)
-                        )
-                    )
-                }
-            }
-
-            // Tour type filter
-            Text(
-                text = "Loại tour",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF666666)
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                listOf("Trong nước", "Nước ngoài", "Du thuyền", "Trekking", "Nghỉ dưỡng").forEach { type ->
-                    FilterChip(
-                        selected = selectedType == type,
-                        onClick = {
-                            selectedType = if (selectedType == type) null else type
-                            onFilterChanged(
-                                mapOf(
-                                    "duration" to (selectedDuration ?: ""),
-                                    "priceRange" to (selectedPriceRange ?: ""),
-                                    "type" to (selectedType ?: "")
-                                )
-                            )
-                        },
-                        label = { Text(type, fontSize = 12.sp) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = AppColors.Primary,
-                            selectedLabelColor = Color.White,
-                            containerColor = Color(0xFFF5F5F5),
-                            labelColor = Color(0xFF666666)
-                        )
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun QuickFilterItem(
+    filterId: String,
+    emoji: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .border(
+                1.dp,
+                if (isSelected) AppColors.Primary else AppColors.Border,
+                RoundedCornerShape(8.dp)
+            )
+            .background(
+                if (isSelected) Color(0xFFF0F7FF) else Color.White,
+                RoundedCornerShape(8.dp)
+            )
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp, horizontal = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = emoji,
+            fontSize = 24.sp,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        Text(
+            text = LocalizationManager.getString("tour_filter_$filterId"),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = if (isSelected) AppColors.Primary else AppColors.TextSecondary,
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+fun BottomSortBar(
+    selectedSort: String,
+    onSortChange: (String) -> Unit
+) {
+    var showSortDropdown by remember { mutableStateOf(false) }
+    
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(16.dp)
+            .border(1.dp, AppColors.Border, RoundedCornerShape(8.dp))
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = LocalizationManager.getString("tour_sort_by"),
+            fontSize = 14.sp,
+            color = AppColors.TextSecondary
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Box {
+            Text(
+                text = when (selectedSort) {
+                    "recent" -> LocalizationManager.getString("tour_sort_recent")
+                    "popular" -> LocalizationManager.getString("tour_sort_popular")
+                    "price_low" -> LocalizationManager.getString("tour_sort_price_low")
+                    "price_high" -> LocalizationManager.getString("tour_sort_price_high")
+                    else -> LocalizationManager.getString("tour_sort_recent")
+                },
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = AppColors.TextPrimary,
+                modifier = Modifier
+                    .border(1.dp, AppColors.Border, RoundedCornerShape(6.dp))
+                    .background(Color.White, RoundedCornerShape(6.dp))
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                    .clickable { showSortDropdown = !showSortDropdown }
+            )
+            
+            // Dropdown menu
+            if (showSortDropdown) {
+                Popup(
+                    onDismissRequest = { showSortDropdown = false },
+                    properties = PopupProperties(focusable = true)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .border(1.dp, AppColors.Border, RoundedCornerShape(6.dp))
+                            .background(Color.White, RoundedCornerShape(6.dp))
+                            .padding(2.dp)
+                            .widthIn(min = 120.dp)
+                    ) {
+                        SortOption(
+                            text = LocalizationManager.getString("tour_sort_recent"),
+                            isSelected = selectedSort == "recent",
+                            onClick = {
+                                onSortChange("recent")
+                                showSortDropdown = false
+                            }
+                        )
+                        
+                        SortOption(
+                            text = LocalizationManager.getString("tour_sort_popular"),
+                            isSelected = selectedSort == "popular",
+                            onClick = {
+                                onSortChange("popular")
+                                showSortDropdown = false
+                            }
+                        )
+                        
+                        SortOption(
+                            text = LocalizationManager.getString("tour_sort_price_low"),
+                            isSelected = selectedSort == "price_low",
+                            onClick = {
+                                onSortChange("price_low")
+                                showSortDropdown = false
+                            }
+                        )
+                        
+                        SortOption(
+                            text = LocalizationManager.getString("tour_sort_price_high"),
+                            isSelected = selectedSort == "price_high",
+                            onClick = {
+                                onSortChange("price_high")
+                                showSortDropdown = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SortOption(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Text(
+        text = text,
+        fontSize = 13.sp,
+        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+        color = if (isSelected) AppColors.Primary else AppColors.TextPrimary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+    )
 }

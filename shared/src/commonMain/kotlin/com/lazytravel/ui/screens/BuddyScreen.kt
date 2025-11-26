@@ -3,7 +3,6 @@ package com.lazytravel.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -18,7 +17,6 @@ import com.lazytravel.ui.components.sections.buddies.BuddyHotSection
 import com.lazytravel.ui.components.sections.buddies.BuddyNormalSection
 import com.lazytravel.ui.components.sections.buddies.BuddyLuxurySection
 import com.lazytravel.ui.components.sections.buddies.BuddyStatsSection
-import kotlinx.coroutines.launch
 
 @Composable
 fun BuddyScreen(
@@ -43,20 +41,12 @@ fun BuddyScreen(
 
     // LazyListState for scrolling
     val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
 
-    // Track when filter changes to scroll to BuddyNormalSection
-    LaunchedEffect(selectedTab, selectedFilters, selectedSort, searchQuery, filterMinCost, filterMaxCost, filterMonth, filterYear) {
-        // Only scroll if user has interacted with filters (not on first load)
-        if (selectedTab != "all" || selectedFilters.isNotEmpty() || selectedSort != "recent" ||
-            searchQuery.isNotEmpty() || filterMinCost.isNotEmpty() ||
-            filterMaxCost.isNotEmpty() || filterMonth.isNotEmpty() || filterYear.isNotEmpty()) {
-            // Scroll to item index 3 (Stats=0, Filter=1, Content=2, BuddyNormal inside=3)
-            coroutineScope.launch {
-                listState.animateScrollToItem(2) // Scroll to content section
-            }
-        }
-    }
+    // Determine if filters are active (excluding sort to keep Hot/Luxury visible)
+    val hasActiveFilters = selectedTab != "all" || selectedFilters.isNotEmpty() ||
+        searchQuery.isNotEmpty() ||
+        filterMinCost.isNotEmpty() || filterMaxCost.isNotEmpty() ||
+        filterMonth.isNotEmpty() || filterYear.isNotEmpty()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -81,16 +71,24 @@ fun BuddyScreen(
                     selectedTab = selectedTab,
                     onTabChange = { selectedTab = it },
                     selectedFilters = selectedFilters,
-                    onFiltersChange = { selectedFilters = it },
-                    selectedSort = selectedSort,
-                    onSortChange = { selectedSort = it }
+                    onFiltersChange = { selectedFilters = it }
                 )
             }
 
             // Content Sections - each manages its own loading state
             item(key = "content") {
-                BuddyHotSection(onNavigateToDetail = onNavigateToDetail)
-                BuddyLuxurySection(onNavigateToDetail = onNavigateToDetail)
+                // Hide Hot and Luxury sections when filters are active
+                if (!hasActiveFilters) {
+                    BuddyHotSection(
+                        onJoinClick = { onNavigateToDetail("placeholder") },
+                        onViewAllClick = { }
+                    )
+                    BuddyLuxurySection(
+                        onJoinClick = { onNavigateToDetail("placeholder") },
+                        onViewAllClick = { }
+                    )
+                }
+
                 BuddyNormalSection(
                     filterTab = selectedTab,
                     filterInterests = selectedFilters,
@@ -100,7 +98,8 @@ fun BuddyScreen(
                     filterMaxCost = filterMaxCost,
                     filterMonth = filterMonth,
                     filterYear = filterYear,
-                    onNavigateToDetail = onNavigateToDetail
+                    onNavigateToDetail = onNavigateToDetail,
+                    onSortChange = { selectedSort = it }
                 )
             }
         }

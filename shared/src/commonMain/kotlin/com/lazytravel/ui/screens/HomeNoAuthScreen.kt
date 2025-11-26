@@ -7,8 +7,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.lazytravel.ui.components.sections.BlogSection
-import com.lazytravel.ui.components.sections.BuddySection
-import com.lazytravel.ui.components.sections.DestinationSection
+import com.lazytravel.ui.components.sections.buddies.BuddyHotSection
+import com.lazytravel.ui.components.sections.PlaceSection
 import com.lazytravel.ui.components.sections.FeaturesSection
 import com.lazytravel.ui.components.sections.FeedSection
 import com.lazytravel.ui.components.sections.HeroSection
@@ -25,7 +25,7 @@ fun HomeNoAuthScreen(
     onNavigateToSignIn: () -> Unit,
     onNavigateToSignUp: () -> Unit = {},
     onNavigateToBuddies: () -> Unit = {},
-    onNavigateToDestinations: () -> Unit = {},
+    onNavigateToPlaces: () -> Unit = {},
     onNavigateToTours: () -> Unit = {},
     onNavigateToBlogs: () -> Unit = {}
 ) {
@@ -50,19 +50,19 @@ fun HomeNoAuthScreen(
 
         ReviewsSection()
 
-        BuddySection(
+        BuddyHotSection(
             onJoinClick = {
                 onNavigateToSignIn()
             },
             onViewAllClick = onNavigateToBuddies
         )
 
-        DestinationSection(
+        PlaceSection(
 
-            onDestinationClick = {
+            onPlaceClick = {
                 onNavigateToSignIn()
             },
-            onViewAllClick = onNavigateToDestinations
+            onViewAllClick = onNavigateToPlaces
         )
 
         TourSection(

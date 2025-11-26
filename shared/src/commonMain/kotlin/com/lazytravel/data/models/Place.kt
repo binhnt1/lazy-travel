@@ -17,8 +17,23 @@ data class Place(
     val longitude: Double = 0.0,
     val placeType: String = PlaceType.OTHER.name,
     val rating: Double = 0.0,
-    val photoUrl: String = "",
-    val checkInsCount: Int = 0
+    val images: List<String> = emptyList(),
+    val checkInsCount: Int = 0,
+
+    // Fields from Destination (for popular destinations)
+    val emoji: String = "",                // banner emoji (🏖️, ⛰️, 🌸)
+    val badgeType: String = "",            // TRENDING, BEST_SEASON, ADVENTURE, etc
+    val badgeText: String = "",            // e.g., "🔥 Trending #1", "❄️ Mùa đẹp nhất"
+    val viewersCount: Int = 0,             // e.g., 156
+    val reviewsCount: Int = 0,             // e.g., 1200
+    val tripsCount: Int = 0,               // e.g., 1234
+    val costRange: String = "",            // e.g., "3-5tr"
+    val temperature: String = "",          // e.g., "🌡️ 28°C"
+    val tripDuration: String = "",         // e.g., "2-4 ngày"
+    val highlights: List<String> = emptyList(), // e.g., ["🏖️ Biển đẹp", "🤿 Lặn biển"]
+    val bestSeasonEmoji: String = "",      // e.g., "❄️" for winter, "🌸" for spring
+    val bestSeasonName: String = "",       // e.g., "Mùa đông", "Mùa xuân"
+    val isDestination: Boolean = false     // true if this is a major destination (featured)
 ) : BaseModel() {
 
     override fun serializeToJson(item: BaseModel): String {
@@ -38,8 +53,23 @@ data class Place(
         number("longitude") { required = true }
         text("placeType") { required = true; max = 50 }
         number("rating") { required = false }
-        text("photoUrl") { required = false; max = 500 }
+        json("images") { required = false }
         number("checkInsCount") { required = false; onlyInt = true }
+
+        // Destination fields
+        text("emoji") { required = false; max = 10 }
+        text("badgeType") { required = false; max = 50 }
+        text("badgeText") { required = false; max = 100 }
+        number("viewersCount") { required = false; min = 0.0; onlyInt = true }
+        number("reviewsCount") { required = false; min = 0.0; onlyInt = true }
+        number("tripsCount") { required = false; min = 0.0; onlyInt = true }
+        text("costRange") { required = false; max = 50 }
+        text("temperature") { required = false; max = 50 }
+        text("tripDuration") { required = false; max = 50 }
+        json("highlights") { required = false }
+        text("bestSeasonEmoji") { required = false; max = 10 }
+        text("bestSeasonName") { required = false; max = 100 }
+        bool("isDestination") { required = false }
     }
 
     override suspend fun getSeedData(): List<Place> {
@@ -58,7 +88,11 @@ data class Place(
                 longitude = 105.8542,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.8,
-                photoUrl = "https://images.unsplash.com/photo-1555880679-c2d074c4f026?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1555880679-c2d074c4f026?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 5200
             ),
             Place(
@@ -69,7 +103,10 @@ data class Place(
                 longitude = 105.8355,
                 placeType = PlaceType.TEMPLE.name,
                 rating = 4.7,
-                photoUrl = "https://images.unsplash.com/photo-1555880679-c2d074c4f026?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1555880679-c2d074c4f026?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 3800
             ),
             Place(
@@ -80,7 +117,10 @@ data class Place(
                 longitude = 105.8490,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.6,
-                photoUrl = "https://images.unsplash.com/photo-1555880679-c2d074c4f026?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1555880679-c2d074c4f026?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 6500
             ),
 
@@ -93,7 +133,10 @@ data class Place(
                 longitude = 106.6990,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.5,
-                photoUrl = "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 4200
             ),
             Place(
@@ -104,7 +147,10 @@ data class Place(
                 longitude = 106.6980,
                 placeType = PlaceType.OTHER.name,
                 rating = 4.3,
-                photoUrl = "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 7800
             ),
             Place(
@@ -115,7 +161,9 @@ data class Place(
                 longitude = 106.6955,
                 placeType = PlaceType.MUSEUM.name,
                 rating = 4.6,
-                photoUrl = "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 3500
             ),
 
@@ -128,7 +176,10 @@ data class Place(
                 longitude = 108.2279,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.7,
-                photoUrl = "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 5600
             ),
             Place(
@@ -139,7 +190,9 @@ data class Place(
                 longitude = 108.2590,
                 placeType = PlaceType.TEMPLE.name,
                 rating = 4.8,
-                photoUrl = "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 3456
             ),
             Place(
@@ -150,7 +203,10 @@ data class Place(
                 longitude = 108.2425,
                 placeType = PlaceType.BEACH.name,
                 rating = 4.9,
-                photoUrl = "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 8900
             ),
 
@@ -163,7 +219,10 @@ data class Place(
                 longitude = 108.3380,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.9,
-                photoUrl = "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 5678
             ),
             Place(
@@ -174,7 +233,9 @@ data class Place(
                 longitude = 108.3276,
                 placeType = PlaceType.TEMPLE.name,
                 rating = 4.8,
-                photoUrl = "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 4200
             ),
             Place(
@@ -185,7 +246,10 @@ data class Place(
                 longitude = 108.3425,
                 placeType = PlaceType.BEACH.name,
                 rating = 4.7,
-                photoUrl = "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 3800
             ),
 
@@ -198,7 +262,10 @@ data class Place(
                 longitude = 109.2475,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.6,
-                photoUrl = "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 9500
             ),
             Place(
@@ -209,7 +276,9 @@ data class Place(
                 longitude = 109.1967,
                 placeType = PlaceType.BEACH.name,
                 rating = 4.7,
-                photoUrl = "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 7200
             ),
             Place(
@@ -220,7 +289,9 @@ data class Place(
                 longitude = 109.1961,
                 placeType = PlaceType.TEMPLE.name,
                 rating = 4.5,
-                photoUrl = "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 3100
             ),
 
@@ -233,7 +304,10 @@ data class Place(
                 longitude = 108.4583,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.5,
-                photoUrl = "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 1234
             ),
             Place(
@@ -244,7 +318,9 @@ data class Place(
                 longitude = 108.4345,
                 placeType = PlaceType.PARK.name,
                 rating = 4.6,
-                photoUrl = "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 4500
             ),
             Place(
@@ -255,7 +331,9 @@ data class Place(
                 longitude = 108.4505,
                 placeType = PlaceType.PARK.name,
                 rating = 4.4,
-                photoUrl = "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 2800
             ),
 
@@ -268,7 +346,10 @@ data class Place(
                 longitude = 107.5780,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.8,
-                photoUrl = "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 6200
             ),
             Place(
@@ -279,7 +360,9 @@ data class Place(
                 longitude = 107.6424,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.7,
-                photoUrl = "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 3900
             ),
             Place(
@@ -290,7 +373,9 @@ data class Place(
                 longitude = 107.5534,
                 placeType = PlaceType.TEMPLE.name,
                 rating = 4.6,
-                photoUrl = "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 3300
             ),
 
@@ -303,7 +388,10 @@ data class Place(
                 longitude = 103.9694,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.6,
-                photoUrl = "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 8901
             ),
             Place(
@@ -314,7 +402,9 @@ data class Place(
                 longitude = 103.9983,
                 placeType = PlaceType.BEACH.name,
                 rating = 4.8,
-                photoUrl = "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 5400
             ),
             Place(
@@ -325,7 +415,9 @@ data class Place(
                 longitude = 103.9613,
                 placeType = PlaceType.TEMPLE.name,
                 rating = 4.4,
-                photoUrl = "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1578986849445-9d0e4c7c4a1e?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 2100
             ),
 
@@ -338,7 +430,10 @@ data class Place(
                 longitude = 100.4913,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.9,
-                photoUrl = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 12000
             ),
             Place(
@@ -349,7 +444,9 @@ data class Place(
                 longitude = 100.4887,
                 placeType = PlaceType.TEMPLE.name,
                 rating = 4.8,
-                photoUrl = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 8900
             ),
 
@@ -362,7 +459,10 @@ data class Place(
                 longitude = 139.7454,
                 placeType = PlaceType.TOURIST_ATTRACTION.name,
                 rating = 4.7,
-                photoUrl = "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 15000
             ),
             Place(
@@ -373,8 +473,98 @@ data class Place(
                 longitude = 139.7967,
                 placeType = PlaceType.TEMPLE.name,
                 rating = 4.8,
-                photoUrl = "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop",
+                images = listOf(
+                    "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop"
+                ),
                 checkInsCount = 11000
+            ),
+
+            // ========== FEATURED DESTINATIONS (from Destination model) ==========
+            // These are major destinations with full destination info
+
+            Place(
+                name = "Nha Trang",
+                address = "Nha Trang City",
+                cityId = cityMap["Nha Trang"]?.id ?: "",
+                latitude = 12.2388,
+                longitude = 109.1967,
+                placeType = PlaceType.BEACH.name,
+                rating = 4.8,
+                images = listOf(
+                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1569163139394-de4798aa62b6?w=800&h=600&fit=crop"
+                ),
+                checkInsCount = 5600,
+                emoji = "🏖️",
+                badgeType = "TRENDING",
+                badgeText = "🔥 Trending #1",
+                viewersCount = 156,
+                reviewsCount = 1200,
+                tripsCount = 1234,
+                costRange = "3-5tr",
+                temperature = "🌡️ 28°C",
+                tripDuration = "2-4 ngày",
+                highlights = listOf("🏖️ Biển đẹp", "🤿 Lặn biển", "🍜 Ẩm thực", "🌊 Hoạt động nước", "🏝️ Đảo"),
+                bestSeasonEmoji = "☀️",
+                bestSeasonName = "Hè",
+                isDestination = true
+            ),
+
+            Place(
+                name = "Đà Lạt",
+                address = "Đà Lạt City",
+                cityId = cityMap["Da Lat"]?.id ?: "",
+                latitude = 11.9404,
+                longitude = 108.4583,
+                placeType = PlaceType.TOURIST_ATTRACTION.name,
+                rating = 4.9,
+                images = listOf(
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop"
+                ),
+                checkInsCount = 4500,
+                emoji = "⛰️",
+                badgeType = "BEST_SEASON",
+                badgeText = "❄️ Mùa đẹp nhất",
+                viewersCount = 89,
+                reviewsCount = 987,
+                tripsCount = 987,
+                costRange = "2-4tr",
+                temperature = "🌡️ 18°C",
+                tripDuration = "2-3 ngày",
+                highlights = listOf("🌸 Hoa", "☕ Cà phê", "🏞️ Thiên nhiên", "🏔️ Đồi núi", "🍓 Dâu tây"),
+                bestSeasonEmoji = "❄️",
+                bestSeasonName = "Mùa đông",
+                isDestination = true
+            ),
+
+            Place(
+                name = "Sapa",
+                address = "Sa Pa, Lào Cai",
+                cityId = cityMap["Hanoi"]?.id ?: "", // Use Hanoi as closest major city
+                latitude = 22.3364,
+                longitude = 103.8438,
+                placeType = PlaceType.TOURIST_ATTRACTION.name,
+                rating = 4.7,
+                images = listOf(
+                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop",
+                    "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800&h=600&fit=crop"
+                ),
+                checkInsCount = 3200,
+                emoji = "🌸",
+                badgeType = "ADVENTURE",
+                badgeText = "🏔️ Phiêu lưu",
+                viewersCount = 67,
+                reviewsCount = 756,
+                tripsCount = 756,
+                costRange = "3-6tr",
+                temperature = "🌡️ 15°C",
+                tripDuration = "3-4 ngày",
+                highlights = listOf("🥾 Trekking", "🌾 Ruộng bậc thang", "🏔️ Fansipan", "🌄 Bình minh", "👥 Dân tộc"),
+                bestSeasonEmoji = "🌸",
+                bestSeasonName = "Mùa xuân",
+                isDestination = true
             )
         )
     }

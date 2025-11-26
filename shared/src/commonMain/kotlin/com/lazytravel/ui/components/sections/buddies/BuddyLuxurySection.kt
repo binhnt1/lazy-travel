@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun BuddyLuxurySection(
-    onNavigateToDetail: (String) -> Unit = {}
+    onJoinClick: () -> Unit = {},
+    onViewAllClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val buddyRepo = remember { BaseRepository<Buddy>() }
@@ -35,7 +36,7 @@ fun BuddyLuxurySection(
                 page = 1,
                 perPage = 10,
                 sort = "-startDate",
-                expand = "userId,cityId,cityId.countryId,buddyreviews_via_buddy",
+                expand = "userId,cityId,cityId.countryId,placeId,buddyreviews_via_buddy",
                 filter = "tags ~ '✨ LUXURY'",
             ).fold(
                 onSuccess = { fetchedBuddies ->
@@ -75,7 +76,7 @@ fun BuddyLuxurySection(
                 ) {
                     Text(
                         text = "💎 LUXURY",
-                        fontSize = 10.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFFD4AF37), // Gold
                         letterSpacing = 2.sp
@@ -84,14 +85,14 @@ fun BuddyLuxurySection(
                     Row {
                         Text(
                             text = LocalizationManager.getString("buddy_luxury_title"),
-                            fontSize = 24.sp,
+                            fontSize = 26.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.White
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "& Đẳng Cấp",
-                            fontSize = 24.sp,
+                            fontSize = 26.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color(0xFF4FACFE), // Blue accent
                             fontStyle = FontStyle.Italic
@@ -118,7 +119,7 @@ fun BuddyLuxurySection(
                     items(buddies) { buddy ->
                         BuddyLuxuryCard(
                             buddy = buddy,
-                            onClick = { onNavigateToDetail(buddy.id) }
+                            onClick = { onJoinClick() }
                         )
                     }
                 }
@@ -152,4 +153,3 @@ fun BuddyLuxurySection(
         }
     }
 }
-

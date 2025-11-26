@@ -249,7 +249,7 @@ fun TourDetailScreen(
                         )
                         TourInfoChip(
                             icon = "📍",
-                            label = tour.expandedCity?.name ?: "Destination",
+                            label = tour.expandedCity?.name ?: "Place",
                             modifier = Modifier.weight(1f)
                         )
                     }

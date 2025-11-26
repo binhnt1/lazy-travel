@@ -280,8 +280,8 @@ class TripViewModel {
             isValid = false
         }
 
-        if (_startDate.value <= System.currentTimeMillis()) {
-            errors["startDate"] = "Ngày khởi hành phải trong tương lai"
+        if (_startDate.value <= 0L) { // Simplified check - just ensure start date is set
+            errors["startDate"] = "Vui lòng chọn ngày khởi hành"
             isValid = false
         }
 

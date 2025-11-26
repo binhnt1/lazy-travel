@@ -11,42 +11,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.lazytravel.core.i18n.localizedString
 import com.lazytravel.data.base.BaseRepository
-import com.lazytravel.data.models.Buddy
-import com.lazytravel.ui.components.cards.buddies.BuddyCard
+import com.lazytravel.data.models.Place
 import com.lazytravel.ui.theme.AppColors
+import com.lazytravel.ui.components.cards.PlaceCard
 import kotlinx.coroutines.launch
 
-
 @Composable
-fun BuddySection(
+fun PlaceSection(
     modifier: Modifier = Modifier,
-    onJoinClick: (Buddy) -> Unit = {},
+    onPlaceClick: (Place) -> Unit = {},
     onViewAllClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    val buddyRepo = remember { BaseRepository<Buddy>() }
+    val placeRepo = remember { BaseRepository<Place>() }
+    var places by remember { mutableStateOf<List<Place>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
-    var buddies by remember { mutableStateOf<List<Buddy>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         scope.launch {
-            buddyRepo.getRecords<Buddy>(
-                page = 1,
-                perPage = 10,
-                sort = "-startDate",
-                filter = "status='AVAILABLE' || status='URGENT'",
-                expand = "userId,cityId,cityId.countryId,buddyreviews_via_buddy"
-            ).fold(
-                onSuccess = { fetchedBuddies ->
-                    fetchedBuddies.forEach { buddy ->
-                        buddy.populateExpandedData()
-                    }
-                    buddies = fetchedBuddies
+            placeRepo.getRecords<Place>().fold(
+                onSuccess = { fetchedPlaces ->
+                    // Filter to only show places marked as destinations
+                    places = fetchedPlaces.filter { it.isDestination }.take(10)
                     isLoading = false
                 },
-                onFailure = { exception ->
-                    exception.printStackTrace()
+                onFailure = { _ ->
                     isLoading = false
                 }
             )
@@ -80,26 +71,26 @@ fun BuddySection(
             ) {
                 Surface(
                     shape = RoundedCornerShape(6.dp),
-                    color = Color(0xFFE8F5E9)
+                    color = Color(0xFFFFEBEE)
                 ) {
                     Text(
-                        text = "👥 CỘNG ĐỒNG",
+                        text = localizedString("hot_tag"),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF2E7D32),
+                        color = Color(0xFFC62828),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Tìm bạn đồng hành",
+                    text = localizedString("destination_section_title"),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = AppColors.TextPrimary
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Kết nối với người có cùng sở thích",
+                    text = localizedString("destination_section_subtitle"),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF666666)
                 )
@@ -111,7 +102,7 @@ fun BuddySection(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(400.dp),
+                        .height(380.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(color = AppColors.Primary)
@@ -122,10 +113,9 @@ fun BuddySection(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(buddies) { buddy ->
-                        BuddyCard(
-                            buddy = buddy,
-                            onJoinClick = { onJoinClick(buddy) },
+                    items(places) { place ->
+                        PlaceCard(
+                            place = place,
                             modifier = Modifier.width(290.dp)
                         )
                     }
@@ -145,7 +135,7 @@ fun BuddySection(
                     shape = RoundedCornerShape(6.dp)
                 ) {
                     Text(
-                        text = "Xem tất cả →",
+                        text = localizedString("view_all"),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = AppColors.Primary

@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.datetime.*
+import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,7 +113,10 @@ fun DateDurationPicker(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 private fun formatDate(timestamp: Long): String {
-    val sdf = SimpleDateFormat("dd MMM, yyyy", Locale("vi"))
-    return sdf.format(Date(timestamp))
+    val instant = Instant.fromEpochMilliseconds(timestamp)
+    val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    val monthNames = listOf("Thg1", "Thg2", "Thg3", "Thg4", "Thg5", "Thg6", "Thg7", "Thg8", "Thg9", "Thg10", "Thg11", "Thg12")
+    return "${dateTime.dayOfMonth} ${monthNames[dateTime.monthNumber - 1]}, ${dateTime.year}"
 }

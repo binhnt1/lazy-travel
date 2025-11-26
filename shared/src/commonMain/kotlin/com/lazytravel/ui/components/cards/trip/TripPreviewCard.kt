@@ -8,8 +8,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lazytravel.ui.screens.trip.DestinationInput
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.datetime.*
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun TripPreviewCard(
@@ -171,14 +171,18 @@ private fun PreviewItem(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 private fun formatDate(timestamp: Long): String {
     if (timestamp == 0L) return "Chưa chọn"
-    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale("vi"))
-    return sdf.format(Date(timestamp))
+    val instant = Instant.fromEpochMilliseconds(timestamp)
+    val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${dateTime.dayOfMonth.toString().padStart(2, '0')}/${dateTime.monthNumber.toString().padStart(2, '0')}/${dateTime.year}"
 }
 
+@OptIn(ExperimentalTime::class)
 private fun formatDateTime(timestamp: Long): String {
     if (timestamp == 0L) return "Chưa chọn"
-    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("vi"))
-    return sdf.format(Date(timestamp))
+    val instant = Instant.fromEpochMilliseconds(timestamp)
+    val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${dateTime.dayOfMonth.toString().padStart(2, '0')}/${dateTime.monthNumber.toString().padStart(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padStart(2, '0')}:${dateTime.minute.toString().padStart(2, '0')}"
 }
