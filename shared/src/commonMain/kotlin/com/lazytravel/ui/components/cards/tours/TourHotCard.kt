@@ -47,6 +47,11 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.clickable
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -57,6 +62,7 @@ fun TourHotCard(
     onFavoriteClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    var showImageViewer by remember { mutableStateOf(false) }
     Card(
         onClick = onClick,
         modifier = modifier.width(280.dp),
@@ -77,9 +83,14 @@ fun TourHotCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
+                    .clickable {
+                        if (tour.allImages.isNotEmpty()) {
+                            showImageViewer = true
+                        }
+                    }
             ) {
-                // Background image
-                val bgImage = tour.images?.firstOrNull() ?: ""; if (bgImage.isNotEmpty()) {
+                // Background image from cardImages
+                val bgImage = tour.cardImages.firstOrNull() ?: ""; if (bgImage.isNotEmpty()) {
                     AsyncImage(
                         model = bgImage,
                         contentDescription = tour.name,
@@ -437,6 +448,77 @@ fun TourHotCard(
                         )
                     }
                 }
+            }
+        }
+    }
+
+    // Image viewer dialog
+    if (showImageViewer) {
+        ImageViewerDialog(
+            images = tour.allImages,
+            onDismiss = { showImageViewer = false }
+        )
+    }
+}
+
+@Composable
+private fun ImageViewerDialog(
+    images: List<String>,
+    onDismiss: () -> Unit
+) {
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column {
+                // Header
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Ảnh tour (${images.size})",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Surface(
+                        onClick = onDismiss,
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color(0xFFF5F5F5)
+                    ) {
+                        Text(
+                            text = "✕",
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                            fontSize = 18.sp,
+                            color = Color(0xFF666666)
+                        )
+                    }
+                }
+
+                // Images grid
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    images.forEach { imageUrl ->
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

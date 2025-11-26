@@ -40,7 +40,6 @@ data class Tour(
     // Pricing
     @EncodeDefault val currentPrice: Double = 0.0,
     @EncodeDefault val originalPrice: Double = 0.0,
-    @EncodeDefault val discount: Int = 0,
 
     // Rating
     @EncodeDefault val reviewCount: Int = 0,
@@ -112,6 +111,15 @@ data class Tour(
     // Get limited images for card display (6 images max)
     val cardImages: List<String>
         get() = allImages.take(6)
+
+    // Calculate discount percentage from prices
+    val discount: Int
+        get() {
+            if (originalPrice <= 0 || currentPrice >= originalPrice) {
+                return 0
+            }
+            return ((originalPrice - currentPrice) / originalPrice * 100).toInt()
+        }
 
     override fun serializeToJson(item: BaseModel): String {
         return json.encodeToString(serializer(), item as Tour)
@@ -227,7 +235,6 @@ data class Tour(
 
         number("currentPrice") { required = true; min = 0.0 }
         number("originalPrice") { required = false; min = 0.0 }
-        number("discount") { required = false; min = 0.0; max = 100.0; onlyInt = true }
 
         number("rating") { required = false; min = 0.0; max = 5.0 }
         number("reviewCount") { required = false; min = 0.0; onlyInt = true }
@@ -337,7 +344,6 @@ data class Tour(
                 maxGroupSize = 8,
                 currentPrice = 3750000.0,
                 originalPrice = 5000000.0,
-                discount = 25,
                 reviewCount = 234,
                 highlights = listOf("🏖️ Bãi biển đẹp", "🤿 Lặn biển ngắm san hô", "🍜 Ẩm thực hải sản"),
                 included = listOf("Xe đưa đón sân bay", "Khách sạn 3*", "Bữa sáng", "Hướng dẫn viên", "Bay VietJet Air"),
@@ -369,7 +375,6 @@ data class Tour(
                 maxGroupSize = 10,
                 currentPrice = 2800000.0,
                 originalPrice = 4000000.0,
-                discount = 30,
                 reviewCount = 456,
                 highlights = listOf("🏔️ Đỉnh Fansipan 3143m", "🏞️ Ruộng bậc thang", "🛖 Văn hóa H'Mông"),
                 included = listOf("Xe limousine VIP", "Khách sạn 4*", "Bữa sáng & tối", "Cáp treo Fansipan"),
@@ -401,7 +406,6 @@ data class Tour(
                 maxGroupSize = 12,
                 currentPrice = 7500000.0,
                 originalPrice = 10000000.0,
-                discount = 25,
                 reviewCount = 289,
                 highlights = listOf("🏰 Phố cổ Hội An", "🌉 Cầu Vàng Bà Nà", "🏖️ Biển Mỹ Khê", "🏨 Khách sạn 5*"),
                 included = listOf("Khách sạn 5*", "Bữa sáng & tối", "Vé Bà Nà Hills", "Hướng dẫn viên", "Xe VIP"),
@@ -433,7 +437,6 @@ data class Tour(
                 maxGroupSize = 15,
                 currentPrice = 1700000.0,
                 originalPrice = 2000000.0,
-                discount = 15,
                 reviewCount = 312,
                 highlights = listOf("🗻 Đỉnh Tà Xùa 2865m", "☁️ Săn mây lúc bình minh", "🚶 Trekking 6km"),
                 included = listOf("Xe đưa đón", "Homestay", "Bữa tối & sáng", "Hướng dẫn viên chuyên nghiệp"),
@@ -465,7 +468,6 @@ data class Tour(
                 maxGroupSize = 8,
                 currentPrice = 2200000.0,
                 originalPrice = 2750000.0,
-                discount = 20,
                 reviewCount = 178,
                 highlights = listOf("🌸 Vườn hoa Đà Lạt", "☕ Cà phê view đẹp", "🚡 Cáp treo Robin Hill"),
                 included = listOf("Khách sạn 4*", "Bữa sáng & tối", "Xe đưa đón sân bay"),
@@ -497,7 +499,6 @@ data class Tour(
                 maxGroupSize = 10,
                 currentPrice = 1500000.0,
                 originalPrice = 2000000.0,
-                discount = 25,
                 reviewCount = 267,
                 highlights = listOf("🏞️ Tràng An di sản", "🚣 Đò Tam Cốc", "🏯 Chùa Bái Đính"),
                 included = listOf("Xe đưa đón", "Khách sạn 3*", "Bữa trưa & tối", "Vé tham quan"),
@@ -522,7 +523,6 @@ data class Tour(
                     durationNights = 2,
                     currentPrice = 3750000.0,
                     originalPrice = 5000000.0,
-                    discount = 25,
                     reviewCount = 234,
                     tags = listOf("🔥 HOT", "Biển", "Resort")
                 )
