@@ -7,6 +7,7 @@ import com.lazytravel.data.base.collectionName
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.jsonArray
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
@@ -73,6 +74,46 @@ data class Tour(
     @kotlinx.serialization.Transient
     var expandedFlightProvider: FlightProvider? = null
 
+    @kotlinx.serialization.Transient
+    var rating: Double = 0.0
+
+    @kotlinx.serialization.Transient
+    var reviewsCount: Int = 0
+
+    @kotlinx.serialization.Transient
+    var totalCapacity: Int = 0
+
+    @kotlinx.serialization.Transient
+    var availableSlots: Int = 0
+
+    @kotlinx.serialization.Transient
+    var expandedParticipants: List<User> = emptyList()
+
+    // Get all images for this Tour, combining Tour images and Place images
+    val allImages: List<String>
+        get() {
+            val allImageList = mutableListOf<String>()
+
+            // Add Tour images first
+            if (!images.isNullOrEmpty()) {
+                allImageList.addAll(images)
+            }
+
+            // Add Place images as well
+            expandedPlace?.let { place ->
+                if (place.images.isNotEmpty()) {
+                    allImageList.addAll(place.images)
+                }
+            }
+
+            // Return combined list with all images
+            return allImageList
+        }
+
+    // Get limited images for card display (6 images max)
+    val cardImages: List<String>
+        get() = allImages.take(6)
+
     override fun serializeToJson(item: BaseModel): String {
         return json.encodeToString(serializer(), item as Tour)
     }
@@ -88,8 +129,12 @@ data class Tour(
 
         expandData["cityId"]?.let { cityJson ->
             try {
-                expandedCity = json.decodeFromJsonElement(City.serializer(), cityJson)
-            } catch (_: Exception) {}
+                val city = json.decodeFromJsonElement(City.serializer(), cityJson)
+                city.populateExpandedData()
+                expandedCity = city
+            } catch (e: Exception) {
+                println("❌ Tour: Failed to parse cityId: ${e.message}")
+            }
         }
 
         expandData["placeId"]?.let { placeJson ->
@@ -102,6 +147,40 @@ data class Tour(
             try {
                 expandedFlightProvider = json.decodeFromJsonElement(FlightProvider.serializer(), airlineJson)
             } catch (_: Exception) {}
+        }
+
+        // Parse reviews
+        expandData["tourreviews_via_tour"]?.let { reviewsJson ->
+            val reviews = reviewsJson.jsonArray.map {
+                json.decodeFromJsonElement(TourReview.serializer(), it)
+            }
+            reviewsCount = reviews.size
+            if (reviews.isNotEmpty()) {
+                rating = reviews.map { it.rating }.average()
+            }
+        }
+
+        // Parse participants
+        expandData["tourparticipant_via_tour"]?.let { participantsJson ->
+            val participants = participantsJson.jsonArray.mapNotNull {
+                try {
+                    val participant = json.decodeFromJsonElement(TourParticipant.serializer(), it)
+                    // Only get APPROVED participants
+                    if (participant.status == "APPROVED") {
+                        participant.expand?.get("userId")?.let { userJson ->
+                            json.decodeFromJsonElement(User.serializer(), userJson)
+                        }
+                    } else null
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            expandedParticipants = participants
+            totalCapacity = maxGroupSize
+            availableSlots = maxGroupSize - participants.sumOf {
+                // Get numberOfPeople from participant if available
+                1 // Default to 1 per participant if we can't get the actual count
+            }
         }
     }
 
