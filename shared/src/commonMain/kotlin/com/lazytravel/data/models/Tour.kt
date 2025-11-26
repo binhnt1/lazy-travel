@@ -320,194 +320,133 @@ data class Tour(
             return airlines.find { it.code == code }?.id ?: ""
         }
 
-        return listOf(
-            // HOT Tour 1 - With place and airline
-            Tour(
-                name = "Phú Quốc 3N2Đ - Khám phá đảo ngọc",
-                description = "Trải nghiệm thiên đường biển đảo với những bãi biển tuyệt đẹp và hoạt động vui chơi phong phú",
-                emoji = "🏖️",
-                thumbnailColor = "#4ECDC4",
-                images = listOf(
-                    "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
-                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800",
-                    "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800"
-                ),
-                tags = listOf("🔥 HOT", "Biển", "Nghỉ dưỡng", "Resort", "Gia đình"),
-                tourProviderId = findProvider("vietravel"),
-                cityId = findCity("phu-quoc"),
-                placeId = findPlace("bai-sao"), // Optional - has place
-                airlineId = findAirline("VJ"),   // Optional - has airline
-                visitedPlaces = listOf("Bãi Sao", "Vinpearl Land Phú Quốc", "Dinh Cậu", "Chợ đêm Phú Quốc"),
-                duration = 3,
-                durationNights = 2,
-                minGroupSize = 2,
-                maxGroupSize = 8,
-                currentPrice = 3750000.0,
-                originalPrice = 5000000.0,
-                reviewCount = 234,
-                highlights = listOf("🏖️ Bãi biển đẹp", "🤿 Lặn biển ngắm san hô", "🍜 Ẩm thực hải sản"),
-                included = listOf("Xe đưa đón sân bay", "Khách sạn 3*", "Bữa sáng", "Hướng dẫn viên", "Bay VietJet Air"),
-                excluded = listOf("Vé máy bay", "Chi phí cá nhân", "Tiền tip"),
-                languages = listOf("vi", "en"),
-                startDate = 1734220800000, // 2024-12-15
-                bookedCount = 2345
-            ),
+        // Tour templates data
+        val tourTemplates = listOf(
+            // Beach destinations
+            Triple("Phú Quốc", "phu-quoc", listOf("🏖️ Bãi biển đẹp", "🤿 Lặn biển", "🍜 Hải sản tươi")),
+            Triple("Nha Trang", "nha-trang", listOf("🏝️ Đảo đẹp", "🏊 Bơi lội", "🎢 Vinpearl")),
+            Triple("Đà Nẵng", "da-nang", listOf("🌉 Cầu Vàng", "🏖️ Bãi Mỹ Khê", "🏛️ Phố cổ Hội An")),
+            Triple("Vũng Tàu", "vung-tau", listOf("🏖️ Bãi Sau", "🗿 Tượng Chúa", "🍲 Bánh khọt")),
+            Triple("Quy Nhơn", "quy-nhon", listOf("🏖️ Kỳ Co", "🏝️ Eo Gió", "🌊 Biển xanh")),
 
-            // HOT Tour 2 - With place, no airline (land tour)
-            Tour(
-                name = "Sapa - Fansipan 4N3Đ từ Hà Nội",
-                description = "Chinh phục nóc nhà Đông Dương, khám phá văn hóa người dân tộc và ngắm nhìn cảnh sắc thiên nhiên hùng vĩ",
-                emoji = "🏔️",
-                thumbnailColor = "#667EEA",
-                images = listOf(
-                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800",
-                    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800"
-                ),
-                tags = listOf("🔥 HOT", "Núi", "Trekking", "Văn hóa", "Nhiếp ảnh"),
-                tourProviderId = findProvider("saigon-tourist"),
-                cityId = findCity("sapa"),
-                placeId = findPlace("dinh-fansipan"), // Optional - has place
-                airlineId = "", // No airline - land tour
-                visitedPlaces = listOf("Đỉnh Fansipan", "Bản Cát Cát", "Thác Bạc", "Cầu Kính Rồng Mây"),
-                duration = 4,
-                durationNights = 3,
-                minGroupSize = 2,
-                maxGroupSize = 10,
-                currentPrice = 2800000.0,
-                originalPrice = 4000000.0,
-                reviewCount = 456,
-                highlights = listOf("🏔️ Đỉnh Fansipan 3143m", "🏞️ Ruộng bậc thang", "🛖 Văn hóa H'Mông"),
-                included = listOf("Xe limousine VIP", "Khách sạn 4*", "Bữa sáng & tối", "Cáp treo Fansipan"),
-                excluded = listOf("Vé máy bay", "Chi phí cá nhân"),
-                languages = listOf("vi", "en"),
-                startDate = 1734652800000, // 2024-12-20
-                bookedCount = 1823
-            ),
+            // Mountain destinations
+            Triple("Sapa", "sapa", listOf("🏔️ Fansipan", "🏞️ Ruộng bậc thang", "🛖 Văn hóa H'Mông")),
+            Triple("Đà Lạt", "da-lat", listOf("🌸 Vườn hoa", "☕ Cà phê", "🌲 Thác Datanla")),
+            Triple("Mù Cang Chải", "mu-cang-chai", listOf("🌾 Ruộng bậc thang", "🏔️ Núi non", "📸 Check-in")),
+            Triple("Tam Đảo", "tam-dao", listOf("🌲 Rừng thông", "🏔️ Núi cao", "⛪ Nhà thờ đá")),
+            Triple("Mai Châu", "mai-chau", listOf("🏡 Nhà sàn", "🚴 Đạp xe", "🌾 Cánh đồng")),
 
-            // LUXURY Tour 1 - With place, no airline
-            Tour(
-                name = "Hội An - Đà Nẵng 5N4Đ Premium",
-                description = "Tour khám phá di sản miền Trung với phố cổ Hội An, bãi biển Đà Nẵng và cố đô Huế - Dịch vụ cao cấp",
-                emoji = "🏛️",
-                thumbnailColor = "#FF6B35",
-                images = listOf(
-                    "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800",
-                    "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800"
-                ),
-                tags = listOf("✨ LUXURY", "Văn hóa", "5 sao", "Biển", "Nhiếp ảnh"),
-                tourProviderId = findProvider("vietravel"),
-                cityId = findCity("da-nang"),
-                placeId = findPlace("pho-co-hoi-an"), // Optional - has place
-                airlineId = "", // No airline
-                visitedPlaces = listOf("Phố Cổ Hội An", "Cầu Rồng", "Bà Nà Hills", "Chùa Linh Ứng", "Bãi Biển Mỹ Khê"),
-                duration = 5,
-                durationNights = 4,
-                minGroupSize = 2,
-                maxGroupSize = 12,
-                currentPrice = 7500000.0,
-                originalPrice = 10000000.0,
-                reviewCount = 289,
-                highlights = listOf("🏰 Phố cổ Hội An", "🌉 Cầu Vàng Bà Nà", "🏖️ Biển Mỹ Khê", "🏨 Khách sạn 5*"),
-                included = listOf("Khách sạn 5*", "Bữa sáng & tối", "Vé Bà Nà Hills", "Hướng dẫn viên", "Xe VIP"),
-                excluded = listOf("Vé máy bay", "Chi phí cá nhân", "Tiền tip"),
-                languages = listOf("vi", "en", "ja"),
-                startDate = 1734825600000, // 2024-12-22
-                bookedCount = 945
-            ),
+            // City/Cultural
+            Triple("Hà Nội", "hanoi", listOf("🏛️ Hoàn Kiếm", "🍜 Phở", "🏺 Văn Miếu")),
+            Triple("Hồ Chí Minh", "ho-chi-minh", listOf("🏛️ Dinh Độc Lập", "🏙️ Bitexco", "🍲 Ẩm thực")),
+            Triple("Huế", "hue", listOf("🏰 Cố đô", "🛶 Sông Hương", "👑 Hoàng cung")),
+            Triple("Hội An", "hoi-an", listOf("🏮 Phố cổ", "🏛️ Hội quán", "🎨 Nghệ thuật")),
 
-            // Budget Tour 1 - No place, no airline (city tour)
-            Tour(
-                name = "Trekking Tà Xùa 2N1Đ - Săn mây",
-                description = "Trải nghiệm trekking đầy thử thách, ngắm biển mây tuyệt đẹp tại Tà Xùa - Tour tiết kiệm",
-                emoji = "⛰️",
-                thumbnailColor = "#11998e",
-                images = listOf(
-                    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-                    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"
-                ),
-                tags = listOf("Budget", "Núi", "Trekking", "Phiêu lưu", "Phượt"),
-                tourProviderId = findProvider("vietravel-adventures"),
-                cityId = findCity("hanoi"),
-                placeId = "", // No specific place - general area tour
-                airlineId = "", // No airline
-                visitedPlaces = listOf("Đỉnh Tà Xùa", "Sống lưng khủng long", "Bản Háng Đồng"),
-                duration = 2,
-                durationNights = 1,
-                minGroupSize = 4,
-                maxGroupSize = 15,
-                currentPrice = 1700000.0,
-                originalPrice = 2000000.0,
-                reviewCount = 312,
-                highlights = listOf("🗻 Đỉnh Tà Xùa 2865m", "☁️ Săn mây lúc bình minh", "🚶 Trekking 6km"),
-                included = listOf("Xe đưa đón", "Homestay", "Bữa tối & sáng", "Hướng dẫn viên chuyên nghiệp"),
-                excluded = listOf("Chi phí cá nhân", "Trang phục trekking"),
-                languages = listOf("vi"),
-                startDate = 1734393600000, // 2024-12-17
-                bookedCount = 678
-            ),
-
-            // Normal Tour 1 - With place, no airline
-            Tour(
-                name = "Đà Lạt 3N2Đ - Thành phố ngàn hoa",
-                description = "Khám phá thành phố sương mù với khí hậu mát mẻ, những vườn hoa rực rỡ và cà phê thơm ngon",
-                emoji = "🌺",
-                thumbnailColor = "#FA709A",
-                images = listOf(
-                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800",
-                    "https://images.unsplash.com/photo-1528127269322-539801943592?w=800"
-                ),
-                tags = listOf("Núi", "Nhiếp ảnh", "Check-in", "Gia đình"),
-                tourProviderId = findProvider("saigon-tourist"),
-                cityId = findCity("da-lat"),
-                placeId = findPlace("ho-xuan-huong"), // Optional - has place
-                airlineId = "", // No airline
-                visitedPlaces = listOf("Hồ Xuân Hương", "Crazy House", "Thung Lũng Tình Yêu", "Đồi chè Cầu Đất"),
-                duration = 3,
-                durationNights = 2,
-                minGroupSize = 2,
-                maxGroupSize = 8,
-                currentPrice = 2200000.0,
-                originalPrice = 2750000.0,
-                reviewCount = 178,
-                highlights = listOf("🌸 Vườn hoa Đà Lạt", "☕ Cà phê view đẹp", "🚡 Cáp treo Robin Hill"),
-                included = listOf("Khách sạn 4*", "Bữa sáng & tối", "Xe đưa đón sân bay"),
-                excluded = listOf("Vé máy bay", "Chi phí cá nhân", "Tiền tip"),
-                languages = listOf("vi", "en"),
-                startDate = 1734566400000, // 2024-12-19
-                bookedCount = 523
-            ),
-
-            // Normal Tour 2 - No place, no airline (multi-destination)
-            Tour(
-                name = "Ninh Bình 2N1Đ - Vịnh Hạ Long cạn",
-                description = "Khám phá Tràng An, Tam Cốc - Bích Động với cảnh quan thiên nhiên kỳ vĩ",
-                emoji = "🚣",
-                thumbnailColor = "#38B2AC",
-                images = listOf(
-                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800",
-                    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800"
-                ),
-                tags = listOf("Văn hóa", "Nhiếp ảnh", "Gia đình", "Budget"),
-                tourProviderId = findProvider("fiditour"),
-                cityId = findCity("hanoi"),
-                placeId = "", // No specific place - multi-destination tour
-                airlineId = "", // No airline
-                visitedPlaces = listOf("Tràng An", "Tam Cốc", "Hang Múa", "Chùa Bái Đính"),
-                duration = 2,
-                durationNights = 1,
-                minGroupSize = 2,
-                maxGroupSize = 10,
-                currentPrice = 1500000.0,
-                originalPrice = 2000000.0,
-                reviewCount = 267,
-                highlights = listOf("🏞️ Tràng An di sản", "🚣 Đò Tam Cốc", "🏯 Chùa Bái Đính"),
-                included = listOf("Xe đưa đón", "Khách sạn 3*", "Bữa trưa & tối", "Vé tham quan"),
-                excluded = listOf("Chi phí cá nhân", "Đồ uống"),
-                languages = listOf("vi", "en"),
-                startDate = 1734307200000, // 2024-12-16
-                bookedCount = 892
-            )
+            // Nature/Adventure
+            Triple("Ninh Bình", "ninh-binh", listOf("🏞️ Tràng An", "🚣 Tam Cốc", "🏯 Bái Đính")),
+            Triple("Hạ Long", "ha-long", listOf("⛵ Vịnh Hạ Long", "🏝️ Đảo Titop", "🛥️ Du thuyền")),
+            Triple("Phong Nha", "phong-nha", listOf("🏞️ Hang động", "🌳 Vườn quốc gia", "🚣 Suối Nước Mọọc")),
+            Triple("Cát Bà", "cat-ba", listOf("🏝️ Đảo Cát Bà", "🏖️ Bãi biển", "🌳 Vườn quốc gia"))
         )
+
+        val tourTypes = listOf(
+            "Khám phá", "Du lịch", "Nghỉ dưỡng", "Phiêu lưu", "Trải nghiệm"
+        )
+
+        val durations = listOf(
+            Pair(2, 1), Pair(3, 2), Pair(4, 3), Pair(5, 4), Pair(6, 5)
+        )
+
+        val allTags = listOf(
+            listOf("🔥 HOT", "Best Seller", "Top Rated"),
+            listOf("✨ LUXURY", "5 sao", "Cao cấp"),
+            listOf("Biển", "Resort", "Nghỉ dưỡng"),
+            listOf("Núi", "Trekking", "Phiêu lưu"),
+            listOf("Văn hóa", "Lịch sử", "Di sản"),
+            listOf("Ẩm thực", "Food tour", "Khám phá"),
+            listOf("Gia đình", "Trẻ em", "Family"),
+            listOf("Budget", "Tiết kiệm", "Phượt"),
+            listOf("Nhiếp ảnh", "Check-in", "Sống ảo"),
+            listOf("Thành phố", "City tour", "Shopping")
+        )
+
+        val imageUrls = listOf(
+            "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
+            "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800",
+            "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
+            "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800",
+            "https://images.unsplash.com/photo-1528127269322-539801943592?w=800",
+            "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800",
+            "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"
+        )
+
+        val emojis = listOf("🏖️", "🏔️", "🏛️", "⛰️", "🌺", "🚣", "🏝️", "🌄", "🏰", "🎭")
+        val colors = listOf("#4ECDC4", "#667EEA", "#FF6B35", "#11998e", "#FA709A", "#38B2AC", "#FF8C42", "#764BA2")
+
+        val providerSlugs = listOf("vietravel", "saigon-tourist", "fiditour", "vietravel-adventures")
+        val airlineCodes = listOf("VJ", "VN", "QH", "")
+
+        val tours = mutableListOf<Tour>()
+
+        // Generate 100 tours
+        for (i in 0 until 100) {
+            val template = tourTemplates[i % tourTemplates.size]
+            val (destinationName, citySlug, highlights) = template
+            val duration = durations[i % durations.size]
+            val tourType = tourTypes[i % tourTypes.size]
+            val emoji = emojis[i % emojis.size]
+            val color = colors[i % colors.size]
+            val providerSlug = providerSlugs[i % providerSlugs.size]
+            val airlineCode = airlineCodes[i % airlineCodes.size]
+
+            // Select 2-3 tag groups
+            val tourTags = mutableListOf<String>()
+            val tagGroups = allTags.shuffled().take((2..3).random())
+            tagGroups.forEach { group ->
+                tourTags.addAll(group.take((1..2).random()))
+            }
+
+            // Select 3-6 images
+            val tourImages = imageUrls.shuffled().take((3..6).random())
+
+            // Price varies by tour type and tags
+            val basePrice = when {
+                tourTags.any { it.contains("LUXURY") } -> (8000000..15000000).random()
+                tourTags.any { it.contains("Budget") } -> (1500000..3000000).random()
+                else -> (3000000..8000000).random()
+            }
+            val originalPrice = (basePrice * 1.2).toLong().toDouble()
+
+            tours.add(Tour(
+                name = "$tourType $destinationName ${duration.first}N${duration.second}Đ",
+                description = "Khám phá $destinationName với tour ${duration.first} ngày ${duration.second} đêm. ${highlights.joinToString(", ")}. Trải nghiệm khó quên cùng dịch vụ chuyên nghiệp.",
+                emoji = emoji,
+                thumbnailColor = color,
+                images = tourImages,
+                tags = tourTags,
+                tourProviderId = findProvider(providerSlug),
+                cityId = findCity(citySlug),
+                placeId = if (i % 3 == 0) findPlace(destinationName) else "", // 33% have place
+                airlineId = if (airlineCode.isNotEmpty() && i % 4 == 0) findAirline(airlineCode) else "", // 25% have airline
+                visitedPlaces = highlights,
+                duration = duration.first,
+                durationNights = duration.second,
+                minGroupSize = (2..4).random(),
+                maxGroupSize = (8..20).random(),
+                currentPrice = basePrice.toDouble(),
+                originalPrice = originalPrice,
+                reviewCount = (50..500).random(),
+                highlights = highlights,
+                included = listOf("Khách sạn", "Bữa ăn", "Hướng dẫn viên", "Vé tham quan"),
+                excluded = listOf("Vé máy bay", "Chi phí cá nhân"),
+                languages = if (tourTags.any { it.contains("LUXURY") }) listOf("vi", "en", "ja") else listOf("vi", "en"),
+                startDate = System.currentTimeMillis() + ((7..60).random() * 24 * 60 * 60 * 1000L),
+                bookedCount = (100..3000).random()
+            ))
+        }
+
+        return tours
     }
 
     companion object {
