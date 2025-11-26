@@ -1,5 +1,6 @@
-package com.lazytravel.ui.components.cards.tours
+ package com.lazytravel.ui.components.cards.tours
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -81,7 +82,6 @@ fun TourLuxuryCard(
     
     var showImageViewer by remember { mutableStateOf(false) }
     var showHighlights by remember { mutableStateOf(false) }
-    var showIncluded by remember { mutableStateOf(false) }
     
     Box(
         modifier = modifier
@@ -664,19 +664,23 @@ fun TourLuxuryCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Xem chi tiết button
-                    OutlinedButton(
+                    // Xem chi tiết button - outline style
+                    Button(
                         onClick = onClick,
-                        modifier = Modifier.weight(1f).height(36.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
                             contentColor = goldColor
                         ),
                         shape = RoundedCornerShape(6.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, goldColor),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+                        border = BorderStroke(1.dp, goldColor),
+                        contentPadding = PaddingValues(0.dp)
                     ) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
@@ -685,6 +689,7 @@ fun TourLuxuryCard(
                                 modifier = Modifier.size(16.dp),
                                 tint = goldColor
                             )
+                            Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = "Chi tiết",
                                 fontSize = 13.sp,
@@ -693,46 +698,38 @@ fun TourLuxuryCard(
                             )
                         }
                     }
-
-                    // Đặt tour button with luxury styling
+                    
+                    // Đặt tour button - gradient style
                     Button(
                         onClick = { /* TODO: Handle booking */ },
-                        modifier = Modifier.weight(1f).height(36.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent
+                            containerColor = goldColor,
+                            contentColor = darkGold
                         ),
                         shape = RoundedCornerShape(6.dp),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+                        contentPadding = PaddingValues(0.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    Brush.linearGradient(
-                                        colors = listOf(goldColor, Color(0xFFF4E4A6))
-                                    ),
-                                    shape = RoundedCornerShape(6.dp)
-                                )
-                                .padding(horizontal = 4.dp, vertical = 2.dp),
-                            contentAlignment = Alignment.Center
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ShoppingCart,
-                                    contentDescription = "Đặt tour",
-                                    modifier = Modifier.size(16.dp),
-                                    tint = darkGold
-                                )
-                                Text(
-                                    text = "Đặt tour",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = darkGold
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Filled.ShoppingCart,
+                                contentDescription = "Đặt tour",
+                                modifier = Modifier.size(16.dp),
+                                tint = darkGold
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Đặt tour",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = darkGold
+                            )
                         }
                     }
                 }

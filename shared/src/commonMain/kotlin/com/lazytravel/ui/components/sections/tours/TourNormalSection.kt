@@ -52,7 +52,7 @@ fun TourNormalSection(
 
         scope.launch {
             // Build filter query based on selected filters
-            val baseFilter = "status='AVAILABLE' && tags !~ '🔥 HOT' && tags !~ '✨ LUXURY'"
+            val baseFilter = "tags !~ '🔥 HOT' && tags !~ '✨ LUXURY'"
 
             // Add tab filter
             val tabFilter = when (filterTab) {
@@ -134,17 +134,17 @@ fun TourNormalSection(
 
             // Determine sort order
             val sortOrder = when (sortBy) {
-                "popular" -> "-viewCount,-created"
-                "price_low" -> "price,created"
-                "price_high" -> "-price,created"
-                else -> "-created" // "recent"
+                "popular" -> "-bookedCount,-startDate"
+                "price_low" -> "currentPrice,startDate"
+                "price_high" -> "-currentPrice,startDate"
+                else -> "-startDate"
             }
 
             tourRepo.getRecords<Tour>(
                 page = page,
                 perPage = perPage,
                 sort = sortOrder,
-                expand = "tourProviderId,cityId,cityId.countryId,placeId,airlineId",
+                expand = "userId,cityId,cityId.countryId,placeId,tourProviderId,tourreviews_via_tour",
                 filter = finalFilter,
             ).fold(
                 onSuccess = { fetchedTours ->

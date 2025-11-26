@@ -66,15 +66,15 @@ fun TourHotSection(
         }
     }
 
-    // Featured section with gradient background matching HTML design
+    // Featured section with gradient background for HOT tours
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
-                        Color(0xFF8B6914), // Dark gold
-                        Color(0xFFC19A6B)  // Light brown gold
+                        Color(0xFFD32F2F), // Deep red
+                        Color(0xFFFF5252)  // Bright red
                     ),
                     start = androidx.compose.ui.geometry.Offset(0f, 0f),
                     end = androidx.compose.ui.geometry.Offset(1f, 1f)
@@ -90,7 +90,7 @@ fun TourHotSection(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
                             Color.Transparent,
-                            Color(0xFFF39C12), // Gold color
+                            Color(0xFFB71C1C), // Dark red for HOT
                             Color.Transparent
                         )
                     )
@@ -135,7 +135,7 @@ fun TourHotSection(
                             text = "Tour nổi bật",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF2C3E50)
+                            color = Color.White // Changed to white for better contrast with red-orange background
                         )
                     }
                 }
@@ -144,7 +144,7 @@ fun TourHotSection(
                 Text(
                     text = "Xem tất cả →",
                     fontSize = 13.sp,
-                    color = Color(0xFF2C3E50),
+                    color = Color.White, // Changed to white for better contrast
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier
                         .clickable { onViewAllClick() }
@@ -175,7 +175,7 @@ fun TourHotSection(
                     ) {
                         Text(
                             text = "Chưa có tour nổi bật nào",
-                            color = Color(0xFF2C3E50),
+                            color = Color.White, // Changed to white for better contrast
                             fontSize = 14.sp
                         )
                     }
