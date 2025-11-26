@@ -48,7 +48,7 @@ fun BuddyHotSection(
                 perPage = 10,
                 sort = "-startDate",
                 expand = "userId,cityId,cityId.countryId,placeId,buddyreviews_via_buddy",
-                filter = "tags ~ '🔥 HOT' || status='AVAILABLE' || status='URGENT'",
+                filter = "tags:each ~ 'HOT' || status='AVAILABLE' || status='URGENT'",
             ).fold(
                 onSuccess = { fetchedBuddies ->
                     fetchedBuddies.forEach { buddy ->

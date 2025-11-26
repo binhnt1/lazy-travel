@@ -37,7 +37,7 @@ fun BuddyLuxurySection(
                 perPage = 10,
                 sort = "-startDate",
                 expand = "userId,cityId,cityId.countryId,placeId,buddyreviews_via_buddy",
-                filter = "tags ~ '✨ LUXURY'",
+                filter = "tags:each ~ 'LUXURY'",
             ).fold(
                 onSuccess = { fetchedBuddies ->
                     fetchedBuddies.forEach { buddy ->
