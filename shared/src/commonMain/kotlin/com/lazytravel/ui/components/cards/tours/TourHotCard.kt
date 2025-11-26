@@ -120,46 +120,44 @@ fun TourHotCard(
                         )
                 )
 
-                // Badge row - top left
-                if (!tour.badges.isNullOrEmpty()) {
+                // Badge row - top left (from tags)
+                val badgeTags = tour.tags?.filter { tag ->
+                    tag.contains("🔥", ignoreCase = true) ||
+                    tag.contains("✨", ignoreCase = true) ||
+                    tag.contains("Budget", ignoreCase = true) ||
+                    tag.contains("Best Seller", ignoreCase = true) ||
+                    tag.contains("Top Rated", ignoreCase = true)
+                }?.take(2)
+
+                if (!badgeTags.isNullOrEmpty()) {
                     Row(
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        tour.badges.take(2).forEach { badge ->
-                            val (bgColor, textColor, icon) = when (badge.uppercase()) {
-                                Tour.BADGE_HOT -> Triple(Color(0xFFE53935), Color.White, "🔥")
-                                Tour.BADGE_SALE -> Triple(Color(0xFFFFEB3B), Color(0xFF333333), "")
-                                Tour.BADGE_NEW -> Triple(Color(0xFF4CAF50), Color.White, "✨")
-                                Tour.BADGE_FEATURED -> Triple(Color(0xFFF1C40F), Color(0xFF2C3E50), "⭐")
-                                else -> Triple(Color(0xFF666666), Color.White, "")
+                        badgeTags.forEach { tag ->
+                            val (bgColor, textColor) = when {
+                                tag.contains("🔥") -> Pair(Color(0xFFE53935), Color.White)
+                                tag.contains("✨") -> Pair(Color(0xFFF1C40F), Color(0xFF2C3E50))
+                                tag.contains("Budget", ignoreCase = true) -> Pair(Color(0xFF4CAF50), Color.White)
+                                tag.contains("Best Seller", ignoreCase = true) -> Pair(Color(0xFFFF6B35), Color.White)
+                                tag.contains("Top Rated", ignoreCase = true) -> Pair(Color(0xFF667EEA), Color.White)
+                                else -> Pair(Color(0xFF666666), Color.White)
                             }
 
                             Surface(
                                 shape = RoundedCornerShape(4.dp),
                                 color = bgColor
                             ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    if (icon.isNotEmpty()) {
-                                        Text(
-                                            text = icon,
-                                            fontSize = 10.sp
-                                        )
-                                    }
-                                    Text(
-                                        text = badge,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = textColor,
-                                        fontSize = 10.sp
-                                    )
-                                }
+                                Text(
+                                    text = tag,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = textColor,
+                                    fontSize = 10.sp,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
                             }
                         }
                     }
