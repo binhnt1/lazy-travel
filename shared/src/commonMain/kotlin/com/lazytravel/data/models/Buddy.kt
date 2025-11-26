@@ -85,7 +85,6 @@ data class Buddy(
     val verified: Boolean
         get() = expandedUser?.verified ?: false
 
-    // Get all images for this Buddy, combining Buddy images and Place images
     val allImages: List<String>
         get() {
             val allImageList = mutableListOf<String>()
@@ -106,7 +105,6 @@ data class Buddy(
             return allImageList
         }
 
-    // Get limited images for card display (6 images max)
     val cardImages: List<String>
         get() = allImages.take(6)
 
