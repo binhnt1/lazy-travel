@@ -51,9 +51,6 @@ data class Buddy(
     @EncodeDefault val cityId: String = "",              // relation to City
 
     // Card display type (for UI rendering)
-    @EncodeDefault val cardType: String = "STANDARD",    // HOT, LUXURY, STANDARD
-    @EncodeDefault val badgeText: String = "",           // e.g., "🔥 HOT", "✨ LUXURY"
-    @EncodeDefault val isFeatured: Boolean = false,      // show in featured section
     @EncodeDefault val viewCount: Int = 0                // number of views
 ) : BaseModel() {
 
@@ -371,9 +368,6 @@ data class Buddy(
                     interests = emptyList(),
                     status = BuddyStatus.URGENT.name,
                     cityId = place.cityId,
-                    cardType = "HOT",
-                    badgeText = "🔥 HOT",
-                    isFeatured = true,
                     viewCount = 500 + (i * 100),
                     requirements = listOf("Hòa đồng, vui vẻ", "Tôn trọng lịch trình nhóm")
                 ))
@@ -400,9 +394,6 @@ data class Buddy(
                     interests = manual.interests,
                     status = BuddyStatus.URGENT.name,
                     cityId = manualCityId,
-                    cardType = "HOT",
-                    badgeText = "🔥 HOT",
-                    isFeatured = true,
                     viewCount = 500 + (i * 100),
                     requirements = listOf("Hòa đồng, vui vẻ", "Tôn trọng lịch trình nhóm")
                 ))
@@ -470,9 +461,6 @@ data class Buddy(
                     interests = emptyList(),
                     status = BuddyStatus.AVAILABLE.name,
                     cityId = place.cityId,
-                    cardType = "LUXURY",
-                    badgeText = "✨ LUXURY",
-                    isFeatured = false,
                     viewCount = 300 + (i * 80),
                     requirements = listOf("Thích trải nghiệm cao cấp", "Tôn trọng sự riêng tư")
                 ))
@@ -499,9 +487,6 @@ data class Buddy(
                     interests = manual.interests,
                     status = BuddyStatus.AVAILABLE.name,
                     cityId = manualCityId,
-                    cardType = "LUXURY",
-                    badgeText = "✨ LUXURY",
-                    isFeatured = false,
                     viewCount = 300 + (i * 80),
                     requirements = listOf("Thích trải nghiệm cao cấp", "Tôn trọng sự riêng tư")
                 ))
@@ -574,13 +559,6 @@ data class Buddy(
                     status = status,
                     cityId = place.cityId,
                     requirements = listOf("Hòa đồng", "Đúng giờ", "Có kinh nghiệm đi du lịch"),
-                    cardType = "STANDARD",
-                    badgeText = when {
-                        status == BuddyStatus.URGENT.name -> "⚡ GẤP"
-                        i % 7 == 0 -> "⭐ PHỔ BIẾN"
-                        else -> ""
-                    },
-                    isFeatured = false,
                     viewCount = 100 + (i * 25)
                 ))
             } else {
@@ -612,13 +590,6 @@ data class Buddy(
                     status = status,
                     cityId = manualCityId,
                     requirements = listOf("Hòa đồng", "Đúng giờ", "Có kinh nghiệm đi du lịch"),
-                    cardType = "STANDARD",
-                    badgeText = when {
-                        status == BuddyStatus.URGENT.name -> "⚡ GẤP"
-                        i % 7 == 0 -> "⭐ PHỔ BIẾN"
-                        else -> ""
-                    },
-                    isFeatured = false,
                     viewCount = 100 + (i * 25)
                 ))
             }
@@ -679,9 +650,6 @@ data class Buddy(
         }
 
         // Card display type
-        text("cardType") { required = false; max = 50 }
-        text("badgeText") { required = false; max = 100 }
-        bool("isFeatured") { required = false }
         number("viewCount") { required = false; min = 0.0; onlyInt = true }
     }
 

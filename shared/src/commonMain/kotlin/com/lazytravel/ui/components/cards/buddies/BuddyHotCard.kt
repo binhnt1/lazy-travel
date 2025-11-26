@@ -161,44 +161,6 @@ fun BuddyHotCard(
                         contentScale = ContentScale.Crop
                     )
                 }
-
-                // Enhanced HOT badge with animation (top-left) - fixed verified badge
-                if (buddy.badgeText.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(10.dp)
-                            .background(
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(
-                                        Color(0xFFFF6B35), // Hot orange
-                                        Color(0xFFFF8C42), // Lighter orange
-                                        Color(0xFFFFA726)  // Even lighter orange
-                                    )
-                                ),
-                                RoundedCornerShape(6.dp)
-                            )
-                            .scale(pulseScale)
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(
-                                text = "🔥",
-                                fontSize = 14.sp
-                            )
-                            Text(
-                                text = buddy.badgeText.uppercase(),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Black,
-                                color = Color.White,
-                                letterSpacing = 0.5.sp
-                            )
-                        }
-                    }
-                }
                 
                 // Animated flame indicator (top-right)
                 Box(
