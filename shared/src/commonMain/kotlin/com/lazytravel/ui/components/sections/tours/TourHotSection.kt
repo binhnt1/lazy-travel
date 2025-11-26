@@ -49,7 +49,7 @@ fun TourHotSection(
                 perPage = 10,
                 sort = "-created",
                 expand = "tourProviderId,cityId,placeId,airlineId",
-                filter = "tags ~ '🔥 HOT' || featured=true",
+                filter = "tags ~ '🔥'",
             ).fold(
                 onSuccess = { fetchedTours ->
                     fetchedTours.forEach { tour ->
