@@ -77,7 +77,7 @@ data class TourParticipant(
         // Tạo participants cho tours
         tours.forEachIndexed { tourIndex, tour ->
             // Số người đã book (60-90% capacity)
-            val bookedSlots = ((tour.maxGroupSize * 0.6)..(tour.maxGroupSize * 0.9)).random().toInt()
+            val bookedSlots = ((tour.maxGroupSize * 0.6).toInt()..(tour.maxGroupSize * 0.9).toInt()).random()
 
             // Tạo participants
             var totalBooked = 0
