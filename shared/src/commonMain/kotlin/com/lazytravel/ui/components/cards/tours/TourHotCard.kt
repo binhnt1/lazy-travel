@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,19 +15,27 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -39,14 +48,16 @@ import com.lazytravel.data.models.Tour
 import com.lazytravel.ui.theme.AppColors
 import com.lazytravel.ui.utils.parseHexColor
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Flight
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -82,54 +93,138 @@ fun TourHotCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(140.dp)
-                    .clickable {
-                        if (tour.allImages.isNotEmpty()) {
-                            showImageViewer = true
+                    .height(170.dp)
+            ) {
+                // Get images for card display (limited to 6)
+                val displayImages = tour.cardImages
+
+                // Only use pager if there are multiple images
+                if (displayImages.size > 1) {
+                    val pagerState = rememberPagerState(pageCount = { displayImages.size })
+
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable {
+                                    if (tour.allImages.isNotEmpty()) {
+                                        showImageViewer = true
+                                    }
+                                }
+                        ) {
+                            AsyncImage(
+                                model = displayImages[page],
+                                contentDescription = "${tour.name} - Image ${page + 1}",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+
+                            // Gradient overlay for better text readability
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color.Transparent,
+                                                Color.Black.copy(alpha = 0.7f)
+                                            ),
+                                            startY = 0f,
+                                            endY = Float.POSITIVE_INFINITY
+                                        )
+                                    )
+                            )
                         }
                     }
-            ) {
-                // Background image from cardImages
-                val bgImage = tour.cardImages.firstOrNull() ?: ""; if (bgImage.isNotEmpty()) {
-                    AsyncImage(
-                        model = bgImage,
-                        contentDescription = tour.name,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+
+                    // Page indicators
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        repeat(displayImages.size) { index ->
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (pagerState.currentPage == index) Color.White
+                                        else Color.White.copy(alpha = 0.5f)
+                                    )
+                            )
+                        }
+                    }
+
+                    // Image counter (bottom left)
+                    Text(
+                        text = "${pagerState.currentPage + 1}/${tour.allImages.size}",
+                        fontSize = 11.sp,
+                        color = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(8.dp)
+                            .background(Color.Black.copy(alpha = 0.8f), RoundedCornerShape(12.dp))
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 } else {
+                    // Single image display
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(
-                                color = parseHexColor(tour.thumbnailColor) ?: AppColors.Primary
-                            ),
-                        contentAlignment = Alignment.Center
+                            .clickable {
+                                if (tour.allImages.isNotEmpty()) {
+                                    showImageViewer = true
+                                }
+                            }
                     ) {
-                        Text(
-                            text = tour.emoji,
-                            style = MaterialTheme.typography.displayLarge.copy(
-                                fontSize = 48.sp
+                        val bgImage = displayImages.firstOrNull() ?: ""
+                        if (bgImage.isNotEmpty()) {
+                            AsyncImage(
+                                model = bgImage,
+                                contentDescription = tour.name,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
                             )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        color = parseHexColor(tour.thumbnailColor) ?: AppColors.Primary
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = tour.emoji,
+                                    style = MaterialTheme.typography.displayLarge.copy(
+                                        fontSize = 48.sp
+                                    )
+                                )
+                            }
+                        }
+
+                        // Gradient overlay for better text readability
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            Color.Black.copy(alpha = 0.7f)
+                                        ),
+                                        startY = 0f,
+                                        endY = Float.POSITIVE_INFINITY
+                                    )
+                                )
                         )
                     }
                 }
-
-                // Gradient overlay for better text readability
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black.copy(alpha = 0.7f)
-                                ),
-                                startY = 0f,
-                                endY = Float.POSITIVE_INFINITY
-                            )
-                        )
-                )
 
                 // Badge row - top left (from tags)
                 val badgeTags = tour.tags?.filter { tag ->
@@ -389,11 +484,11 @@ fun TourHotCard(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Bottom section - price and rating
+                // Price and rating section
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Price block
                     Column(
@@ -446,6 +541,68 @@ fun TourHotCard(
                             color = Color(0xFF666666),
                             fontSize = 11.sp
                         )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Action buttons section
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Xem chi tiết button
+                    OutlinedButton(
+                        onClick = onClick,
+                        modifier = Modifier.weight(1f).height(36.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = AppColors.Primary
+                        ),
+                        shape = RoundedCornerShape(6.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Info,
+                                contentDescription = "Chi tiết",
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = "Chi tiết",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+
+                    // Đặt tour button
+                    Button(
+                        onClick = { /* TODO: Handle booking */ },
+                        modifier = Modifier.weight(1f).height(36.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFE53935)
+                        ),
+                        shape = RoundedCornerShape(6.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.ShoppingCart,
+                                contentDescription = "Đặt tour",
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = "Đặt tour",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
                 }
             }

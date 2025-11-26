@@ -11,6 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -139,32 +142,59 @@ fun BuddyLuxuryCard(
                     )
                 }
 
-                // Badges
-                if (buddy.tags.isNotEmpty()) {
-                    Row(
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.TopStart),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        buddy.tags.take(1).forEach { tag ->
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        Color(0xFF050A30).copy(alpha = 0.9f),
-                                        RoundedCornerShape(2.dp)
+                // Top indicators row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
+                ) {
+                    // Badges
+                    if (buddy.tags.isNotEmpty()) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            buddy.tags.take(1).forEach { tag ->
+                                Box(
+                                    modifier = Modifier
+                                        .background(
+                                            Color(0xFF050A30).copy(alpha = 0.9f),
+                                            RoundedCornerShape(2.dp)
+                                        )
+                                        .border(1.dp, Color(0xFFD4AF37), RoundedCornerShape(2.dp))
+                                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                                ) {
+                                    Text(
+                                        text = tag.trim().uppercase(),
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color(0xFFD4AF37),
+                                        letterSpacing = 1.sp
                                     )
-                                    .border(1.dp, Color(0xFFD4AF37), RoundedCornerShape(2.dp))
-                                    .padding(horizontal = 10.dp, vertical = 5.dp)
-                            ) {
-                                Text(
-                                    text = tag.trim().uppercase(),
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFFD4AF37),
-                                    letterSpacing = 1.sp
-                                )
+                                }
                             }
+                        }
+                    }
+
+                    // Heart/Favorite button
+                    var isFavorite by remember { mutableStateOf(false) }
+                    Surface(
+                        onClick = { isFavorite = !isFavorite },
+                        modifier = Modifier.size(32.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color.White.copy(alpha = 0.95f)
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                                contentDescription = "Favorite",
+                                tint = Color(0xFFE53935),
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
                     }
                 }
@@ -543,22 +573,6 @@ fun BuddyLuxuryCard(
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(6.dp) // Increased spacing like BuddyHotCard
                         ) {
-                            // Icon button - Bookmark - increased size
-                            Box(
-                                modifier = Modifier
-                                    .size(32.dp) // Increased from 28dp like BuddyHotCard
-                                    .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(6.dp)) // Increased border radius
-                                    .background(Color.White, RoundedCornerShape(6.dp))
-                                    .clickable { },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "🔖",
-                                    fontSize = 18.sp, // Increased font size like BuddyHotCard
-                                    color = Color(0xFF757575)
-                                )
-                            }
-
                             // Icon button - Chat - increased size
                             Box(
                                 modifier = Modifier

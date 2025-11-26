@@ -11,6 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -167,11 +170,11 @@ fun BuddyNormalCard(
             ) {
                 // Get images for card display (limited to 6)
                 val displayImages = buddy.cardImages
-                
+
                 // Only use pager if there are multiple images
                 if (displayImages.size > 1) {
                     val pagerState = rememberPagerState(pageCount = { displayImages.size })
-                    
+
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier.fillMaxSize()
@@ -188,7 +191,7 @@ fun BuddyNormalCard(
                             contentScale = ContentScale.Crop
                         )
                     }
-                    
+
                     // Page indicators
                     Row(
                         modifier = Modifier
@@ -208,7 +211,7 @@ fun BuddyNormalCard(
                             )
                         }
                     }
-                    
+
                     // Image counter (bottom left) - show total images count
                     Text(
                         text = "${pagerState.currentPage + 1}/${buddy.allImages.size}",
@@ -233,6 +236,30 @@ fun BuddyNormalCard(
                             },
                         contentScale = ContentScale.Crop
                     )
+                }
+
+                // Heart/Favorite button at top-right corner
+                var isFavorite by remember { mutableStateOf(false) }
+                Surface(
+                    onClick = { isFavorite = !isFavorite },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(10.dp)
+                        .size(32.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color.White.copy(alpha = 0.95f)
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = "Favorite",
+                            tint = Color(0xFFE53935),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
 
@@ -550,22 +577,6 @@ fun BuddyNormalCard(
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp) // Increased spacing further
                 ) {
-                    // Icon button - Bookmark - even larger size
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp) // Increased from 32dp to 36dp
-                            .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(8.dp)) // Increased border radius
-                            .background(Color.White, RoundedCornerShape(8.dp))
-                            .clickable { },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "🔖",
-                            fontSize = 20.sp, // Increased from 18sp to 20sp
-                            color = Color(0xFF757575)
-                        )
-                    }
-
                     // Icon button - Chat - even larger size
                     Box(
                         modifier = Modifier

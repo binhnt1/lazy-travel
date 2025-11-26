@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -162,17 +164,43 @@ fun BuddyHotCard(
                     )
                 }
                 
-                // Animated flame indicator (top-right)
-                Box(
+                // Top-right indicators row
+                Row(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(10.dp)
-                        .scale(pulseScale)
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = "🔥",
-                        fontSize = 22.sp
-                    )
+                    // Animated flame indicator
+                    Box(
+                        modifier = Modifier.scale(pulseScale)
+                    ) {
+                        Text(
+                            text = "🔥",
+                            fontSize = 22.sp
+                        )
+                    }
+
+                    // Heart/Favorite button
+                    var isFavorite by remember { mutableStateOf(false) }
+                    Surface(
+                        onClick = { isFavorite = !isFavorite },
+                        modifier = Modifier.size(32.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color.White.copy(alpha = 0.95f)
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                                contentDescription = "Favorite",
+                                tint = Color(0xFFE53935),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
                 }
             }
 
@@ -588,22 +616,6 @@ fun BuddyHotCard(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(6.dp) // Increased spacing
                     ) {
-                        // Icon button - Bookmark - increased size
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp) // Increased from 28dp
-                                .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(6.dp)) // Increased border radius
-                                .background(Color.White, RoundedCornerShape(6.dp))
-                                .clickable { },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "🔖",
-                                fontSize = 18.sp, // Increased font size
-                                color = Color(0xFF757575)
-                            )
-                        }
-
                         // Icon button - Chat - increased size
                         Box(
                             modifier = Modifier
