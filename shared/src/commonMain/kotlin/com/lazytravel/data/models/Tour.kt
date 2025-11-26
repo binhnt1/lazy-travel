@@ -198,7 +198,7 @@ data class Tour(
     }
 
     override suspend fun getSeedData(): List<Tour> {
-        // Get providers, cities, places, airlines first
+        // Try to get providers, cities, places, airlines from DB (optional)
         val providerRepo = BaseRepository<TourProvider>()
         val cityRepo = BaseRepository<City>()
         val placeRepo = BaseRepository<Place>()
@@ -209,27 +209,34 @@ data class Tour(
         val places = placeRepo.getRecords<Place>().getOrNull() ?: emptyList()
         val airlines = airlineRepo.getRecords<FlightProvider>().getOrNull() ?: emptyList()
 
-        val providerMap = providers.associateBy { it.slug }
-        val cityMap = cities.associateBy { it.slug }
-        val placeMap = places.associateBy { it.slug }
-        val airlineMap = airlines.associateBy { it.code }
+        // If no required entities exist, return empty list
+        if (providers.isEmpty() || cities.isEmpty()) {
+            return emptyList()
+        }
 
-        // All possible tags for tours
-        val allTags = listOf(
-            listOf("🔥 HOT", "Best Seller", "Top Rated"),
-            listOf("✨ LUXURY", "5 sao", "Cao cấp"),
-            listOf("Biển", "Resort", "Nghỉ dưỡng"),
-            listOf("Núi", "Trekking", "Phiêu lưu"),
-            listOf("Văn hóa", "Lịch sử", "Di sản"),
-            listOf("Ẩm thực", "Food tour", "Khám phá"),
-            listOf("Gia đình", "Trẻ em", "Family"),
-            listOf("Budget", "Tiết kiệm", "Phượt"),
-            listOf("Nhiếp ảnh", "Check-in", "Sống ảo"),
-            listOf("Thành phố", "City tour", "Shopping")
-        )
+        // Helper function to find provider by slug
+        fun findProvider(slug: String): String {
+            return providers.find { it.slug == slug }?.id ?: providers.firstOrNull()?.id ?: ""
+        }
+
+        // Helper function to find city by slug or name
+        fun findCity(slug: String): String {
+            return cities.find { it.slug == slug || it.name.contains(slug, ignoreCase = true) }?.id
+                ?: cities.firstOrNull()?.id ?: ""
+        }
+
+        // Helper function to find place by slug (optional - returns empty if not found)
+        fun findPlace(slug: String): String {
+            return places.find { it.slug == slug || it.name.contains(slug, ignoreCase = true) }?.id ?: ""
+        }
+
+        // Helper function to find airline by code (optional - returns empty if not found)
+        fun findAirline(code: String): String {
+            return airlines.find { it.code == code }?.id ?: ""
+        }
 
         return listOf(
-            // HOT Tour 1
+            // HOT Tour 1 - With place and airline
             Tour(
                 name = "Phú Quốc 3N2Đ - Khám phá đảo ngọc",
                 description = "Trải nghiệm thiên đường biển đảo với những bãi biển tuyệt đẹp và hoạt động vui chơi phong phú",
@@ -241,10 +248,10 @@ data class Tour(
                     "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800"
                 ),
                 tags = listOf("🔥 HOT", "Biển", "Nghỉ dưỡng", "Resort", "Gia đình"),
-                tourProviderId = providerMap["vietravel"]?.id ?: "",
-                cityId = cityMap["phu-quoc"]?.id ?: "",
-                placeId = placeMap["bai-sao"]?.id ?: "",
-                airlineId = airlineMap["VJ"]?.id ?: "",
+                tourProviderId = findProvider("vietravel"),
+                cityId = findCity("phu-quoc"),
+                placeId = findPlace("bai-sao"), // Optional - has place
+                airlineId = findAirline("VJ"),   // Optional - has airline
                 visitedPlaces = listOf("Bãi Sao", "Vinpearl Land Phú Quốc", "Dinh Cậu", "Chợ đêm Phú Quốc"),
                 duration = 3,
                 durationNights = 2,
@@ -263,7 +270,7 @@ data class Tour(
                 bookedCount = 2345
             ),
 
-            // HOT Tour 2
+            // HOT Tour 2 - With place, no airline (land tour)
             Tour(
                 name = "Sapa - Fansipan 4N3Đ từ Hà Nội",
                 description = "Chinh phục nóc nhà Đông Dương, khám phá văn hóa người dân tộc và ngắm nhìn cảnh sắc thiên nhiên hùng vĩ",
@@ -274,9 +281,10 @@ data class Tour(
                     "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800"
                 ),
                 tags = listOf("🔥 HOT", "Núi", "Trekking", "Văn hóa", "Nhiếp ảnh"),
-                tourProviderId = providerMap["saigon-tourist"]?.id ?: "",
-                cityId = cityMap["sapa"]?.id ?: "",
-                placeId = placeMap["dinh-fansipan"]?.id ?: "",
+                tourProviderId = findProvider("saigon-tourist"),
+                cityId = findCity("sapa"),
+                placeId = findPlace("dinh-fansipan"), // Optional - has place
+                airlineId = "", // No airline - land tour
                 visitedPlaces = listOf("Đỉnh Fansipan", "Bản Cát Cát", "Thác Bạc", "Cầu Kính Rồng Mây"),
                 duration = 4,
                 durationNights = 3,
@@ -295,7 +303,7 @@ data class Tour(
                 bookedCount = 1823
             ),
 
-            // LUXURY Tour 1
+            // LUXURY Tour 1 - With place, no airline
             Tour(
                 name = "Hội An - Đà Nẵng 5N4Đ Premium",
                 description = "Tour khám phá di sản miền Trung với phố cổ Hội An, bãi biển Đà Nẵng và cố đô Huế - Dịch vụ cao cấp",
@@ -306,9 +314,10 @@ data class Tour(
                     "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800"
                 ),
                 tags = listOf("✨ LUXURY", "Văn hóa", "5 sao", "Biển", "Nhiếp ảnh"),
-                tourProviderId = providerMap["vietravel"]?.id ?: "",
-                cityId = cityMap["da-nang"]?.id ?: "",
-                placeId = placeMap["pho-co-hoi-an"]?.id ?: "",
+                tourProviderId = findProvider("vietravel"),
+                cityId = findCity("da-nang"),
+                placeId = findPlace("pho-co-hoi-an"), // Optional - has place
+                airlineId = "", // No airline
                 visitedPlaces = listOf("Phố Cổ Hội An", "Cầu Rồng", "Bà Nà Hills", "Chùa Linh Ứng", "Bãi Biển Mỹ Khê"),
                 duration = 5,
                 durationNights = 4,
@@ -327,7 +336,7 @@ data class Tour(
                 bookedCount = 945
             ),
 
-            // Budget Tour 1
+            // Budget Tour 1 - No place, no airline (city tour)
             Tour(
                 name = "Trekking Tà Xùa 2N1Đ - Săn mây",
                 description = "Trải nghiệm trekking đầy thử thách, ngắm biển mây tuyệt đẹp tại Tà Xùa - Tour tiết kiệm",
@@ -338,9 +347,10 @@ data class Tour(
                     "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"
                 ),
                 tags = listOf("Budget", "Núi", "Trekking", "Phiêu lưu", "Phượt"),
-                tourProviderId = providerMap["vietravel-adventures"]?.id ?: "",
-                cityId = cityMap["hanoi"]?.id ?: "",
-                placeId = placeMap["ho-hoan-kiem"]?.id ?: "",
+                tourProviderId = findProvider("vietravel-adventures"),
+                cityId = findCity("hanoi"),
+                placeId = "", // No specific place - general area tour
+                airlineId = "", // No airline
                 visitedPlaces = listOf("Đỉnh Tà Xùa", "Sống lưng khủng long", "Bản Háng Đồng"),
                 duration = 2,
                 durationNights = 1,
@@ -359,7 +369,7 @@ data class Tour(
                 bookedCount = 678
             ),
 
-            // Normal Tour 1
+            // Normal Tour 1 - With place, no airline
             Tour(
                 name = "Đà Lạt 3N2Đ - Thành phố ngàn hoa",
                 description = "Khám phá thành phố sương mù với khí hậu mát mẻ, những vườn hoa rực rỡ và cà phê thơm ngon",
@@ -370,9 +380,10 @@ data class Tour(
                     "https://images.unsplash.com/photo-1528127269322-539801943592?w=800"
                 ),
                 tags = listOf("Núi", "Nhiếp ảnh", "Check-in", "Gia đình"),
-                tourProviderId = providerMap["saigon-tourist"]?.id ?: "",
-                cityId = cityMap["da-lat"]?.id ?: "",
-                placeId = placeMap["ho-xuan-huong"]?.id ?: "",
+                tourProviderId = findProvider("saigon-tourist"),
+                cityId = findCity("da-lat"),
+                placeId = findPlace("ho-xuan-huong"), // Optional - has place
+                airlineId = "", // No airline
                 visitedPlaces = listOf("Hồ Xuân Hương", "Crazy House", "Thung Lũng Tình Yêu", "Đồi chè Cầu Đất"),
                 duration = 3,
                 durationNights = 2,
@@ -391,7 +402,7 @@ data class Tour(
                 bookedCount = 523
             ),
 
-            // Normal Tour 2
+            // Normal Tour 2 - No place, no airline (multi-destination)
             Tour(
                 name = "Ninh Bình 2N1Đ - Vịnh Hạ Long cạn",
                 description = "Khám phá Tràng An, Tam Cốc - Bích Động với cảnh quan thiên nhiên kỳ vĩ",
@@ -402,9 +413,10 @@ data class Tour(
                     "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800"
                 ),
                 tags = listOf("Văn hóa", "Nhiếp ảnh", "Gia đình", "Budget"),
-                tourProviderId = providerMap["fiditour"]?.id ?: "",
-                cityId = cityMap["hanoi"]?.id ?: "",
-                placeId = placeMap["ho-hoan-kiem"]?.id ?: "",
+                tourProviderId = findProvider("fiditour"),
+                cityId = findCity("hanoi"),
+                placeId = "", // No specific place - multi-destination tour
+                airlineId = "", // No airline
                 visitedPlaces = listOf("Tràng An", "Tam Cốc", "Hang Múa", "Chùa Bái Đính"),
                 duration = 2,
                 durationNights = 1,
