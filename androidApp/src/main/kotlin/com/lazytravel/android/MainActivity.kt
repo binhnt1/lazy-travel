@@ -32,6 +32,8 @@ import com.lazytravel.data.models.UseCase
 import com.lazytravel.data.models.User
 import com.lazytravel.data.models.BuddyParticipant
 import com.lazytravel.data.models.Feature
+import com.lazytravel.data.models.TourParticipant
+import com.lazytravel.data.models.TourReview
 import com.lazytravel.data.remote.PocketBaseClient
 import com.lazytravel.ui.navigation.AppNavigation
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -81,7 +83,10 @@ class MainActivity : ComponentActivity() {
             InsuranceProvider().setup()
             VisaProvider().setup()
             InsurancePackage().setup()   // Package after provider
+
             Tour().setup()               // Tour last (depends on providers)
+            TourReview().setup()
+            TourParticipant().setup()
 
             HowItWork().setup()
         }

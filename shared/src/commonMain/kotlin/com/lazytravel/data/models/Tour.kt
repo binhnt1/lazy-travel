@@ -43,7 +43,6 @@ data class Tour(
     @EncodeDefault val discount: Int = 0,
 
     // Rating
-    @EncodeDefault val rating: Double = 0.0,
     @EncodeDefault val reviewCount: Int = 0,
 
     // Tour details
@@ -339,7 +338,6 @@ data class Tour(
                 currentPrice = 3750000.0,
                 originalPrice = 5000000.0,
                 discount = 25,
-                rating = 4.8,
                 reviewCount = 234,
                 highlights = listOf("🏖️ Bãi biển đẹp", "🤿 Lặn biển ngắm san hô", "🍜 Ẩm thực hải sản"),
                 included = listOf("Xe đưa đón sân bay", "Khách sạn 3*", "Bữa sáng", "Hướng dẫn viên", "Bay VietJet Air"),
@@ -372,7 +370,6 @@ data class Tour(
                 currentPrice = 2800000.0,
                 originalPrice = 4000000.0,
                 discount = 30,
-                rating = 4.9,
                 reviewCount = 456,
                 highlights = listOf("🏔️ Đỉnh Fansipan 3143m", "🏞️ Ruộng bậc thang", "🛖 Văn hóa H'Mông"),
                 included = listOf("Xe limousine VIP", "Khách sạn 4*", "Bữa sáng & tối", "Cáp treo Fansipan"),
@@ -405,7 +402,6 @@ data class Tour(
                 currentPrice = 7500000.0,
                 originalPrice = 10000000.0,
                 discount = 25,
-                rating = 4.9,
                 reviewCount = 289,
                 highlights = listOf("🏰 Phố cổ Hội An", "🌉 Cầu Vàng Bà Nà", "🏖️ Biển Mỹ Khê", "🏨 Khách sạn 5*"),
                 included = listOf("Khách sạn 5*", "Bữa sáng & tối", "Vé Bà Nà Hills", "Hướng dẫn viên", "Xe VIP"),
@@ -438,7 +434,6 @@ data class Tour(
                 currentPrice = 1700000.0,
                 originalPrice = 2000000.0,
                 discount = 15,
-                rating = 5.0,
                 reviewCount = 312,
                 highlights = listOf("🗻 Đỉnh Tà Xùa 2865m", "☁️ Săn mây lúc bình minh", "🚶 Trekking 6km"),
                 included = listOf("Xe đưa đón", "Homestay", "Bữa tối & sáng", "Hướng dẫn viên chuyên nghiệp"),
@@ -471,7 +466,6 @@ data class Tour(
                 currentPrice = 2200000.0,
                 originalPrice = 2750000.0,
                 discount = 20,
-                rating = 4.6,
                 reviewCount = 178,
                 highlights = listOf("🌸 Vườn hoa Đà Lạt", "☕ Cà phê view đẹp", "🚡 Cáp treo Robin Hill"),
                 included = listOf("Khách sạn 4*", "Bữa sáng & tối", "Xe đưa đón sân bay"),
@@ -504,7 +498,6 @@ data class Tour(
                 currentPrice = 1500000.0,
                 originalPrice = 2000000.0,
                 discount = 25,
-                rating = 4.8,
                 reviewCount = 267,
                 highlights = listOf("🏞️ Tràng An di sản", "🚣 Đò Tam Cốc", "🏯 Chùa Bái Đính"),
                 included = listOf("Xe đưa đón", "Khách sạn 3*", "Bữa trưa & tối", "Vé tham quan"),
@@ -530,7 +523,6 @@ data class Tour(
                     currentPrice = 3750000.0,
                     originalPrice = 5000000.0,
                     discount = 25,
-                    rating = 4.8,
                     reviewCount = 234,
                     tags = listOf("🔥 HOT", "Biển", "Resort")
                 )
