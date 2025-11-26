@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
             InsuranceProvider().setup()
             VisaProvider().setup()
             InsurancePackage().setup()   // Package after provider
-            Tour().setup(true)               // Tour last (depends on providers)
+            Tour().setup()               // Tour last (depends on providers)
 
             HowItWork().setup()
         }
