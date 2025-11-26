@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
             ReviewComment().setup()
 
             // Travel Buddy models
-            Buddy().setup(true)
+            Buddy().setup()
             BuddyReview().setup()
             BuddyParticipant().setup()
 
@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
             InsuranceProvider().setup()
             VisaProvider().setup()
             InsurancePackage().setup()   // Package after provider
-            Tour().setup()               // Tour last (depends on providers)
+            Tour().setup(true)               // Tour last (depends on providers)
 
             HowItWork().setup()
         }

@@ -221,13 +221,13 @@ data class Tour(
 
         // Helper function to find city by slug or name
         fun findCity(slug: String): String {
-            return cities.find { it.slug == slug || it.name.contains(slug, ignoreCase = true) }?.id
+            return cities.find { it.name.contains(slug, ignoreCase = true) }?.id
                 ?: cities.firstOrNull()?.id ?: ""
         }
 
         // Helper function to find place by slug (optional - returns empty if not found)
         fun findPlace(slug: String): String {
-            return places.find { it.slug == slug || it.name.contains(slug, ignoreCase = true) }?.id ?: ""
+            return places.find { it.name.contains(slug, ignoreCase = true) }?.id ?: ""
         }
 
         // Helper function to find airline by code (optional - returns empty if not found)
